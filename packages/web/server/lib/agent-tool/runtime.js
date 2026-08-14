@@ -6,13 +6,17 @@ import {
   OPENCHAMBER_WEB_ACTION_DEFINITIONS,
   OPENCHAMBER_WEB_ACTIONS,
 } from '../openchamber-control/actions.js';
+import {
+  WORKSPACE_ACTION_DEFINITIONS,
+  WORKSPACE_ACTIONS,
+} from '../workspace-tools/service.js';
 
 const TOOL_SCHEMA_VERSION = 1;
 // Everything either managed tool may ask for; the agent allowlist stays
 // narrower than the full control surface.
-const ACTIONS = new Set([...OPENCHAMBER_AGENT_TOOL_ACTIONS, ...OPENCHAMBER_WEB_ACTIONS]);
+const ACTIONS = new Set([...OPENCHAMBER_AGENT_TOOL_ACTIONS, ...OPENCHAMBER_WEB_ACTIONS, ...WORKSPACE_ACTIONS]);
 const AGENT_TOOL_ACTION_TITLES = Object.fromEntries(
-  [...OPENCHAMBER_AGENT_TOOL_ACTION_DEFINITIONS, ...OPENCHAMBER_WEB_ACTION_DEFINITIONS]
+  [...OPENCHAMBER_AGENT_TOOL_ACTION_DEFINITIONS, ...OPENCHAMBER_WEB_ACTION_DEFINITIONS, ...WORKSPACE_ACTION_DEFINITIONS]
     .map(({ action, title }) => [action, title]),
 );
 
@@ -24,6 +28,11 @@ const AGENT_TOOL_ACTION_TITLES = Object.fromEntries(
  * on every call.
  */
 const WEB_PARAMETER_NAMES = ['url', 'selector', 'text', 'value', 'submit', 'direction', 'viewport', 'label'];
+const WORKSPACE_PARAMETER_NAMES = [
+  'content', 'kind', 'tags', 'query', 'id', 'inputPath', 'outputFormat',
+  'outputDirectory', 'overwrite', 'previewFormat', 'text', 'voice',
+  'outputName', 'limit',
+];
 
 const ALL_PARAMETER_PROPERTIES = {
   projectId: { type: 'string', description: 'Configured project ID; do not combine with directory' },
@@ -66,6 +75,18 @@ const ALL_PARAMETER_PROPERTIES = {
   direction: { type: 'string', enum: ['up', 'down', 'top', 'bottom'], description: 'Scroll direction for browser.scroll' },
   viewport: { type: 'string', enum: ['mobile', 'tablet', 'desktop', 'fill'], description: 'Page layout size; snapshots report which one is in effect' },
   label: { type: 'string', description: 'Short name for a browser.capture image, such as before-fix' },
+  content: { type: 'string', description: 'User-approved fact for memory.add; never pass a secret' },
+  kind: { type: 'string', description: 'Optional memory category; defaults to note' },
+  tags: { type: 'array', items: { type: 'string' }, description: 'Optional memory tags' },
+  query: { type: 'string', description: 'Text to find in local memory' },
+  id: { type: 'integer', minimum: 1, description: 'Memory id for memory.delete' },
+  inputPath: { type: 'string', description: 'Document path, absolute or relative to the current session directory' },
+  outputFormat: { type: 'string', enum: ['pdf', 'html', 'docx', 'xlsx', 'pptx'], description: 'Converted copy format; defaults to pdf' },
+  outputDirectory: { type: 'string', description: 'Optional output directory, absolute or relative to the current session directory' },
+  overwrite: { type: 'boolean', description: 'Replace an existing output only after the user approves' },
+  previewFormat: { type: 'string', enum: ['pdf', 'html'], description: 'Preview format; defaults to pdf' },
+  voice: { type: 'string', description: 'Installed Piper voice from voice.list' },
+  outputName: { type: 'string', description: 'Optional safe filename for synthesized WAV audio' },
 };
 
 const pickParameters = (names) => Object.fromEntries(
@@ -73,13 +94,20 @@ const pickParameters = (names) => Object.fromEntries(
 );
 
 const CONTROL_PARAMETER_PROPERTIES = pickParameters(
-  Object.keys(ALL_PARAMETER_PROPERTIES).filter((name) => !WEB_PARAMETER_NAMES.includes(name)),
+  Object.keys(ALL_PARAMETER_PROPERTIES).filter((name) => !WEB_PARAMETER_NAMES.includes(name) && (!WORKSPACE_PARAMETER_NAMES.includes(name) || name === 'limit')),
 );
 const WEB_PARAMETER_PROPERTIES = pickParameters(WEB_PARAMETER_NAMES);
+const WORKSPACE_PARAMETER_PROPERTIES = {
+  ...pickParameters(WORKSPACE_PARAMETER_NAMES),
+  text: { type: 'string', description: 'English or Persian text to synthesize; maximum 5000 characters' },
+  limit: { type: 'integer', minimum: 1, description: 'Maximum memory or history records to return' },
+};
 
-const CONTROL_TOOL_DESCRIPTION = "Control OpenChamber projects, sessions, and scheduled tasks on the user's behalf. Sessions and scheduled tasks you create are for the user to follow and interact with; never use this tool to delegate parts of your own current task. Use one action per call. Scope with projectId or directory; omit both to use the current session directory. Session dispatches return immediately by default and you receive no notification when a dispatched session finishes, so never promise to report back on it; the user follows it in OpenChamber; a dispatched session needs no follow-up from you. If the user later asks how it went, use session.messages (add wait to block until it is idle, lastAssistant for just the final answer) — session.send always sends a NEW prompt and never just waits. Set wait only when the user asks or the next step requires the completed result. Session and worktree deletion are unavailable.";
+const CONTROL_TOOL_DESCRIPTION = "Control OpenDeputy projects, sessions, and scheduled tasks on the user's behalf. Sessions and scheduled tasks you create are for the user to follow and interact with; never use this tool to delegate parts of your own current task. Use one action per call. Scope with projectId or directory; omit both to use the current session directory. Session dispatches return immediately by default and you receive no notification when a dispatched session finishes, so never promise to report back on it; the user follows it in OpenDeputy; a dispatched session needs no follow-up from you. If the user later asks how it went, use session.messages (add wait to block until it is idle, lastAssistant for just the final answer) — session.send always sends a NEW prompt and never just waits. Set wait only when the user asks or the next step requires the completed result. Session and worktree deletion are unavailable.";
 
-const WEB_TOOL_DESCRIPTION = "Look at and interact with a web page in OpenChamber's browser panel, so you can check your own work rather than describing what you expect. Use one action per call. Open a page, snapshot it to read its text and its interactive elements, then click, type or scroll using the selectors the snapshot returned; snapshots also report any errors the page logged. Pass a selector to browser.snapshot to read one part of a long page. browser.inspect returns computed styles when the question is how something renders. Set viewport to check a layout at mobile, tablet or desktop size. The page runs with the user's real logins, so treat what you see as their live session.";
+const WEB_TOOL_DESCRIPTION = "Look at and interact with a web page in OpenDeputy's browser panel, so you can check your own work rather than describing what you expect. Use one action per call. Open a page, snapshot it to read its text and its interactive elements, then click, type or scroll using the selectors the snapshot returned; snapshots also report any errors the page logged. Pass a selector to browser.snapshot to read one part of a long page. browser.inspect returns computed styles when the question is how something renders. Set viewport to check a layout at mobile, tablet or desktop size. The page runs with the user's real logins, so treat what you see as their live session.";
+
+const WORKSPACE_TOOL_DESCRIPTION = "Use OpenDeputy's local workspace capabilities. Memory stores only facts the user explicitly asks to remember; never store passwords, API keys, tokens, financial details, or other secrets, and ask before deleting non-test memory. Document conversion preserves the source and requires explicit approval before overwrite. Piper speech creates a local WAV file and does not play or upload it. ActivityWatch is optional: start it, read history, or stop it only when the user explicitly asks. Use workspace.status or voice.list to check optional local dependencies before relying on them.";
 
 const asNonEmptyString = (value) => {
   if (typeof value !== 'string') return null;
@@ -114,7 +142,7 @@ const isLoopbackAddress = (value) => {
 const createToolEntry = ({ name, description, actions, definitions, parameters }) => String.raw`    ${name}: {
       description: ${JSON.stringify(description)},
       args: {
-        action: { type: "string", enum: ${JSON.stringify(actions)}, oneOf: ${JSON.stringify(definitions.map((entry) => ({ const: entry.action, description: entry.description })))}, description: "OpenChamber action to perform" },
+        action: { type: "string", enum: ${JSON.stringify(actions)}, oneOf: ${JSON.stringify(definitions.map((entry) => ({ const: entry.action, description: entry.description })))}, description: "OpenDeputy action to perform" },
         parameters: { type: "object", properties: ${JSON.stringify(parameters)}, additionalProperties: false, description: "Inputs for the action; use an empty object when none are needed" },
       },
       async execute(input, context) {
@@ -141,10 +169,10 @@ const createToolEntry = ({ name, description, actions, definitions, parameters }
         const failure = (payload) => ({
           title,
           output: JSON.stringify(payload),
-          metadata: { openchamber: { schemaVersion: ${TOOL_SCHEMA_VERSION}, action: args.action, description: title, ok: false } },
+          metadata: { opendeputy: { schemaVersion: ${TOOL_SCHEMA_VERSION}, action: args.action, description: title, ok: false } },
         })
         if (!endpoint || !token) {
-          return failure({ schemaVersion: ${TOOL_SCHEMA_VERSION}, ok: false, action: args.action, error: { message: "OpenChamber managed tool connection is unavailable" } })
+          return failure({ schemaVersion: ${TOOL_SCHEMA_VERSION}, ok: false, action: args.action, error: { message: "OpenDeputy managed tool connection is unavailable" } })
         }
 
         try {
@@ -172,8 +200,8 @@ const createToolEntry = ({ name, description, actions, definitions, parameters }
               },
             },
           })
-          if (valid) return { title, output, metadata: { openchamber: { schemaVersion: ${TOOL_SCHEMA_VERSION}, action: args.action, description: title, ok: result.ok === true } } }
-          return failure({ schemaVersion: ${TOOL_SCHEMA_VERSION}, ok: false, action: args.action, error: { message: "OpenChamber returned an invalid response", kind: "runtime", status: response.status } })
+          if (valid) return { title, output, metadata: { opendeputy: { schemaVersion: ${TOOL_SCHEMA_VERSION}, action: args.action, description: title, ok: result.ok === true } } }
+          return failure({ schemaVersion: ${TOOL_SCHEMA_VERSION}, ok: false, action: args.action, error: { message: "OpenDeputy returned an invalid response", kind: "runtime", status: response.status } })
         } catch (error) {
           if (context.abort.aborted) throw error
           return failure({ schemaVersion: ${TOOL_SCHEMA_VERSION}, ok: false, action: args.action, error: { message: error instanceof Error ? error.message : String(error), kind: "runtime" } })
@@ -182,11 +210,11 @@ const createToolEntry = ({ name, description, actions, definitions, parameters }
     },
 `;
 
-const createPluginSource = ({ includeControl, includeWeb }) => {
+const createPluginSource = ({ includeControl, includeWeb, includeWorkspace }) => {
   const entries = [];
   if (includeControl) {
     entries.push(createToolEntry({
-      name: 'openchamber',
+      name: 'opendeputy',
       description: CONTROL_TOOL_DESCRIPTION,
       actions: OPENCHAMBER_AGENT_TOOL_ACTIONS,
       definitions: OPENCHAMBER_AGENT_TOOL_ACTION_DEFINITIONS,
@@ -195,35 +223,68 @@ const createPluginSource = ({ includeControl, includeWeb }) => {
   }
   if (includeWeb) {
     entries.push(createToolEntry({
-      name: 'openchamber_web',
+      name: 'opendeputy_web',
       description: WEB_TOOL_DESCRIPTION,
       actions: OPENCHAMBER_WEB_ACTIONS,
       definitions: OPENCHAMBER_WEB_ACTION_DEFINITIONS,
       parameters: WEB_PARAMETER_PROPERTIES,
     }));
   }
+  if (includeWorkspace) {
+    entries.push(createToolEntry({
+      name: 'opendeputy_workspace',
+      description: WORKSPACE_TOOL_DESCRIPTION,
+      actions: WORKSPACE_ACTIONS,
+      definitions: WORKSPACE_ACTION_DEFINITIONS,
+      parameters: WORKSPACE_PARAMETER_PROPERTIES,
+    }));
+  }
 
-  return `export const OpenChamberPlugin = async () => ({
+  return `export const OpenDeputyPlugin = async () => ({
   tool: {
 ${entries.join('')}  },
 })
+export const OpenChamberPlugin = OpenDeputyPlugin
 `;
 };
 
-const mergePluginConfig = (rawConfig, pluginUrl) => {
+const mergeManagedConfig = (rawConfig, pluginUrl, computerUseBinary) => {
   const errors = [];
   const parsed = asNonEmptyString(rawConfig) ? parseJsonc(rawConfig, errors, { allowTrailingComma: true }) : {};
   if (errors.length > 0 || !parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
-    throw new Error('OPENCODE_CONFIG_CONTENT must contain a valid JSON object before OpenChamber can inject its managed tool');
+    throw new Error('OPENCODE_CONFIG_CONTENT must contain a valid JSON object before OpenDeputy can inject its managed tool');
   }
   if (parsed.plugin !== undefined && !Array.isArray(parsed.plugin)) {
-    throw new Error('OPENCODE_CONFIG_CONTENT plugin must be an array before OpenChamber can inject its managed tool');
+    throw new Error('OPENCODE_CONFIG_CONTENT plugin must be an array before OpenDeputy can inject its managed tool');
   }
   const configured = Array.isArray(parsed.plugin) ? parsed.plugin : [];
   parsed.plugin = [
     ...configured.filter((value) => value !== pluginUrl && (!Array.isArray(value) || value[0] !== pluginUrl)),
     pluginUrl,
   ];
+  if (asNonEmptyString(computerUseBinary)) {
+    if (parsed.mcp !== undefined && (!parsed.mcp || typeof parsed.mcp !== 'object' || Array.isArray(parsed.mcp))) {
+      throw new Error('OPENCODE_CONFIG_CONTENT mcp must be an object before OpenDeputy can inject Computer Use');
+    }
+    parsed.mcp = {
+      ...(parsed.mcp || {}),
+      open_deputy_computer: {
+        type: 'local',
+        command: [computerUseBinary, 'mcp'],
+        enabled: true,
+        timeout: 30_000,
+      },
+    };
+    if (parsed.permission !== undefined && (!parsed.permission || typeof parsed.permission !== 'object' || Array.isArray(parsed.permission))) {
+      throw new Error('OPENCODE_CONFIG_CONTENT permission must be an object before OpenDeputy can protect Computer Use');
+    }
+    parsed.permission = {
+      'open_deputy_computer_*': 'ask',
+      'open_deputy_computer_list_apps': 'allow',
+      'open_deputy_computer_get_app_state': 'allow',
+      ...(parsed.permission || {}),
+    };
+  }
   return JSON.stringify(parsed);
 };
 
@@ -238,23 +299,23 @@ export const createAgentToolRuntime = (dependencies) => {
     env = process.env,
   } = dependencies;
   const pluginDirectory = path.join(dataDir, 'agent-tool');
-  const pluginPath = path.join(pluginDirectory, 'openchamber-plugin.js');
+  const pluginPath = path.join(pluginDirectory, 'opendeputy-plugin.js');
   let activeToken = null;
 
-  const prepareManagedOpenCodeEnv = async ({ includeControl = true, includeWeb = true } = {}) => {
+  const prepareManagedOpenCodeEnv = async ({ includeControl = true, includeWeb = true, includeWorkspace = true } = {}) => {
     const port = getActivePort();
     if (!Number.isInteger(port) || port <= 0) {
-      throw new Error('OpenChamber listener port is unavailable for managed tool injection');
+      throw new Error('OpenDeputy listener port is unavailable for managed tool injection');
     }
-    if (!includeControl && !includeWeb) {
-      throw new Error('At least one OpenChamber managed tool must be enabled to inject the plugin');
+    if (!includeControl && !includeWeb && !includeWorkspace) {
+      throw new Error('At least one OpenDeputy managed tool must be enabled to inject the plugin');
     }
     await fsPromises.mkdir(pluginDirectory, { recursive: true });
-    await fsPromises.writeFile(pluginPath, createPluginSource({ includeControl, includeWeb }), { mode: 0o600 });
+    await fsPromises.writeFile(pluginPath, createPluginSource({ includeControl, includeWeb, includeWorkspace }), { mode: 0o600 });
     activeToken = crypto.randomBytes(32).toString('base64url');
     const pluginUrl = pathToFileURL(pluginPath).href;
     return {
-      OPENCODE_CONFIG_CONTENT: mergePluginConfig(env.OPENCODE_CONFIG_CONTENT, pluginUrl),
+      OPENCODE_CONFIG_CONTENT: mergeManagedConfig(env.OPENCODE_CONFIG_CONTENT, pluginUrl, env.OPENDEPUTY_COMPUTER_USE_BINARY),
       OPENCHAMBER_AGENT_TOOL_URL: `http://127.0.0.1:${port}/api/openchamber/agent-tool`,
       OPENCHAMBER_AGENT_TOOL_TOKEN: activeToken,
     };
@@ -272,10 +333,10 @@ export const createAgentToolRuntime = (dependencies) => {
   const execute = async (payload = {}, options = {}) => {
     const action = asNonEmptyString(payload.input?.action);
     if (!action || !ACTIONS.has(action)) {
-      return createResult({ ok: false, action, error: { message: `Unsupported OpenChamber action: ${action || 'missing'}`, kind: 'usage' } });
+      return createResult({ ok: false, action, error: { message: `Unsupported OpenDeputy action: ${action || 'missing'}`, kind: 'usage' } });
     }
     if (typeof executeAction !== 'function') {
-      return createResult({ ok: false, action, error: { message: 'OpenChamber control service is unavailable', kind: 'runtime' } });
+      return createResult({ ok: false, action, error: { message: 'OpenDeputy control service is unavailable', kind: 'runtime' } });
     }
     try {
       const data = await executeAction(action, payload.input, payload.contextDirectory, options);

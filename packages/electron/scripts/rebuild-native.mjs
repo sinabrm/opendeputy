@@ -133,25 +133,40 @@ const ensureWindowsNodeAddonApiForNodePty = async (rebuildRootPath) => {
 
 console.log(`[electron] rebuilding native modules against Electron ${electronVersion}...`);
 
+const nodePtyDir = path.dirname(require.resolve('node-pty/package.json'));
+const windowsPrebuildArch = targetArchitecture.electronBuilder === 'arm64' ? 'arm64' : 'x64';
+const windowsNodePtyPrebuildDir = path.join(nodePtyDir, 'prebuilds', `win32-${windowsPrebuildArch}`);
+const hasWindowsNodePtyPrebuilds = process.platform === 'win32'
+  && existsSync(path.join(windowsNodePtyPrebuildDir, 'conpty.node'))
+  && existsSync(path.join(windowsNodePtyPrebuildDir, 'conpty_console_list.node'));
+
 // Rebuild against the hoisted root node_modules (bun workspace layout).
 // force=true re-links regardless of cached state; prebuild-install lookup is
 // bypassed by @electron/rebuild in favor of direct node-gyp builds.
-const rebuildPath = createWindowsRebuildPath(repoRoot);
-let cleanupNodeAddonApi = async () => {};
-try {
-  cleanupNodeAddonApi = await ensureWindowsNodeAddonApiForNodePty(rebuildPath.buildPath);
-  await rebuild({
-    buildPath: rebuildPath.buildPath,
-    electronVersion,
-    force: true,
-    arch: targetArchitecture.electronBuilder,
-    onlyModules: ['node-pty', 'bun-pty'],
-  });
-} finally {
+// node-pty's published Windows binaries use Node-API and are compatible with
+// Electron. Prefer them when available so Windows packaging does not require a
+// multi-gigabyte Visual Studio installation. Electron uses node-pty rather than
+// bun-pty at runtime.
+if (hasWindowsNodePtyPrebuilds) {
+  console.log(`[electron] using bundled node-pty Windows ${windowsPrebuildArch} prebuilds`);
+} else {
+  const rebuildPath = createWindowsRebuildPath(repoRoot);
+  let cleanupNodeAddonApi = async () => {};
   try {
-    await cleanupNodeAddonApi();
+    cleanupNodeAddonApi = await ensureWindowsNodeAddonApiForNodePty(rebuildPath.buildPath);
+    await rebuild({
+      buildPath: rebuildPath.buildPath,
+      electronVersion,
+      force: true,
+      arch: targetArchitecture.electronBuilder,
+      onlyModules: ['node-pty', 'bun-pty'],
+    });
   } finally {
-    rebuildPath.cleanup();
+    try {
+      await cleanupNodeAddonApi();
+    } finally {
+      rebuildPath.cleanup();
+    }
   }
 }
 

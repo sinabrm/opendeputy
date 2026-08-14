@@ -1,21 +1,27 @@
-# Managed OpenChamber Agent Tool
+# Managed OpenDeputy Agent Tools
 
 ## Purpose
 
-This module exposes OpenChamber to agents as typed OpenCode custom tools. There
-are two, because controlling sessions and driving a page are separate intents
+This module exposes OpenDeputy to agents as typed OpenCode custom tools. There
+are three, because controlling sessions, driving a page, and using local workspace capabilities are separate intents
 the user can want independently:
 
-- `openchamber` — projects, sessions, worktrees, and scheduled tasks. Enabled
+- `opendeputy` — projects, sessions, worktrees, and scheduled tasks. Enabled
   while the persisted `agentControlToolEnabled` setting is not `false`.
-- `openchamber_web` — looking at and interacting with the page in OpenChamber's
+- `opendeputy_web` — looking at and interacting with the page in OpenDeputy's
   browser panel. Enabled while `agentWebToolEnabled` is not `false`.
+- `opendeputy_workspace` — local memory, document conversion, speech synthesis,
+  and optional activity history. It follows the agent-control setting.
 
-Both default to on, are toggled in Settings → General → OpenCode CLI, and apply
-on the next managed OpenCode restart. Each tool carries only its own actions and
+The control settings default to on, are toggled in Settings → General → OpenCode
+CLI, and apply on the next managed OpenCode restart. Desktop packages
+also inject `open_deputy_computer` when the bundled Open Computer Use runtime is
+available; discovery is allowed by default and actions require approval.
+
+Each tool carries only its own actions and
 only the parameters those actions use, so turning one off removes its inputs
 from the schema rather than leaving them visible. The plugin is injected only
-when OpenChamber launches and owns the OpenCode process, and not at all when
+when OpenDeputy launches and owns the OpenCode process, and not at all when
 both settings are `false`.
 
 - The plugin accepts the action's inputs either inside `parameters` or beside
@@ -26,7 +32,7 @@ both settings are `false`.
 
 ## Runtime flow
 
-1. The OpenChamber HTTP listener binds and publishes its authoritative port.
+1. The OpenDeputy HTTP listener binds and publishes its authoritative port.
 2. `prepareManagedOpenCodeEnv()` materializes the plugin under
    `<openchamber-data-dir>/agent-tool/` and appends its `file://` URL to
    `OPENCODE_CONFIG_CONTENT` without replacing existing plugin entries.
@@ -35,7 +41,7 @@ both settings are `false`.
 4. The plugin calls `POST /api/openchamber/agent-tool` with its typed input and
    OpenCode's authoritative session directory.
 5. The route delegates the fixed action allowlist directly to the shared
-   OpenChamber control service. The CLI uses the same service through its
+   OpenDeputy control service. The CLI uses the same service through its
    authenticated HTTP adapter, so Goal Mode ordering, wait behavior,
    partial-failure reporting, and scheduled-task contracts have one owner.
 6. Each action definition owns a short presentation title and a separate
@@ -99,7 +105,7 @@ error state.
 
 - Web and Desktop managed OpenCode: injected automatically.
 - External OpenCode selected with `OPENCODE_HOST` or skip-start: not injected,
-  because OpenChamber does not control that process environment.
+  because OpenDeputy does not control that process environment.
 - VS Code: not injected; the extension owns a separate OpenCode lifecycle.
 - Hosted and Capacitor mobile clients use the server's managed OpenCode tool
   when connected to such a server; no tool runs in the client runtime.

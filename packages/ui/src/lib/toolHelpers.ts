@@ -187,15 +187,37 @@ const TOOL_METADATA: Record<string, ToolMetadata> = {
       ]
     },
 
+    opendeputy: {
+      displayName: 'OpenDeputy',
+      category: 'system',
+      outputLanguage: 'json',
+      inputFields: []
+    },
+
+    opendeputy_web: {
+      displayName: 'OpenDeputy Web',
+      category: 'system',
+      outputLanguage: 'json',
+      inputFields: []
+    },
+
+    opendeputy_workspace: {
+      displayName: 'OpenDeputy Workspace',
+      category: 'system',
+      outputLanguage: 'json',
+      inputFields: []
+    },
+
+    // Keep old session transcripts readable after upgrading from OpenChamber.
     openchamber: {
-      displayName: 'OpenChamber',
+      displayName: 'OpenDeputy',
       category: 'system',
       outputLanguage: 'json',
       inputFields: []
     },
 
     openchamber_web: {
-      displayName: 'OpenChamber Web',
+      displayName: 'OpenDeputy Web',
       category: 'system',
       outputLanguage: 'json',
       inputFields: []

@@ -1,161 +1,85 @@
-# <picture><source media="(prefers-color-scheme: dark)" srcset="docs/references/badges/openchamber-logo-dark.svg"><img src="docs/references/badges/openchamber-logo-light.svg" width="32" height="32" align="absmiddle" /></picture> OpenChamber
+# OpenDeputy
 
-[![GitHub stars](https://img.shields.io/github/stars/openchamber/openchamber?style=flat&labelColor=100F0F&color=66800B)](https://github.com/openchamber/openchamber/stargazers)
-[![GitHub release](https://img.shields.io/github/v/release/openchamber/openchamber?style=flat&labelColor=100F0F&color=205EA6)](https://github.com/openchamber/openchamber/releases/latest)
-[![Discord](https://img.shields.io/badge/Discord-join.svg?style=flat&labelColor=100F0F&color=8B7EC8&logo=discord&logoColor=FFFCF0)](https://discord.gg/ZYRSdnwwKA)
-[![Support the project](https://img.shields.io/badge/Support-Project-black?style=flat&labelColor=100F0F&color=EC8B49&logo=ko-fi&logoColor=FFFCF0)](https://ko-fi.com/G2G41SAWNS)
+![OpenDeputy logo](docs/brand/open-deputy-logo.svg)
 
-## Run agent work. Keep control. Ship from anywhere.
+OpenDeputy is an open-source AI coworker that can work with projects, files, terminals, websites, and desktop applications from one visual workspace. It uses [OpenCode](https://opencode.ai) for agents and models, and is built from the MIT-licensed [OpenChamber](https://github.com/openchamber/openchamber) project.
 
-**OpenChamber is an open-source workspace for running, supervising, and reviewing AI coding work across desktop, browser, editor, and mobile.**
+## What it can do
 
-OpenChamber gives you one place to direct agent work, understand the changes, and move them toward release. Your projects stay available when you switch devices or step away.
+- Run OpenCode agents with any provider and model configured in OpenCode.
+- Read and change project files, run terminal commands, use Git, and maintain project notes.
+- Open a real Chromium page inside the desktop app, read its semantic snapshot, click, type, scroll, inspect styles, resize the viewport, and save screenshots.
+- Control Windows, macOS, and Linux applications through the bundled MIT-licensed [Open Computer Use](https://github.com/iFurySt/open-codex-computer-use) accessibility runtime. Read-only app discovery is automatic; actions remain approval-gated.
+- Store user-approved facts in local SQLite memory.
+- Create document previews and converted copies with an optional LibreOffice installation.
+- Create local English or Persian WAV speech with optional Piper voices.
+- Read optional local ActivityWatch history only when the user asks.
+- Run multiple agents, persistent goals, scheduled tasks, remote instances, notifications, voice input, desktop, web/PWA, mobile, and VS Code surfaces inherited from OpenChamber.
 
-![OpenChamber Chat](docs/references/chat_example.png)
+OpenDeputy does not include a proprietary model. Model availability, speed, vision, and pricing come from the OpenCode provider the user selects. The built-in browser usually uses DOM/accessibility structure, so text-only reasoning models can click reliably without understanding a screenshot. Vision remains useful as a fallback for canvas, video, remote desktops, and other structureless interfaces.
 
-<details>
-<summary>More screenshots</summary>
+## Run from source
 
-![VS Code Extension](packages/vscode/extension.jpg)
-
-<p>
-<img src="docs/references/pwa_chat_example.png" width="45%" alt="OpenChamber PWA chat">
-<img src="docs/references/pwa_diff_example.png" width="45%" alt="OpenChamber PWA diff review">
-</p>
-
-</details>
-
-## What you can do with OpenChamber
-
-### Goals that continue on their own
-
-Give a session a finish line with **Session Goals**. OpenChamber checks the result after every turn and keeps the agent working until the goal is complete, blocked, or reaches the limit you set — even after you close the app.
-
-### Compare and combine runs
-
-Use **Multi-run** to give the same task to up to five models, each in its own session and optionally its own worktree. See what each one actually built, choose the best result, or use **Fusion** to combine the strongest parts into a new session.
-
-### Guided changes walkthroughs
-
-**Changes Walkthrough** turns a large diff into an AI-guided tour of the change. It groups related edits into steps, puts them in the order the change makes sense, and explains how the pieces fit together.
-
-### Inspect a running app
-
-Open your app beside the conversation with **Preview**. Point at an element and send the agent its screenshot, styles, position, and browser errors — all the context behind “this thing here.” Desktop brings the same workflow to any web page through its built-in browser.
-
-### GitHub context from issue to pull request
-
-Start a session from a GitHub issue or pull request with its context attached. Send failed checks or review comments back to the agent, then update or merge the pull request from OpenChamber.
-
-### Continue on another device
-
-Open the same projects and sessions from Desktop, Web/PWA, VS Code, iOS, or Android. Check progress, answer questions, review changes, and reattach to a running terminal.
-
-### Private remote access
-
-Pair a device with a one-time QR code and connect through **Private Relay** without opening ports or exposing a public server. The connection is end-to-end encrypted and can be revoked at any time. Direct connections, LAN/VPN access, Cloudflare/Ngrok tunnels, and SSH are also supported.
-
-### Track work across projects
-
-See which sessions are working, waiting, finished, or failed, along with approvals, scheduled tasks, provider limits, token use, and costs. Organize sessions into folders and keep notes, todos, and reusable project actions nearby.
-
-### Schedule recurring work
-
-Run a prompt once, daily, weekly, or on a cron schedule. Scheduled tasks can use Session Goals, so they continue toward an outcome instead of stopping after one response.
-
-## Use it where you work
-
-| Surface | Role |
-| --- | --- |
-| **Desktop** | The complete workspace for macOS, Windows, and Linux, with multiple windows, Mini Chat, remote machines, SSH, and native notifications |
-| **Web / PWA** | Open your workspace in a browser, install it as an app, and stay up to date through background notifications |
-| **VS Code** | Keep sessions beside your code, send selections to the agent, open results in the editor, and compare parallel runs |
-| **iOS / Android** | Review and steer work away from your desk, receive completion alerts, and use the terminal with touch controls |
-| **CLI / Server** | Run OpenChamber on a workstation or server, schedule work, manage remote access, and keep it available after login |
-
-## Quick start
-
-### Desktop — macOS, Windows, and Linux
-
-Download the latest release from [GitHub Releases](https://github.com/openchamber/openchamber/releases/latest). Desktop bundles the matching OpenCode CLI, so no separate OpenCode installation is required.
-
-Linux releases are available as x86_64 and ARM64 AppImages. Make the downloaded AppImage executable and keep it in a writable location for in-app updates:
+Requirements: Git, Node.js 22 or newer, and Bun 1.3.14.
 
 ```bash
-chmod +x OpenChamber-*.AppImage
-./OpenChamber-*.AppImage
+git clone https://github.com/GhostBlinkCode/open-deputy.git
+cd open-deputy
+bun install
+bun run electron:dev
 ```
 
-Linux AppImages require FUSE (`libfuse.so.2`). Without FUSE, run with `APPIMAGE_EXTRACT_AND_RUN=1`.
-
-### VS Code
-
-Install [OpenChamber from the Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=fedaykindev.openchamber), or search for “OpenChamber” in Extensions.
-
-### CLI — Web and PWA
-
-Requires Node.js 22+. CLI/Web and VS Code use your installed [OpenCode CLI](https://opencode.ai).
+Build the desktop installer:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/openchamber/openchamber/main/scripts/install.sh | bash
-openchamber --ui-password be-creative-here
+bun run electron:build
 ```
 
-Common operations:
+The web CLI keeps the upstream `openchamber` command as a compatibility alias and also provides:
 
 ```bash
-openchamber status
-openchamber connect-url --qr
-openchamber tunnel start --provider cloudflare --mode quick --qr
-openchamber startup enable
-openchamber logs
-openchamber stop
-openchamber update
+open-deputy --port 3000
 ```
 
-OpenChamber binds to localhost by default. Use `--lan` only on a trusted network and protect browser access with `--ui-password`.
+## Optional local capabilities
 
-## Guides
+Memory and the in-app browser need no API key. Open Computer Use is bundled with desktop builds. These optional executables are discovered automatically from common Windows locations or can be set explicitly:
 
-Go deeper with the OpenChamber guides:
+- `OPENDEPUTY_LIBREOFFICE_BINARY`
+- `OPENDEPUTY_PIPER_BINARY`
+- `OPENDEPUTY_PIPER_VOICES_DIR`
+- `OPENDEPUTY_ACTIVITYWATCH_BINARY`
 
-- [Quick start](packages/docs/content/docs/quickstart.mdx)
-- [Installation](packages/docs/content/docs/install.mdx)
-- [Connect devices](packages/docs/content/docs/connect-devices.mdx)
-- [Private Relay](packages/docs/content/docs/private-relay.mdx)
-- [Multi-run](packages/docs/content/docs/multi-run.mdx)
-- [Session Goals](packages/docs/content/docs/session-goals.mdx)
-- [Changes Walkthrough](packages/docs/content/docs/walkthrough.mdx)
-- [Preview and dev servers](packages/docs/content/docs/preview.mdx)
-- [GitHub workflows](packages/docs/content/docs/github.mdx)
-- [Mobile](packages/docs/content/docs/mobile.mdx)
-- [Security](packages/docs/content/docs/security.mdx)
-- [Troubleshooting](packages/docs/content/docs/troubleshooting.mdx)
+Activity history stays off until the user requests it. Document conversion preserves the source, and the agent refuses to overwrite an output without explicit approval. Memory instructions prohibit storing passwords, API keys, tokens, financial details, or other secrets.
 
-For self-hosting details, see the [reverse proxy guide](docs/REVERSE_PROXY.md). For custom theme authoring, see the [custom themes guide](docs/CUSTOM_THEMES.md).
+## Development
 
-## Why OpenCode?
+```bash
+bun run type-check
+bun run test
+bun run build
+bun run dead-code
+```
 
-OpenChamber uses [OpenCode](https://opencode.ai) to power its coding agents. We chose it because we believe it provides the best open-source agentic coding experience today: capable, extensible, and open by design.
+Regenerate app, web, and tray images from the canonical OpenDeputy vector logo:
 
-Around that foundation, OpenChamber brings together the work that happens before, during, and after an agent run — deciding what to try, keeping it on track, reviewing the result, connecting from anywhere, and getting the change shipped.
+```bash
+bun run brand:assets
+```
 
-OpenChamber is an independent project and is not affiliated with the OpenCode team.
+The `upstream` Git remote should point to `https://github.com/openchamber/openchamber.git` so upstream fixes can be reviewed and merged without erasing OpenDeputy-specific changes.
 
-## Contributing
+## Security
 
-See [CONTRIBUTING.md](./CONTRIBUTING.md) for development setup and contribution guidelines. Documentation authoring guidance lives in [`packages/docs`](packages/docs/README.md).
+- Desktop computer actions are permission-gated.
+- Browser pages do not receive OpenDeputy's privileged Electron APIs.
+- Remote access binds to localhost by default. Network exposure requires authentication.
+- No API keys, tokens, model credentials, personal paths, memory databases, speech output, browser data, or ActivityWatch history belong in this repository.
 
-## Acknowledgments
+Please report security issues privately before publishing exploit details.
 
-Special thanks to:
+## Attribution and license
 
-- [OpenCode](https://opencode.ai) for its excellent API and extensible open-source architecture
-- [Pierre](https://pierrejs-docs.vercel.app/) for its fast diff viewer and syntax highlighting
-- [Ghostty-web](https://github.com/coder/ghostty-web) for its Ghostty web renderer
-- [Yulia Ivashko](https://github.com/yulia-ivashko), who built the firework celebration that plays on every successful push
-- Every contributor who shaped OpenChamber with code, ideas, and attention to detail
+OpenDeputy is a modified distribution of OpenChamber. The original MIT copyright notice remains in [LICENSE](LICENSE), and bundled third-party components are listed in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
-## License
-
-MIT
+OpenDeputy is released under the MIT License.

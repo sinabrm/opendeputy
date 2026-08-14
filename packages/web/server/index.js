@@ -104,6 +104,7 @@ import { createSystemPromptRuntime } from './lib/system-prompt/runtime.js';
 import { createOpenChamberSessionService } from './lib/openchamber-sessions/routes.js';
 import { createScheduledTaskService } from './lib/scheduled-tasks/service.js';
 import { createOpenChamberControlService } from './lib/openchamber-control/service.js';
+import { createWorkspaceToolsService, WORKSPACE_ACTIONS } from './lib/workspace-tools/service.js';
 import webPush from 'web-push';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -1101,7 +1102,7 @@ const openCodeLifecycleRuntime = createOpenCodeLifecycleRuntime({
     const includeControl = settings?.agentControlToolEnabled !== false;
     const includeWeb = settings?.agentWebToolEnabled !== false;
     const managedEnv = includeControl || includeWeb
-      ? await (agentToolRuntime?.prepareManagedOpenCodeEnv({ includeControl, includeWeb }) || {})
+      ? await (agentToolRuntime?.prepareManagedOpenCodeEnv({ includeControl, includeWeb, includeWorkspace: includeControl }) || {})
       : {};
     if (settings?.optimizeSystemPrompt !== true) return managedEnv;
 
@@ -1235,6 +1236,10 @@ const openChamberControlService = createOpenChamberControlService({
   scheduledTaskService,
   browserControl: browserControlBroker,
 });
+const workspaceToolsService = createWorkspaceToolsService({
+  dataDir: OPENCHAMBER_DATA_DIR,
+  env: process.env,
+});
 
 const ensureGlobalWatcherStarted = async () => {
   if (globalWatcherStartPromise) {
@@ -1328,7 +1333,9 @@ async function main(options = {}) {
     path,
     dataDir: OPENCHAMBER_DATA_DIR,
     env: process.env,
-    executeAction: (...args) => openChamberControlService.execute(...args),
+    executeAction: (action, ...args) => WORKSPACE_ACTIONS.includes(action)
+      ? workspaceToolsService.execute(action, ...args)
+      : openChamberControlService.execute(action, ...args),
     getActivePort: () => {
       const address = server?.address?.();
       return typeof address === 'object' && address ? address.port : null;
@@ -1466,7 +1473,7 @@ async function main(options = {}) {
     ? options.getDesktopRuntimeConfig
     : null;
 
-  console.log(`Starting OpenChamber on port ${port === 0 ? 'auto' : port}`);
+  console.log(`Starting OpenDeputy on port ${port === 0 ? 'auto' : port}`);
 
   // Voice enumeration is independent from route registration. Start it now,
   // but do not hold server listen or managed OpenCode startup on `say -v "?"`.

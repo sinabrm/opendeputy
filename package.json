@@ -1,7 +1,7 @@
 {
-  "name": "openchamber-monorepo",
+  "name": "open-deputy-monorepo",
   "version": "1.18.4",
-  "description": "OpenChamber monorepo workspace for web, ui, and desktop runtimes",
+  "description": "OpenDeputy open-source AI coworker for browser, desktop, files, terminal, and long-running agent work",
   "private": true,
   "type": "module",
   "packageManager": "bun@1.3.14",
@@ -15,10 +15,11 @@
     "opencode",
     "ai",
     "coding",
+    "open-deputy",
     "openchamber",
     "cli"
   ],
-  "author": "Bohdan Triapitsyn",
+  "author": "OpenDeputy contributors",
   "license": "MIT",
   "scripts": {
     "dev": "node ./scripts/dev-web-hmr.mjs",
@@ -39,6 +40,7 @@
     "lint:electron": "bun run --cwd packages/electron lint",
     "lint:mobile": "bun run --cwd packages/mobile lint",
     "test": "node scripts/run-isolated-tests.mjs scripts && bun run --cwd packages/ui test && bun run --cwd packages/vscode test && bun run --cwd packages/electron test && bun run --cwd packages/web test",
+    "test:integrations": "node scripts/validate-opendeputy-integrations.mjs",
     "clean": "bun run --filter '*' clean",
     "changelog-card": "node scripts/changelog-card/generate.mjs",
     "postinstall": "node ./fix-deprecation.js && patch-package && node ./packages/electron/scripts/ensure-electron.mjs --best-effort",
@@ -77,6 +79,7 @@
     "profile:browser": "node scripts/profile-browser.mjs",
     "icons:sprite": "node scripts/generate-file-type-sprite.mjs",
     "icons:generate": "bun run scripts/generate-icon-sprite.mjs",
+    "brand:assets": "node scripts/generate-opendeputy-brand-assets.mjs",
     "themes:port:opencode": "tsx scripts/port-opencode-theme.ts",
     "version:bump": "node scripts/bump-version.mjs",
     "release:prepare": "bun run build && bun run type-check && bun run lint",

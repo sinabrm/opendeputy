@@ -2,15 +2,16 @@
   "name": "@openchamber/electron",
   "version": "1.18.4",
   "private": true,
-  "description": "Electron desktop runtime for OpenChamber",
-  "author": "OpenChamber",
+  "description": "Electron desktop runtime for OpenDeputy",
+  "author": "OpenDeputy contributors",
   "type": "module",
   "main": "./dist-bundle/main.mjs",
   "dependencies": {
     "@openchamber/web": "workspace:*",
     "electron-context-menu": "^4.1.2",
     "electron-log": "^5.4.3",
-    "electron-updater": "^6.8.3"
+    "electron-updater": "^6.8.3",
+    "open-computer-use": "0.3.1"
   },
   "devDependencies": {
     "@electron/rebuild": "^4.2.0",
@@ -52,8 +53,8 @@
     "lint": "node -e \"process.exit(0)\""
   },
   "build": {
-    "appId": "dev.openchamber.desktop",
-    "productName": "OpenChamber",
+    "appId": "com.ghostblinkcode.opendeputy",
+    "productName": "OpenDeputy",
     "files": [
       "dist-bundle/main.mjs",
       "preload.mjs"
@@ -78,6 +79,15 @@
       {
         "from": "resources/opencode-cli",
         "to": "opencode-cli"
+      },
+      {
+        "from": "node_modules/open-computer-use",
+        "to": "open-computer-use",
+        "filter": [
+          "dist/**",
+          "LICENSE",
+          "README.md"
+        ]
       }
     ],
     "afterPack": "scripts/after-pack.cjs",
@@ -118,14 +128,14 @@
       ],
       "category": "Development",
       "icon": "resources/icons/icon.png",
-      "executableName": "openchamber",
+      "executableName": "open-deputy",
       "artifactName": "${productName}-${version}-linux-${arch}.${ext}",
       "desktop": {
         "entry": {
-          "Name": "OpenChamber",
-          "Comment": "Desktop runtime for OpenChamber",
-          "Icon": "openchamber",
-          "StartupWMClass": "openchamber"
+          "Name": "OpenDeputy",
+          "Comment": "Open-source AI coworker for browser and computer tasks",
+          "Icon": "open-deputy",
+          "StartupWMClass": "open-deputy"
         }
       }
     },
@@ -162,8 +172,8 @@
     },
     "publish": {
       "provider": "github",
-      "owner": "openchamber",
-      "repo": "openchamber"
+      "owner": "GhostBlinkCode",
+      "repo": "open-deputy"
     }
   }
 }

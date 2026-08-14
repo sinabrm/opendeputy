@@ -78,37 +78,46 @@ describe('managed agent tool runtime', () => {
   it('materializes the plugin and preserves configured plugin entries', async () => {
     const { runtime, dataDir, env } = await createRuntime();
     env.OPENCODE_CONFIG_CONTENT = '{ // existing\n "plugin": ["file:///existing.js", ["example-plugin", {"flag": true}]], "model": "test/model" }';
+    env.OPENDEPUTY_COMPUTER_USE_BINARY = 'C:\\OpenDeputy\\open-computer-use.exe';
 
     const preparedEnv = await runtime.prepareManagedOpenCodeEnv();
     const config = JSON.parse(preparedEnv.OPENCODE_CONFIG_CONTENT);
-    const pluginPath = path.join(dataDir, 'agent-tool', 'openchamber-plugin.js');
+    const pluginPath = path.join(dataDir, 'agent-tool', 'opendeputy-plugin.js');
     const source = await fs.readFile(pluginPath, 'utf8');
 
     expect(config.model).toBe('test/model');
     expect(config.plugin).toEqual([
       'file:///existing.js',
       ['example-plugin', { flag: true }],
-      expect.stringContaining('/agent-tool/openchamber-plugin.js'),
+      expect.stringContaining('/agent-tool/opendeputy-plugin.js'),
     ]);
+    expect(config.mcp.open_deputy_computer).toEqual({
+      type: 'local',
+      command: ['C:\\OpenDeputy\\open-computer-use.exe', 'mcp'],
+      enabled: true,
+      timeout: 30_000,
+    });
+    expect(config.permission['open_deputy_computer_*']).toBe('ask');
+    expect(config.permission.open_deputy_computer_list_apps).toBe('allow');
     expect(preparedEnv.OPENCHAMBER_AGENT_TOOL_URL).toBe('http://127.0.0.1:3901/api/openchamber/agent-tool');
     expect(preparedEnv.OPENCHAMBER_AGENT_TOOL_TOKEN).toMatch(/^[A-Za-z0-9_-]+$/);
-    expect(source).toContain('openchamber: {');
+    expect(source).toContain('opendeputy: {');
     for (const { action, description } of OPENCHAMBER_AGENT_TOOL_ACTION_DEFINITIONS) {
       expect(source).toContain(JSON.stringify({ const: action, description }));
     }
     expect(source).not.toContain('"schedule.status"');
     const pluginModule = await import(`${pathToFileURL(pluginPath).href}?schema=${Date.now()}`);
-    const hooks = await pluginModule.OpenChamberPlugin();
-    expect(hooks.tool.openchamber.description).toContain('Session dispatches return immediately by default');
-    expect(hooks.tool.openchamber.description).toContain('Set wait only when the user asks or the next step requires the completed result');
-    expect(hooks.tool.openchamber.args.action.oneOf).toContainEqual({
+    const hooks = await pluginModule.OpenDeputyPlugin();
+    expect(hooks.tool.opendeputy.description).toContain('Session dispatches return immediately by default');
+    expect(hooks.tool.opendeputy.description).toContain('Set wait only when the user asks or the next step requires the completed result');
+    expect(hooks.tool.opendeputy.args.action.oneOf).toContainEqual({
       const: 'session.messages',
       description: 'Read text-only messages and current sessionStatus for sessionId; directory and limit 10 are defaults',
     });
-    expect(hooks.tool.openchamber.args.parameters.properties.wait.description).toBe(
+    expect(hooks.tool.opendeputy.args.parameters.properties.wait.description).toBe(
       'Wait for current session activity to become idle. Omit by default; use only when the user asks or the next step requires the completed result',
     );
-    expect(hooks.tool.openchamber.args.parameters.properties.sessionId).toEqual({ type: 'string' });
+    expect(hooks.tool.opendeputy.args.parameters.properties.sessionId).toEqual({ type: 'string' });
     expect(source).not.toContain('title: "OpenChamber"');
     expect(source).not.toContain('@opencode-ai/plugin');
     expect(source).not.toContain(preparedEnv.OPENCHAMBER_AGENT_TOOL_TOKEN);
@@ -117,28 +126,32 @@ describe('managed agent tool runtime', () => {
   it('emits both tools, each carrying only its own actions and inputs', async () => {
     const { runtime, dataDir } = await createRuntime();
     await runtime.prepareManagedOpenCodeEnv();
-    const pluginPath = path.join(dataDir, 'agent-tool', 'openchamber-plugin.js');
+    const pluginPath = path.join(dataDir, 'agent-tool', 'opendeputy-plugin.js');
     const pluginModule = await import(`${pathToFileURL(pluginPath).href}?both=${Date.now()}`);
-    const { tool } = await pluginModule.OpenChamberPlugin();
+    const { tool } = await pluginModule.OpenDeputyPlugin();
 
-    const controlActions = tool.openchamber.args.action.enum;
-    const webActions = tool.openchamber_web.args.action.enum;
+    const controlActions = tool.opendeputy.args.action.enum;
+    const webActions = tool.opendeputy_web.args.action.enum;
+    const workspaceActions = tool.opendeputy_workspace.args.action.enum;
     expect(webActions).toContain('browser.open');
     expect(controlActions).not.toContain('browser.open');
     expect(webActions).not.toContain('session.create');
+    expect(workspaceActions).toContain('memory.search');
+    expect(workspaceActions).not.toContain('browser.open');
 
     // Turning one tool off has to remove its inputs too, not just its actions.
-    expect(Object.keys(tool.openchamber_web.args.parameters.properties)).toContain('url');
-    expect(Object.keys(tool.openchamber.args.parameters.properties)).not.toContain('url');
-    expect(Object.keys(tool.openchamber.args.parameters.properties)).toContain('sessionId');
+    expect(Object.keys(tool.opendeputy_web.args.parameters.properties)).toContain('url');
+    expect(Object.keys(tool.opendeputy.args.parameters.properties)).not.toContain('url');
+    expect(Object.keys(tool.opendeputy.args.parameters.properties)).toContain('sessionId');
+    expect(Object.keys(tool.opendeputy_workspace.args.parameters.properties)).toContain('inputPath');
   });
 
   it('accepts inputs passed beside the action, not only inside parameters', async () => {
     const { runtime, dataDir } = await createRuntime();
     const prepared = await runtime.prepareManagedOpenCodeEnv();
-    const pluginPath = path.join(dataDir, 'agent-tool', 'openchamber-plugin.js');
+    const pluginPath = path.join(dataDir, 'agent-tool', 'opendeputy-plugin.js');
     const pluginModule = await import(`${pathToFileURL(pluginPath).href}?flat=${Date.now()}`);
-    const { tool } = await pluginModule.OpenChamberPlugin();
+    const { tool } = await pluginModule.OpenDeputyPlugin();
 
     const sent = [];
     const originalFetch = globalThis.fetch;
@@ -154,17 +167,17 @@ describe('managed agent tool runtime', () => {
 
     try {
       // The shape a model actually produced: url and viewport next to action.
-      await tool.openchamber_web.execute(
+      await tool.opendeputy_web.execute(
         { action: 'browser.open', url: 'https://example.test', viewport: 'mobile' },
         context,
       );
       // The documented shape must keep working, and win when both are present.
-      await tool.openchamber_web.execute(
+      await tool.opendeputy_web.execute(
         { action: 'browser.open', url: 'https://ignored.test', parameters: { url: 'https://example.test/nested' } },
         context,
       );
       // Both tools come from one template, so session control accepts it too.
-      await tool.openchamber.execute(
+      await tool.opendeputy.execute(
         { action: 'session.messages', sessionId: 'ses_1', limit: 3 },
         context,
       );
@@ -181,19 +194,19 @@ describe('managed agent tool runtime', () => {
 
   it('omits a tool the user turned off', async () => {
     const { runtime, dataDir } = await createRuntime();
-    await runtime.prepareManagedOpenCodeEnv({ includeControl: false, includeWeb: true });
-    const pluginPath = path.join(dataDir, 'agent-tool', 'openchamber-plugin.js');
+    await runtime.prepareManagedOpenCodeEnv({ includeControl: false, includeWeb: true, includeWorkspace: false });
+    const pluginPath = path.join(dataDir, 'agent-tool', 'opendeputy-plugin.js');
     const pluginModule = await import(`${pathToFileURL(pluginPath).href}?web=${Date.now()}`);
-    const { tool } = await pluginModule.OpenChamberPlugin();
+    const { tool } = await pluginModule.OpenDeputyPlugin();
 
-    expect(Object.keys(tool)).toEqual(['openchamber_web']);
+    expect(Object.keys(tool)).toEqual(['opendeputy_web']);
   });
 
   it('refuses to inject a plugin with no tools in it', async () => {
     const { runtime } = await createRuntime();
     let failed = false;
     try {
-      await runtime.prepareManagedOpenCodeEnv({ includeControl: false, includeWeb: false });
+      await runtime.prepareManagedOpenCodeEnv({ includeControl: false, includeWeb: false, includeWorkspace: false });
     } catch {
       failed = true;
     }
@@ -287,12 +300,12 @@ describe('managed agent tool runtime', () => {
       const env = await runtime.prepareManagedOpenCodeEnv();
       process.env.OPENCHAMBER_AGENT_TOOL_URL = env.OPENCHAMBER_AGENT_TOOL_URL;
       process.env.OPENCHAMBER_AGENT_TOOL_TOKEN = env.OPENCHAMBER_AGENT_TOOL_TOKEN;
-      const pluginPath = path.join(dataDir, 'agent-tool', 'openchamber-plugin.js');
+      const pluginPath = path.join(dataDir, 'agent-tool', 'opendeputy-plugin.js');
       const pluginModule = await import(`${pathToFileURL(pluginPath).href}?test=${Date.now()}`);
-      const hooks = await pluginModule.OpenChamberPlugin();
+      const hooks = await pluginModule.OpenDeputyPlugin();
       const metadata = vi.fn();
 
-      const result = await hooks.tool.openchamber.execute(
+      const result = await hooks.tool.opendeputy.execute(
         { action: 'projects.list', parameters: {} },
         { directory: '/work/project', abort: new AbortController().signal, metadata },
       );
@@ -304,11 +317,11 @@ describe('managed agent tool runtime', () => {
         data: { projects: [] },
       });
       expect(result.title).toBe('List configured projects');
-      expect(result.metadata.openchamber.description).toBe('List configured projects');
+      expect(result.metadata.opendeputy.description).toBe('List configured projects');
       expect(metadata).toHaveBeenCalledWith(expect.objectContaining({
         title: 'List configured projects',
         metadata: expect.objectContaining({
-          openchamber: expect.objectContaining({ description: 'List configured projects' }),
+          opendeputy: expect.objectContaining({ description: 'List configured projects' }),
         }),
       }));
     } finally {

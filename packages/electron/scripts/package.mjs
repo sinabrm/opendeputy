@@ -9,6 +9,11 @@ const targetArchitecture = resolveTargetArchitecture({ environment: env, builder
 
 if (process.platform === 'win32' && !env.CSC_LINK && !env.WINDOWS_CSC_LINK) {
   env.CSC_IDENTITY_AUTO_DISCOVERY = 'false';
+  if (!builderArgs.some((argument) => argument.startsWith('--config.win.signExts'))) {
+    // Repeating the option makes yargs preserve this as the array required by
+    // electron-builder's schema. Unsigned local builds do not need signtool.
+    builderArgs.push('--config.win.signExts=!.exe', '--config.win.signExts=!.dll');
+  }
   console.log('[electron] Windows code signing disabled; building unsigned installer.');
 }
 

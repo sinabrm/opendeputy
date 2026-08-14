@@ -81,7 +81,7 @@ export const registerOpenCodeRoutes = (app, dependencies) => {
 <main>
 <h1>${escapeHtml(title)}</h1>
 <p>${escapeHtml(message)}</p>
-${desktopReturn ? `<a class="return" href="openchamber://focus/mcp-auth">Return to OpenChamber</a>
+${desktopReturn ? `<a class="return" href="openchamber://focus/mcp-auth">Return to OpenDeputy</a>
 <script>window.location.href = 'openchamber://focus/mcp-auth';</script>` : ''}
 </main>
 </body>
@@ -513,7 +513,7 @@ ${desktopReturn ? `<a class="return" href="openchamber://focus/mcp-auth">Return 
     if (!context?.name) {
       return finish(400, {
         title: 'Authorization Failed',
-        message: 'This authorization session has expired or is unknown to the running app. Return to OpenChamber and click Authorize again.',
+        message: 'This authorization session has expired or is unknown to the running app. Return to OpenDeputy and click Authorize again.',
       });
     }
 
