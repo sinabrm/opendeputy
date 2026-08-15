@@ -51,6 +51,7 @@ test('repository ownership and release automation are OpenDeputy-only', () => {
 test('green main pushes create short-lived private Windows artifacts', () => {
   const ciWorkflow = read('.github/workflows/ci.yml');
   const packagingScript = read('packages/electron/scripts/package.mjs');
+  const packageVerifier = read('scripts/test-windows-package.ps1');
   assert.match(ciWorkflow, /contents: read/);
   assert.match(ciWorkflow, /cancel-in-progress: true/);
   assert.match(ciWorkflow, /if: github\.event_name == 'push' && github\.ref == 'refs\/heads\/main'/);
@@ -63,6 +64,8 @@ test('green main pushes create short-lived private Windows artifacts', () => {
   assert.doesNotMatch(ciWorkflow, /action-gh-release|release create/);
   assert.match(packagingScript, /builderArgs\.push\('--publish=never'\)/);
   assert.match(packagingScript, /argument === '--publish'/);
+  assert.match(packageVerifier, /System\.Security\.Cryptography\.SHA256/);
+  assert.doesNotMatch(packageVerifier, /Get-FileHash/);
 });
 
 test('tracked environment secrets are excluded', () => {
