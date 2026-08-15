@@ -17,10 +17,10 @@ body:
     attributes:
       label: Where does it happen?
       options:
-        - Desktop (macOS)
-        - Desktop Web
-        - Mobile (Web/PWA)
-        - VS Code extension
+        - Windows desktop app
+        - Packaged browser workspace
+        - Terminal or file tools
+        - Provider setup
         - Not sure
     validations:
       required: true

@@ -30,6 +30,8 @@ import { OverlayScrollbar } from '@/components/ui/OverlayScrollbar';
 import { Icon } from "@/components/icon/Icon";
 import { cn, formatDirectoryName } from '@/lib/utils';
 import { useProjectsStore } from '@/stores/useProjectsStore';
+import { useConfigStore } from '@/stores/useConfigStore';
+import { useOpenCodeReadiness } from '@/hooks/useOpenCodeReadiness';
 
 // New sync system imports
 import { useSessionUIStore } from '@/sync/session-ui-store';
@@ -504,6 +506,11 @@ const renderDraftTitle = (title: string, projectLabel: string | null): React.Rea
 
 const DraftWelcome: React.FC = () => {
     const { t } = useI18n();
+    const { isReady } = useOpenCodeReadiness();
+    const providerCount = useConfigStore((state) => state.providers.length);
+    const setSelectedProvider = useConfigStore((state) => state.setSelectedProvider);
+    const setSettingsDialogOpen = useUIStore((state) => state.setSettingsDialogOpen);
+    const setSettingsPage = useUIStore((state) => state.setSettingsPage);
     const selectedProjectId = useSessionUIStore((state) => state.newSessionDraft.selectedProjectId ?? null);
     const projectLabel = useProjectsStore(React.useCallback((state) => {
         const projectId = selectedProjectId ?? state.activeProjectId;
@@ -512,6 +519,12 @@ const DraftWelcome: React.FC = () => {
             : null) ?? state.projects[0] ?? null;
         return project ? getProjectDisplayLabel(project) : null;
     }, [selectedProjectId]));
+
+    const openProviderSetup = React.useCallback(() => {
+        setSelectedProvider('__add_provider__');
+        setSettingsPage('providers');
+        setSettingsDialogOpen(true);
+    }, [setSelectedProvider, setSettingsDialogOpen, setSettingsPage]);
 
     return (
         <div className="oc-draft-center flex min-h-0 flex-1 flex-col items-center justify-center px-6 text-center">
@@ -527,6 +540,21 @@ const DraftWelcome: React.FC = () => {
                 onSubmit={(starter) => useInputStore.getState().requestPresetSubmit(starter.submitText, starter.ref.type)}
                 className="oc-draft-starters mt-8 max-w-md"
             />
+            {isReady && providerCount === 0 ? (
+                <div className="mt-6 flex max-w-md flex-col items-center gap-3 rounded-xl border border-border bg-background px-5 py-4">
+                    <div>
+                        <div className="typography-ui-label text-foreground">
+                            {t('settings.providers.page.empty.noProvidersDetected')}
+                        </div>
+                        <div className="mt-1 typography-ui-small text-muted-foreground">
+                            {t('settings.providers.page.empty.checkOpenCodeConfiguration')}
+                        </div>
+                    </div>
+                    <Button type="button" size="sm" onClick={openProviderSetup}>
+                        {t('settings.providers.sidebar.actions.connectProviderTitle')}
+                    </Button>
+                </div>
+            ) : null}
         </div>
     );
 };

@@ -21,7 +21,11 @@ import path from 'node:path';
 
 const TEST_FILE = /\.(test|spec)\.(js|cjs|mjs|jsx|ts|tsx)$/;
 const SKIP_DIRS = new Set(['node_modules', 'dist', 'dist-bundle', 'build', 'out', '.git', 'ios', 'android']);
-const MAX_PARALLEL = 4;
+const requestedParallel = Number.parseInt(process.env.OPENDEPUTY_TEST_PARALLEL ?? '', 10);
+const defaultParallel = process.platform === 'win32' ? 2 : 4;
+const MAX_PARALLEL = Number.isInteger(requestedParallel) && requestedParallel > 0
+  ? requestedParallel
+  : defaultParallel;
 
 const collect = (root, found = []) => {
   for (const entry of readdirSync(root, { withFileTypes: true })) {
