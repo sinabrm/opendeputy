@@ -9,6 +9,21 @@ Set-StrictMode -Version Latest
 
 if ($env:OS -ne 'Windows_NT') { throw 'The packaged release check must run on Windows.' }
 
+function Get-Sha256Hex {
+  param([Parameter(Mandatory = $true)][string]$LiteralPath)
+
+  $stream = [System.IO.File]::OpenRead($LiteralPath)
+  $algorithm = [System.Security.Cryptography.SHA256]::Create()
+  try {
+    $hashBytes = $algorithm.ComputeHash($stream)
+  } finally {
+    $algorithm.Dispose()
+    $stream.Dispose()
+  }
+
+  return ([System.BitConverter]::ToString($hashBytes)).Replace('-', '').ToLowerInvariant()
+}
+
 $projectRoot = Split-Path -Parent $PSScriptRoot
 $distRoot = Join-Path $projectRoot $ArtifactDirectory
 $unpackedRoot = Join-Path $distRoot 'win-unpacked'
@@ -41,9 +56,9 @@ $computerUse = Join-Path $resourcesRoot 'open-computer-use\dist\windows\amd64\op
 $computerUseOutput = (& $computerUse call list_apps | Out-String)
 if ($LASTEXITCODE -ne 0 -or $computerUseOutput -notmatch 'content') { throw 'Bundled Open Computer Use list_apps check failed.' }
 
-$hash = Get-FileHash -LiteralPath $installer.FullName -Algorithm SHA256
+$hash = Get-Sha256Hex -LiteralPath $installer.FullName
 $checksumPath = Join-Path $distRoot 'SHA256SUMS.txt'
-"$($hash.Hash.ToLowerInvariant())  $($installer.Name)" | Set-Content -LiteralPath $checksumPath -Encoding ascii
+"$hash  $($installer.Name)" | Set-Content -LiteralPath $checksumPath -Encoding ascii
 
 $startupResult = 'not requested'
 if ($LaunchSmoke) {
@@ -102,7 +117,7 @@ if ($LaunchSmoke) {
 [pscustomobject]@{
   Installer = $installer.Name
   InstallerBytes = $installer.Length
-  SHA256 = $hash.Hash.ToLowerInvariant()
+  SHA256 = $hash
   OpenCodeVersion = $openCodeVersion
   ComputerUse = 'list_apps passed'
   Startup = $startupResult
