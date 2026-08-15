@@ -7,6 +7,13 @@ const env = { ...process.env };
 const builderArgs = process.argv.slice(2);
 const targetArchitecture = resolveTargetArchitecture({ environment: env, builderArgs });
 
+// electron-builder can infer an upload policy from CI environment variables when
+// a GitHub publish target exists. Packaging and publishing are intentionally
+// separate operations; the approval-gated release workflow owns publishing.
+if (!builderArgs.some((argument) => argument === '--publish' || argument.startsWith('--publish='))) {
+  builderArgs.push('--publish=never');
+}
+
 if (process.platform === 'win32' && !env.CSC_LINK && !env.WINDOWS_CSC_LINK) {
   env.CSC_IDENTITY_AUTO_DISCOVERY = 'false';
   if (!builderArgs.some((argument) => argument.startsWith('--config.win.signExts'))) {
