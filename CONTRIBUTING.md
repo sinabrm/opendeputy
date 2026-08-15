@@ -7,7 +7,7 @@ OpenDeputy 1.19.0 ships as a Windows desktop application. The web and shared UI 
 From PowerShell:
 
 ```powershell
-git clone https://github.com/GhostBlinkCode/open-deputy.git
+git clone https://github.com/sinabrm/open-deputy.git
 Set-Location open-deputy
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/setup-windows.ps1 -InstallMissing
 ```
@@ -15,6 +15,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/setup-windows.ps1 -I
 The script installs missing Git/Bun only after `-InstallMissing` is supplied, installs locked dependencies, and runs repository checks. It does not change provider credentials.
 
 Launch with `bun run electron:dev`. Build the Windows installer with `bun run electron:build`.
+
+After validation passes on a push to `main`, GitHub Actions builds the unsigned Windows installer and keeps the private artifact for 7 days. Tags and official GitHub releases remain manual approval steps.
 
 ## Before submitting
 
@@ -44,4 +46,4 @@ Use the pull-request template. Include intent, affected surfaces, exact validati
 - Keep Electron privileged operations in the main process and approval-gated.
 - Never commit secrets or user data.
 
-Open an issue at [GhostBlinkCode/open-deputy](https://github.com/GhostBlinkCode/open-deputy/issues) for bugs or proposals.
+Open an issue at [sinabrm/open-deputy](https://github.com/sinabrm/open-deputy/issues) for bugs or proposals.

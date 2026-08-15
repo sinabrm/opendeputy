@@ -8,6 +8,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   validate:
     runs-on: windows-latest
@@ -26,3 +30,32 @@ jobs:
       - run: bun run test
       - run: bun run build
       - run: bun run test:release-contract
+
+  package-windows:
+    name: Package private Windows artifact
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: validate
+    runs-on: windows-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.14
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: bun install --frozen-lockfile
+      - run: bun run electron:build
+      - run: bun run test:windows-package
+      - uses: actions/upload-artifact@v4
+        with:
+          name: OpenDeputy-Windows-${{ github.sha }}
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 0
+          path: |
+            packages/electron/dist/OpenDeputy-*-win-*.exe
+            packages/electron/dist/OpenDeputy-*-win-*.exe.blockmap
+            packages/electron/dist/latest.yml
+            packages/electron/dist/SHA256SUMS.txt

@@ -2,7 +2,7 @@
 
 ## Reporting a vulnerability
 
-Please use GitHub's private **Report a vulnerability** form for `GhostBlinkCode/open-deputy`. Do not open a public issue for an unpatched vulnerability.
+Please use GitHub's private **Report a vulnerability** form for `sinabrm/open-deputy`. Do not open a public issue for an unpatched vulnerability.
 
 Include the affected version, steps to reproduce, expected impact, and any suggested mitigation. Do not include real API keys, access tokens, personal files, or other user data.
 

@@ -26,7 +26,7 @@ test('Windows package is branded and self-contained', () => {
   assert.equal(electronPackage.build.appId, 'com.ghostblinkcode.opendeputy');
   assert.equal(electronPackage.build.productName, 'OpenDeputy');
   assert.deepEqual(Object.keys(electronPackage.build).filter((key) => ['mac', 'linux'].includes(key)), []);
-  assert.equal(electronPackage.build.publish.owner, 'GhostBlinkCode');
+  assert.equal(electronPackage.build.publish.owner, 'sinabrm');
   assert.equal(electronPackage.build.publish.repo, 'open-deputy');
 
   const resources = electronPackage.build.extraResources.map((entry) => entry.to);
@@ -36,7 +36,7 @@ test('Windows package is branded and self-contained', () => {
 });
 
 test('repository ownership and release automation are OpenDeputy-only', () => {
-  assert.match(read('.github/CODEOWNERS'), /@GhostBlinkCode/);
+  assert.match(read('.github/CODEOWNERS'), /@sinabrm/);
   assert.doesNotMatch(read('SECURITY.md'), /security@openchamber\.dev|@btriapitsyn/);
 
   const workflowDirectory = path.join(root, '.github/workflows');
@@ -46,6 +46,20 @@ test('repository ownership and release automation are OpenDeputy-only', () => {
   assert.match(releaseWorkflow, /runs-on: windows-latest/);
   assert.match(releaseWorkflow, /draft: true/);
   assert.match(releaseWorkflow, /SHA256SUMS\.txt/);
+});
+
+test('green main pushes create short-lived private Windows artifacts', () => {
+  const ciWorkflow = read('.github/workflows/ci.yml');
+  assert.match(ciWorkflow, /contents: read/);
+  assert.match(ciWorkflow, /cancel-in-progress: true/);
+  assert.match(ciWorkflow, /if: github\.event_name == 'push' && github\.ref == 'refs\/heads\/main'/);
+  assert.match(ciWorkflow, /needs: validate/);
+  assert.match(ciWorkflow, /bun run electron:build/);
+  assert.match(ciWorkflow, /bun run test:windows-package/);
+  assert.match(ciWorkflow, /actions\/upload-artifact@v4/);
+  assert.match(ciWorkflow, /retention-days: 7/);
+  assert.match(ciWorkflow, /compression-level: 0/);
+  assert.doesNotMatch(ciWorkflow, /action-gh-release|release create/);
 });
 
 test('tracked environment secrets are excluded', () => {

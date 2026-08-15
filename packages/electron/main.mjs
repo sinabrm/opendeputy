@@ -230,9 +230,9 @@ const LOCAL_DESKTOP_CLIENT_DEDUPE_KEY = 'desktop-local';
 // connecting to someone else's server).
 const REMOTE_DESKTOP_CLIENT_KIND = 'desktop';
 const ENV_OVERRIDE_HOST_ID = '__env';
-const CHANGELOG_URL = 'https://raw.githubusercontent.com/GhostBlinkCode/open-deputy/main/CHANGELOG.md';
-const GITHUB_BUG_REPORT_URL = 'https://github.com/GhostBlinkCode/open-deputy/issues/new';
-const GITHUB_FEATURE_REQUEST_URL = 'https://github.com/GhostBlinkCode/open-deputy/issues/new';
+const CHANGELOG_URL = 'https://raw.githubusercontent.com/sinabrm/open-deputy/main/CHANGELOG.md';
+const GITHUB_BUG_REPORT_URL = 'https://github.com/sinabrm/open-deputy/issues/new';
+const GITHUB_FEATURE_REQUEST_URL = 'https://github.com/sinabrm/open-deputy/issues/new';
 const DISCORD_INVITE_URL = 'https://discord.gg/ZYRSdnwwKA';
 const INSTALLED_APPS_CACHE_TTL_SECS = 60 * 60 * 24;
 const INSTALLED_APPS_CACHE_FILE = 'discovered-apps.json';
