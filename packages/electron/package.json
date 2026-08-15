@@ -109,7 +109,7 @@
     },
     "publish": {
       "provider": "github",
-      "owner": "GhostBlinkCode",
+      "owner": "sinabrm",
       "repo": "open-deputy"
     }
   }
