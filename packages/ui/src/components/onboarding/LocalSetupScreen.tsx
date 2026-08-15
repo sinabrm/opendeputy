@@ -230,11 +230,11 @@ export function LocalSetupScreen({
             {t('onboarding.localSetup.title')}
           </h1>
           <p className="text-muted-foreground">
-            {t('onboarding.localSetup.description')}
+            {isDesktopApp ? t('onboarding.localSetup.status.autoContinue') : t('onboarding.localSetup.description')}
           </p>
         </div>
 
-        {platform === 'windows' && (
+        {!isDesktopApp && platform === 'windows' && (
           <div className="mx-auto max-w-2xl rounded-lg border border-border bg-background/50 p-4 text-left">
             <div className="text-sm text-foreground">{t('onboarding.localSetup.windows.title')}</div>
             <ol className="mt-2 list-decimal space-y-1 pl-5 text-sm text-muted-foreground">
@@ -244,28 +244,36 @@ export function LocalSetupScreen({
           </div>
         )}
 
-        <div className="flex justify-center">
-          <div className="bg-background/60 backdrop-blur-sm border border-border rounded-lg px-5 py-3 font-mono text-sm w-fit">
-            {copied ? (
-              <div className="flex items-center justify-center gap-2" style={{ color: 'var(--status-success)' }}>
-                <Icon name="check" className="h-4 w-4" />
-                {t('onboarding.common.status.copiedToClipboard')}
+        {!isDesktopApp ? (
+          <>
+            <div className="flex justify-center">
+              <div className="bg-background/60 backdrop-blur-sm border border-border rounded-lg px-5 py-3 font-mono text-sm w-fit">
+                {copied ? (
+                  <div className="flex items-center justify-center gap-2" style={{ color: 'var(--status-success)' }}>
+                    <Icon name="check" className="h-4 w-4" />
+                    {t('onboarding.common.status.copiedToClipboard')}
+                  </div>
+                ) : (
+                  <BashCommand onCopy={handleCopy} copyTitle={t('onboarding.common.copyToClipboard')} />
+                )}
               </div>
-            ) : (
-              <BashCommand onCopy={handleCopy} copyTitle={t('onboarding.common.copyToClipboard')} />
-            )}
-          </div>
-        </div>
+            </div>
 
-        <a
-          href={docsUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-sm text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-1 justify-center"
-        >
-          {platform === 'windows' ? t('onboarding.localSetup.docs.windows') : t('onboarding.localSetup.docs.default')}
-          <Icon name="external-link" className="h-3 w-3" />
-        </a>
+            <a
+              href={docsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-1 justify-center"
+            >
+              {platform === 'windows' ? t('onboarding.localSetup.docs.windows') : t('onboarding.localSetup.docs.default')}
+              <Icon name="external-link" className="h-3 w-3" />
+            </a>
+          </>
+        ) : (
+          <div className="mx-auto max-w-md rounded-lg border border-border bg-background/50 px-4 py-3 text-sm text-muted-foreground">
+            {t('onboarding.localSetup.status.watching')}
+          </div>
+        )}
 
         {checkError && (
           <div className="mx-auto max-w-md rounded-lg border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive">
@@ -281,7 +289,11 @@ export function LocalSetupScreen({
             className="w-full max-w-xs"
             size="lg"
           >
-            {isChecking ? t('onboarding.localSetup.actions.checking') : t('onboarding.localSetup.actions.checkAndContinue')}
+            {isChecking
+              ? t('onboarding.localSetup.actions.checking')
+              : isDesktopApp
+                ? t('onboarding.localSetup.actions.checkNow')
+                : t('onboarding.localSetup.actions.checkAndContinue')}
           </Button>
 
           <p className="text-xs text-muted-foreground">
@@ -291,7 +303,9 @@ export function LocalSetupScreen({
 
         <div className="mx-auto w-full max-w-xl pt-4">
           <div className="space-y-2">
-            <div className="text-sm text-muted-foreground">{t('onboarding.localSetup.field.alreadyInstalled')}</div>
+            <div className="text-sm text-muted-foreground">
+              {isDesktopApp ? t('onboarding.localSetup.advanced.title') : t('onboarding.localSetup.field.alreadyInstalled')}
+            </div>
             <div className="flex gap-2">
               <Input
                 value={opencodeBinary}

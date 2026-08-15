@@ -283,7 +283,7 @@ export function ChooserScreen({ onCliAvailable, localAvailable = true }: Chooser
 
         {showLocal && (
           <div className="space-y-4">
-            {platform === 'windows' && (
+            {!isDesktopApp && platform === 'windows' && (
               <div className="rounded-lg border border-border bg-background/50 p-4">
                 <div className="text-sm text-foreground">{t('onboarding.localSetup.windows.title')}</div>
                 <ol className="mt-2 list-decimal space-y-1 pl-5 text-sm text-muted-foreground">
@@ -293,31 +293,36 @@ export function ChooserScreen({ onCliAvailable, localAvailable = true }: Chooser
               </div>
             )}
 
-            <p className="text-sm text-muted-foreground text-center leading-relaxed">
-              {t('onboarding.localSetup.intro')}
-            </p>
-
-            <div className="app-region-no-drag rounded-lg border border-border bg-background/60 backdrop-blur-sm px-4 py-3 font-mono text-sm">
-              {copied ? (
-                <div className="flex items-center gap-2" style={{ color: 'var(--status-success)' }}>
-                  <Icon name="check" className="h-4 w-4" />
-                  {t('onboarding.common.status.copiedToClipboard')}
+            {!isDesktopApp ? (
+              <>
+                <p className="text-sm text-muted-foreground text-center leading-relaxed">
+                  {t('onboarding.localSetup.intro')}
+                </p>
+                <div className="app-region-no-drag rounded-lg border border-border bg-background/60 backdrop-blur-sm px-4 py-3 font-mono text-sm">
+                  {copied ? (
+                    <div className="flex items-center gap-2" style={{ color: 'var(--status-success)' }}>
+                      <Icon name="check" className="h-4 w-4" />
+                      {t('onboarding.common.status.copiedToClipboard')}
+                    </div>
+                  ) : (
+                    <BashCommand onCopy={handleCopy} copyTitle={t('onboarding.common.copyToClipboard')} />
+                  )}
                 </div>
-              ) : (
-                <BashCommand onCopy={handleCopy} copyTitle={t('onboarding.common.copyToClipboard')} />
-              )}
-            </div>
+              </>
+            ) : null}
 
-            <div className="app-region-no-drag flex items-center justify-between">
-              <a
-                href={docsUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-1"
-              >
-                {platform === 'windows' ? t('onboarding.localSetup.docs.windows') : t('onboarding.localSetup.docs.default')}
-                <Icon name="external-link" className="h-3 w-3" />
-              </a>
+            <div className={cn('app-region-no-drag flex items-center', isDesktopApp ? 'justify-end' : 'justify-between')}>
+              {!isDesktopApp ? (
+                <a
+                  href={docsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-1"
+                >
+                  {platform === 'windows' ? t('onboarding.localSetup.docs.windows') : t('onboarding.localSetup.docs.default')}
+                  <Icon name="external-link" className="h-3 w-3" />
+                </a>
+              ) : null}
               <button
                 type="button"
                 onClick={handleManualCheck}

@@ -1,32 +1,15 @@
 # Security Policy
 
-## Reporting a Vulnerability
+## Reporting a vulnerability
 
-If you discover a security vulnerability in OpenChamber, please report it responsibly.
+Please use GitHub's private **Report a vulnerability** form for `GhostBlinkCode/open-deputy`. Do not open a public issue for an unpatched vulnerability.
 
-**Email:** [security@openchamber.dev](mailto:security@openchamber.dev)
-
-Please include:
-- Description of the vulnerability
-- Steps to reproduce
-- Affected version(s)
-- Potential impact
-
-I'll acknowledge receipt within 48 hours and aim to provide a fix or mitigation as quickly as possible.
-
-**Please do not open public GitHub issues for security vulnerabilities.**
+Include the affected version, steps to reproduce, expected impact, and any suggested mitigation. Do not include real API keys, access tokens, personal files, or other user data.
 
 ## Scope
 
-OpenChamber handles sensitive context including:
-- UI authentication (password-protected sessions, JWT tokens)
-- Cloudflare tunnel access (remote connectivity)
-- Terminal access (PTY sessions)
-- Git credentials and SSH keys
-- File system operations
+High-priority areas include approval-gated computer/browser actions, terminal and file access, provider credentials, remote access, updates, downloads, Electron IPC, and bundled tools.
 
-Security reports related to any of these areas are especially appreciated.
+## Supported versions
 
-## Supported Versions
-
-Security fixes are applied to the latest release. There is no LTS or backport policy at this time.
+Security fixes target the latest Windows release. There is currently no LTS or backport policy.

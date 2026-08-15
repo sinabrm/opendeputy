@@ -79,8 +79,7 @@ const shouldStartInBackground = (loginItemSettings = readLoginItemSettings()) =>
   );
 };
 
-// Set the product name early so electron-log derives its log directory as
-// ~/Library/Logs/OpenChamber/ (not ~/Library/Logs/@openchamber/electron/).
+// Set the product name before electron-log resolves its Windows log directory.
 app.setName('OpenDeputy');
 if (process.platform === 'linux') {
   app.setDesktopName('open-deputy.desktop');
@@ -199,13 +198,13 @@ const readAppMetadata = () => {
     try {
       const raw = fs.readFileSync(candidate, 'utf8');
       const parsed = JSON.parse(raw);
-      if (parsed?.name === '@openchamber/electron' && typeof parsed.version === 'string') {
+      if (parsed?.name === 'open-deputy' && typeof parsed.version === 'string') {
         return { name: parsed.name, version: parsed.version };
       }
     } catch {
     }
   }
-  return { name: '@openchamber/electron', version: app.getVersion() };
+  return { name: 'open-deputy', version: app.getVersion() };
 };
 
 const APP_METADATA = readAppMetadata();
