@@ -3,6 +3,16 @@
   "version": "1.19.0",
   "private": false,
   "type": "module",
+  "license": "MIT",
+  "homepage": "https://github.com/sinabrm/open-deputy#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sinabrm/open-deputy.git",
+    "directory": "packages/web"
+  },
+  "bugs": {
+    "url": "https://github.com/sinabrm/open-deputy/issues"
+  },
   "main": "./server/index.js",
   "types": "./server/index.d.ts",
   "bin": {
@@ -109,6 +119,7 @@
     "bin",
     "public",
     "package.json",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ]
 }

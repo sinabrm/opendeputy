@@ -14,6 +14,9 @@ RUN bun install --frozen-lockfile --ignore-scripts
 FROM deps AS builder
 WORKDIR /app
 COPY . .
+RUN bun scripts/generate-third-party-licenses.mjs \
+  --target=docker-linux-x64 \
+  --output=THIRD_PARTY_LICENSES.docker-linux-x64.txt
 RUN bun run build:web
 
 FROM oven/bun:1.3.14 AS runtime
@@ -43,9 +46,10 @@ USER openchamber
 ENV NPM_CONFIG_PREFIX=/home/openchamber/.npm-global
 ENV PATH=${NPM_CONFIG_PREFIX}/bin:${PATH}
 
+# Keep the managed CLI aligned with the pinned @opencode-ai/sdk version.
 RUN npm config set prefix /home/openchamber/.npm-global && mkdir -p /home/openchamber/.npm-global && \
   mkdir -p /home/openchamber/.local /home/openchamber/.config /home/openchamber/.ssh && \
-  npm install -g opencode-ai
+  npm install -g opencode-ai@1.18.18
 
 # cloudflared 2026.3.0 - update digest explicitly when upgrading
 COPY --from=cloudflare/cloudflared@sha256:6d91c121b803126f7a5344005d17a9324788fc09d305b6e2560ec6040a7ae283 /usr/local/bin/cloudflared /usr/local/bin/cloudflared
@@ -61,6 +65,14 @@ COPY --from=builder /app/packages/web/package.json ./packages/web/package.json
 COPY --from=builder /app/packages/web/bin ./packages/web/bin
 COPY --from=builder /app/packages/web/server ./packages/web/server
 COPY --from=builder /app/packages/web/dist ./packages/web/dist
+
+# Artifact-specific legal materials. The generated Docker inventory deliberately
+# excludes Electron/Windows-only packages and is produced from Linux dependencies.
+COPY --from=builder /app/LICENSE /usr/share/licenses/opendeputy/LICENSE
+COPY --from=builder /app/THIRD_PARTY_NOTICES.md /usr/share/licenses/opendeputy/THIRD_PARTY_NOTICES.md
+COPY --from=builder /app/THIRD_PARTY_LICENSES.docker-linux-x64.txt /usr/share/licenses/opendeputy/THIRD_PARTY_LICENSES.docker-linux-x64.txt
+COPY --from=builder /app/docs/OPEN_SOURCE_COMPONENTS.md /usr/share/licenses/opendeputy/OPEN_SOURCE_COMPONENTS.md
+COPY --from=builder /app/legal/third-party /usr/share/licenses/opendeputy/third-party
 
 EXPOSE 3000
 

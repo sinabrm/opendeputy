@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import test from 'node:test';
@@ -30,7 +31,18 @@ test('Windows package is branded and self-contained', () => {
   assert.equal(electronPackage.build.publish.repo, 'open-deputy');
 
   const resources = electronPackage.build.extraResources.map((entry) => entry.to);
-  for (const expected of ['web-dist', 'opencode-cli', 'open-computer-use', 'icons/icon.ico', 'icons/tray']) {
+  for (const expected of [
+    'web-dist',
+    'opencode-cli',
+    'open-computer-use',
+    'icons/icon.ico',
+    'icons/tray',
+    'legal/LICENSE',
+    'legal/THIRD_PARTY_NOTICES.md',
+    'legal/THIRD_PARTY_LICENSES.txt',
+    'legal/OPEN_SOURCE_COMPONENTS.md',
+    'legal/third-party',
+  ]) {
     assert.ok(resources.includes(expected), `missing packaged resource: ${expected}`);
   }
 });
@@ -46,6 +58,9 @@ test('repository ownership and release automation are OpenDeputy-only', () => {
   assert.match(releaseWorkflow, /runs-on: windows-latest/);
   assert.match(releaseWorkflow, /draft: true/);
   assert.match(releaseWorkflow, /SHA256SUMS\.txt/);
+  assert.match(releaseWorkflow, /THIRD_PARTY_LICENSES\.txt/);
+  assert.match(releaseWorkflow, /OPEN_SOURCE_COMPONENTS\.md/);
+  assert.match(releaseWorkflow, /legal\/third-party/);
 });
 
 test('green main pushes create short-lived private Windows artifacts', () => {
@@ -55,12 +70,13 @@ test('green main pushes create short-lived private Windows artifacts', () => {
   assert.match(ciWorkflow, /contents: read/);
   assert.match(ciWorkflow, /cancel-in-progress: true/);
   assert.match(ciWorkflow, /if: github\.event_name == 'push' && github\.ref == 'refs\/heads\/main'/);
-  assert.match(ciWorkflow, /needs: validate/);
+  assert.match(ciWorkflow, /needs: \[validate, validate-docker\]/);
   assert.match(ciWorkflow, /bun run electron:build/);
   assert.match(ciWorkflow, /bun run test:windows-package/);
   assert.match(ciWorkflow, /actions\/upload-artifact@v4/);
   assert.match(ciWorkflow, /retention-days: 7/);
   assert.match(ciWorkflow, /compression-level: 0/);
+  assert.match(ciWorkflow, /THIRD_PARTY_LICENSES\.txt/);
   assert.doesNotMatch(ciWorkflow, /action-gh-release|release create/);
   assert.match(packagingScript, /builderArgs\.push\('--publish=never'\)/);
   assert.match(packagingScript, /argument === '--publish'/);
@@ -71,6 +87,64 @@ test('green main pushes create short-lived private Windows artifacts', () => {
 test('tracked environment secrets are excluded', () => {
   assert.match(read('.gitignore'), /^\.env$/m);
   assert.equal(fs.existsSync(path.join(root, '.env.example')), true);
+
+  const gitCandidates = process.platform === 'win32'
+    ? ['git.exe', 'C:\\Program Files\\Git\\cmd\\git.exe']
+    : ['git'];
+  let result = null;
+  for (const candidate of gitCandidates) {
+    result = spawnSync(candidate, ['ls-files', '--', '.env'], { cwd: root, encoding: 'utf8' });
+    if (!result.error) break;
+  }
+  assert.equal(result?.status, 0, result?.error?.message || result?.stderr || 'git ls-files failed');
+  assert.equal(result.stdout.trim(), '', '.env must never be tracked');
+});
+
+test('external runtime installers use reviewed exact versions and platform gates', () => {
+  const dockerfile = read('Dockerfile');
+  const optionalToolsInstaller = read('scripts/install-optional-windows-tools.ps1');
+
+  assert.match(dockerfile, /npm install -g opencode-ai@1\.18\.18/);
+  assert.match(dockerfile, /--target=docker-linux-x64/);
+  assert.match(dockerfile, /THIRD_PARTY_LICENSES\.docker-linux-x64\.txt/);
+  assert.match(dockerfile, /\/usr\/share\/licenses\/opendeputy/);
+  assert.match(optionalToolsInstaller, /\$piperVersion = '1\.7\.0'/);
+  assert.match(optionalToolsInstaller, /piper-tts==\$piperVersion/);
+  assert.match(optionalToolsInstaller, /GPL-3\.0-or-later/);
+  assert.match(optionalToolsInstaller, /RuntimeInformation\]::OSArchitecture/);
+  assert.match(optionalToolsInstaller, /\$windowsArchitecture -ne 'X64'/);
+  assert.match(optionalToolsInstaller, /OPENDEPUTY_PIPER_BINARY/);
+});
+
+test('component documentation follows the exact shipped dependency pins', () => {
+  const rootPackage = json('package.json');
+  const electronPackage = json('packages/electron/package.json');
+  const webPackage = json('packages/web/package.json');
+  const notices = read('THIRD_PARTY_NOTICES.md');
+  const componentMap = read('docs/OPEN_SOURCE_COMPONENTS.md');
+  const dockerfile = read('Dockerfile');
+
+  const openCode = rootPackage.dependencies['@opencode-ai/sdk'];
+  const openComputerUse = electronPackage.dependencies['open-computer-use'];
+  const sherpa = webPackage.dependencies['sherpa-onnx-node'];
+  for (const [name, version] of [
+    ['OpenCode', openCode],
+    ['Open Computer Use', openComputerUse],
+    ['sherpa-onnx', sherpa],
+  ]) {
+    assert.ok(componentMap.includes(version), `${name} ${version} is missing from the component map`);
+    assert.ok(notices.includes(version), `${name} ${version} is missing from third-party notices`);
+  }
+  assert.ok(dockerfile.includes(`opencode-ai@${openCode}`), 'Docker OpenCode pin differs from the SDK pin');
+});
+
+test('CI builds the Linux x64 image and checks its artifact-specific legal bundle', () => {
+  const ciWorkflow = read('.github/workflows/ci.yml');
+
+  assert.match(ciWorkflow, /docker build --platform linux\/amd64 --tag opendeputy:ci/);
+  assert.match(ciWorkflow, /THIRD_PARTY_LICENSES\.docker-linux-x64\.txt/);
+  assert.match(ciWorkflow, /third-party\/OpenCode-1\.18\.18-LICENSE\.txt/);
+  assert.match(ciWorkflow, /! grep -q "\^electron@"/);
 });
 
 test('required Windows release documentation exists', () => {
@@ -79,11 +153,56 @@ test('required Windows release documentation exists', () => {
     'docs/OPTIONAL_TOOLS.md',
     'docs/SAFETY_AND_PRIVACY.md',
     'CONTRIBUTING.md',
+    'LICENSE',
     'THIRD_PARTY_NOTICES.md',
+    'THIRD_PARTY_LICENSES.txt',
+    'docs/OPEN_SOURCE_COMPONENTS.md',
+    'legal/third-party/README.md',
+    'legal/third-party/OpenCode-1.18.18-LICENSE.txt',
+    'legal/third-party/Apache-2.0-LICENSE.txt',
+    'legal/third-party/Flexoki-8d723bac-LICENSE.txt',
+    'legal/third-party/Vitesse-2862595c-LICENSE.txt',
+    'legal/third-party/Remix-Icon-4.9.0-LICENSE.txt',
     'UPSTREAM_CHANGELOG.md',
   ]) {
     assert.equal(fs.existsSync(path.join(root, relativePath)), true, `missing ${relativePath}`);
   }
+});
+
+test('generated third-party license inventory is current and release-scoped', () => {
+  const result = spawnSync(process.execPath, [
+    'scripts/generate-third-party-licenses.mjs',
+    '--target=windows-x64',
+    '--check',
+  ], {
+    cwd: root,
+    encoding: 'utf8',
+  });
+  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+
+  const report = read('THIRD_PARTY_LICENSES.txt');
+  assert.match(report, /^OpenDeputy Third-Party Dependency License Inventory \(windows-x64\)$/m);
+  for (const dependency of [
+    'electron@',
+    'open-computer-use@',
+    'sherpa-onnx-node@',
+    '@opencode-ai/sdk@',
+    '@remixicon/react@',
+    'workbox-window@',
+  ]) {
+    assert.ok(report.includes(`\n${dependency}`), `missing shipped dependency: ${dependency}`);
+  }
+  assert.doesNotMatch(report, /^electron-builder@/m);
+  assert.doesNotMatch(report, /License: \(not declared\)/);
+  assert.match(report, /Reviewed exception:/);
+});
+
+test('fork license preserves upstream and OpenDeputy contributor notices', () => {
+  const license = read('LICENSE');
+
+  assert.match(license, /Copyright \(c\) 2025 Bohdan Triapitsyn/);
+  assert.match(license, /Copyright \(c\) 2026 OpenDeputy contributors/);
+  assert.equal(read('packages/web/LICENSE'), license);
 });
 
 test('Persian and Unicode text round-trip without conversion', () => {

@@ -31,12 +31,24 @@ $resourcesRoot = Join-Path $unpackedRoot 'resources'
 
 $requiredPaths = @(
   (Join-Path $unpackedRoot 'OpenDeputy.exe'),
+  (Join-Path $unpackedRoot 'LICENSE.electron.txt'),
+  (Join-Path $unpackedRoot 'LICENSES.chromium.html'),
   (Join-Path $resourcesRoot 'app.asar'),
   (Join-Path $resourcesRoot 'web-dist\index.html'),
   (Join-Path $resourcesRoot 'icons\icon.ico'),
   (Join-Path $resourcesRoot 'icons\tray'),
   (Join-Path $resourcesRoot 'opencode-cli\opencode.exe'),
-  (Join-Path $resourcesRoot 'open-computer-use\dist\windows\amd64\open-computer-use.exe')
+  (Join-Path $resourcesRoot 'open-computer-use\dist\windows\amd64\open-computer-use.exe'),
+  (Join-Path $resourcesRoot 'legal\LICENSE'),
+  (Join-Path $resourcesRoot 'legal\THIRD_PARTY_NOTICES.md'),
+  (Join-Path $resourcesRoot 'legal\THIRD_PARTY_LICENSES.txt'),
+  (Join-Path $resourcesRoot 'legal\OPEN_SOURCE_COMPONENTS.md'),
+  (Join-Path $resourcesRoot 'legal\third-party\README.md'),
+  (Join-Path $resourcesRoot 'legal\third-party\OpenCode-1.18.18-LICENSE.txt'),
+  (Join-Path $resourcesRoot 'legal\third-party\Apache-2.0-LICENSE.txt'),
+  (Join-Path $resourcesRoot 'legal\third-party\Flexoki-8d723bac-LICENSE.txt'),
+  (Join-Path $resourcesRoot 'legal\third-party\Vitesse-2862595c-LICENSE.txt'),
+  (Join-Path $resourcesRoot 'legal\third-party\Remix-Icon-4.9.0-LICENSE.txt')
 )
 
 foreach ($requiredPath in $requiredPaths) {

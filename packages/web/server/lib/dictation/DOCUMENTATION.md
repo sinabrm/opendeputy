@@ -12,6 +12,37 @@ downloading). TTS models live in the same catalog/downloader as STT models
 (`local/model-catalog.js` `LOCAL_TTS_MODEL_CATALOG`) and are managed by the
 same status/download/delete routes.
 
+## Local model provenance and integrity
+
+OpenDeputy downloads converted archives from the
+[k2-fsa/sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx) release pages. The
+original model sources and the licenses declared by their publishers are:
+
+| Catalog model | Original model source | Publisher-declared model license |
+| --- | --- | --- |
+| `parakeet-tdt-0.6b-v2-int8` | [NVIDIA Parakeet TDT 0.6B v2](https://huggingface.co/nvidia/parakeet-tdt-0.6b-v2) | CC-BY-4.0 |
+| `parakeet-tdt-0.6b-v3-int8` | [NVIDIA Parakeet TDT 0.6B v3](https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3) | CC-BY-4.0 |
+| `whisper-base-int8` | [OpenAI Whisper](https://github.com/openai/whisper) | MIT |
+| `whisper-tiny-int8` | [OpenAI Whisper](https://github.com/openai/whisper) | MIT |
+| `kokoro-en-v0_19` | [Kokoro-82M v0.19](https://huggingface.co/hexgrad/Kokoro-82M/tree/e6a2633a608163a6383195168a1abf0c4b8aeaa7) | Apache-2.0 |
+
+These entries describe the model weights, not every support file in a converted
+archive. `local/model-catalog.js` is the source of truth for each archive URL,
+expected byte size, SHA-256, checksum provenance, original project, and model
+license link.
+
+The Parakeet and Kokoro checksums are the SHA-256 digests published by GitHub's
+release API. GitHub does not publish digests for the two older Whisper release
+assets, so those checksums are explicitly marked `maintainer-verified` and were
+computed from the exact upstream assets on 2026-08-16.
+
+The downloader fails closed when integrity metadata is missing or malformed. It
+streams each download to a uniquely named temporary file, verifies both byte
+size and SHA-256, and only then moves it into the download cache for extraction.
+Cached archives are reverified before use. Failed downloads, checksum failures,
+and failed extractions remove their temporary or cached archive; extraction is
+staged so partial model files never appear at the final installed path.
+
 ## Ownership
 
 - `runtime.js` — registers `GET /api/dictation/status`,

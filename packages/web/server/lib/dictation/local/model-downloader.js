@@ -1,10 +1,12 @@
 /**
- * Downloads and extracts local sherpa-onnx STT model archives.
+ * Downloads and extracts local sherpa-onnx STT/TTS model archives.
  * Archives (.tar.bz2) come from the k2-fsa GitHub releases and are extracted
- * with the system `tar` into the speech-models directory.
+ * with the system `tar` into the speech-models directory. Every archive is
+ * checked against its catalog-pinned byte size and SHA-256 before extraction.
  */
 
-import { createWriteStream } from 'fs';
+import { createHash, randomUUID } from 'crypto';
+import { createReadStream, createWriteStream } from 'fs';
 import { mkdir, rename, rm, stat } from 'fs/promises';
 import path from 'path';
 import { Readable } from 'stream';
@@ -30,7 +32,64 @@ async function hasRequiredFiles(modelDir, requiredFiles) {
   return results.every(Boolean);
 }
 
-async function downloadToFile(url, outputPath, onProgress) {
+function parseArchiveIntegrity(spec) {
+  const integrity = spec.archiveIntegrity;
+  if (
+    integrity?.algorithm !== 'sha256' ||
+    !/^[a-f0-9]{64}$/i.test(integrity.sha256 || '') ||
+    !Number.isSafeInteger(integrity.bytes) ||
+    integrity.bytes <= 0
+  ) {
+    throw new Error(
+      `Speech model ${spec.id} has no valid pinned archive SHA-256 and byte size; refusing an unverified download.`,
+    );
+  }
+  return {
+    bytes: integrity.bytes,
+    sha256: integrity.sha256.toLowerCase(),
+  };
+}
+
+function assertArchiveIntegrity({ filename, actualBytes, actualSha256, expected }) {
+  if (actualBytes !== expected.bytes) {
+    throw new Error(
+      `Integrity check failed for ${filename}: expected ${expected.bytes} bytes, received ${actualBytes}.`,
+    );
+  }
+  if (actualSha256 !== expected.sha256) {
+    throw new Error(
+      `Integrity check failed for ${filename}: SHA-256 mismatch (expected ${expected.sha256}, received ${actualSha256}).`,
+    );
+  }
+}
+
+async function verifyArchiveFile(filePath, expected) {
+  const fileStat = await stat(filePath);
+  if (!fileStat.isFile()) {
+    throw new Error(`${filePath} is not a file.`);
+  }
+  if (fileStat.size !== expected.bytes) {
+    assertArchiveIntegrity({
+      filename: path.basename(filePath),
+      actualBytes: fileStat.size,
+      actualSha256: '',
+      expected,
+    });
+  }
+
+  const hash = createHash('sha256');
+  for await (const chunk of createReadStream(filePath)) {
+    hash.update(chunk);
+  }
+  assertArchiveIntegrity({
+    filename: path.basename(filePath),
+    actualBytes: fileStat.size,
+    actualSha256: hash.digest('hex'),
+    expected,
+  });
+}
+
+async function downloadToFile(url, outputPath, expected, onProgress) {
   const res = await fetch(url);
   if (!res.ok) {
     throw new Error(`Failed to download ${url}: ${res.status} ${res.statusText}`);
@@ -39,22 +98,37 @@ async function downloadToFile(url, outputPath, onProgress) {
     throw new Error(`Failed to download ${url}: missing response body`);
   }
 
-  const totalBytes = Number.parseInt(res.headers.get('content-length') || '', 10) || null;
-  let downloadedBytes = 0;
+  const responseBytes = Number.parseInt(res.headers.get('content-length') || '', 10) || null;
+  if (responseBytes !== null && responseBytes !== expected.bytes) {
+    await res.body.cancel().catch(() => undefined);
+    throw new Error(
+      `Integrity check failed for ${path.basename(outputPath)}: expected ${expected.bytes} bytes, server reported ${responseBytes}.`,
+    );
+  }
 
-  const tmpPath = `${outputPath}.tmp-${Date.now()}`;
+  let downloadedBytes = 0;
+  const hash = createHash('sha256');
+
+  const tmpPath = `${outputPath}.tmp-${process.pid}-${randomUUID()}`;
   await mkdir(path.dirname(outputPath), { recursive: true });
 
   const nodeStream = Readable.fromWeb(res.body);
-  if (typeof onProgress === 'function') {
-    nodeStream.on('data', (chunk) => {
-      downloadedBytes += chunk.length;
-      onProgress(downloadedBytes, totalBytes);
-    });
-  }
+  nodeStream.on('data', (chunk) => {
+    downloadedBytes += chunk.length;
+    hash.update(chunk);
+    if (typeof onProgress === 'function') {
+      onProgress(downloadedBytes, expected.bytes);
+    }
+  });
 
   try {
     await pipeline(nodeStream, createWriteStream(tmpPath));
+    assertArchiveIntegrity({
+      filename: path.basename(outputPath),
+      actualBytes: downloadedBytes,
+      actualSha256: hash.digest('hex'),
+      expected,
+    });
     await rename(tmpPath, outputPath);
   } catch (error) {
     await rm(tmpPath, { force: true }).catch(() => undefined);
@@ -104,8 +178,9 @@ export async function isLocalSttModelInstalled(modelsDir, modelId) {
 /**
  * Ensure a model is downloaded and extracted. Resolves with the model dir.
  *
- * Extraction is staged: the archive unpacks into a temporary directory and is
- * verified before being renamed into place. An interrupted or failed tar must
+ * Download and extraction are staged: the archive is integrity-checked before
+ * it is cached, then unpacks into a temporary directory and is verified before
+ * being renamed into place. An interrupted or failed tar must
  * never leave partial files at the final path — the installed check only
  * verifies file presence, so a truncated .onnx there would be treated as an
  * installed model forever ("Protobuf parsing failed" at load time).
@@ -120,6 +195,7 @@ export async function ensureLocalSttModel({ modelsDir, modelId, onProgress }) {
   if (await hasRequiredFiles(modelDir, spec.requiredFiles)) {
     return modelDir;
   }
+  const expectedIntegrity = parseArchiveIntegrity(spec);
 
   // A directory that exists but fails the required-files check is a partial
   // extraction from an earlier interrupted attempt — remove it before retrying.
@@ -129,8 +205,16 @@ export async function ensureLocalSttModel({ modelsDir, modelId, onProgress }) {
   const archiveFilename = path.basename(new URL(spec.archiveUrl).pathname);
   const archivePath = path.join(downloadsDir, archiveFilename);
 
+  if (await isNonEmptyFile(archivePath)) {
+    try {
+      await verifyArchiveFile(archivePath, expectedIntegrity);
+    } catch {
+      await rm(archivePath, { force: true });
+    }
+  }
+
   if (!(await isNonEmptyFile(archivePath))) {
-    await downloadToFile(spec.archiveUrl, archivePath, onProgress);
+    await downloadToFile(spec.archiveUrl, archivePath, expectedIntegrity, onProgress);
   }
 
   const stagingDir = path.join(modelsDir, `.staging-${spec.extractedDir}-${Date.now()}`);

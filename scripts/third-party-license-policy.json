@@ -1,0 +1,225 @@
+{
+  "version": 1,
+  "reviewedLicenseExpressions": [
+    "0BSD",
+    "Apache 2.0",
+    "Apache-2.0",
+    "apache-2.0",
+    "(BSD-2-Clause OR MIT OR Apache-2.0)",
+    "BSD-2-Clause",
+    "BSD-3-Clause",
+    "BlueOak-1.0.0",
+    "EPL-2.0",
+    "ISC",
+    "MIT",
+    "(MIT OR WTFPL)",
+    "MPL-2.0",
+    "(MPL-2.0 OR Apache-2.0)",
+    "Python-2.0",
+    "Remix Icon License 1.0",
+    "SEE LICENSE IN LICENSE.txt"
+  ],
+  "manualLicenseFiles": [
+    {
+      "component": "OpenCode CLI and SDK 1.18.18",
+      "path": "legal/third-party/OpenCode-1.18.18-LICENSE.txt",
+      "sha256": "22340582fd58b5e5591fdf93d2389028ea4625c8a07398d80973532980698de7"
+    },
+    {
+      "component": "sherpa-onnx 1.12.28 and cloudflared 2026.3.0",
+      "path": "legal/third-party/Apache-2.0-LICENSE.txt",
+      "sha256": "58d1e17ffe5109a7ae296caafcadfdbe6a7d176f0bc4ab01e12a689b0499d8bd"
+    },
+    {
+      "component": "Flexoki license snapshot 8d723bac4a9ac46adfdf99d42155286977aac72a",
+      "path": "legal/third-party/Flexoki-8d723bac-LICENSE.txt",
+      "sha256": "02702febac3206e0ed93e97a8c3a445b8a76dc01baa5f437ae9ee056ee3248d7"
+    },
+    {
+      "component": "Vitesse Theme license snapshot 2862595c3d5d05fabfd5aeb50bcbb79ea2f8d85f",
+      "path": "legal/third-party/Vitesse-2862595c-LICENSE.txt",
+      "sha256": "5fe90af2536b0eda5bd1a0e12e1cc9dd801a759c2782677c576f290c898baa4d"
+    },
+    {
+      "component": "Remix Icon 4.9.0",
+      "path": "legal/third-party/Remix-Icon-4.9.0-LICENSE.txt",
+      "sha256": "47727e42990c1c20c3d75ca335c71fad75ec911626f7ee8ebedbbc499def7d93"
+    }
+  ],
+  "reviewedMissingTexts": [
+    {
+      "key": "@opencode-ai/sdk@1.18.18",
+      "license": "MIT",
+      "manualLicenseFile": "legal/third-party/OpenCode-1.18.18-LICENSE.txt",
+      "reason": "The published SDK tarball declares MIT but omits the root license; the exact v1.18.18 upstream license is retained manually."
+    },
+    {
+      "key": "@pierre/theming@0.0.2",
+      "license": "apache-2.0",
+      "manualLicenseFile": "legal/third-party/Apache-2.0-LICENSE.txt",
+      "reason": "The published subpackage omits a root license file; its declared Apache-2.0 expression was reviewed."
+    },
+    {
+      "key": "@radix-ui/number@1.1.1",
+      "license": "MIT",
+      "reason": "The published Radix subpackage omits a root text; the same repository's MIT notice is retained by sibling Radix packages in the generated inventory."
+    },
+    {
+      "key": "@radix-ui/react-compose-refs@1.1.2",
+      "license": "MIT",
+      "reason": "The published Radix subpackage omits a root text; the same repository's MIT notice is retained by sibling Radix packages in the generated inventory."
+    },
+    {
+      "key": "@radix-ui/react-context@1.1.2",
+      "license": "MIT",
+      "reason": "The published Radix subpackage omits a root text; the same repository's MIT notice is retained by sibling Radix packages in the generated inventory."
+    },
+    {
+      "key": "@radix-ui/react-direction@1.1.1",
+      "license": "MIT",
+      "reason": "The published Radix subpackage omits a root text; the same repository's MIT notice is retained by sibling Radix packages in the generated inventory."
+    },
+    {
+      "key": "@radix-ui/react-id@1.1.1",
+      "license": "MIT",
+      "reason": "The published Radix subpackage omits a root text; the same repository's MIT notice is retained by sibling Radix packages in the generated inventory."
+    },
+    {
+      "key": "@radix-ui/react-use-callback-ref@1.1.1",
+      "license": "MIT",
+      "reason": "The published Radix subpackage omits a root text; the same repository's MIT notice is retained by sibling Radix packages in the generated inventory."
+    },
+    {
+      "key": "@radix-ui/react-use-escape-keydown@1.1.1",
+      "license": "MIT",
+      "reason": "The published Radix subpackage omits a root text; the same repository's MIT notice is retained by sibling Radix packages in the generated inventory."
+    },
+    {
+      "key": "@radix-ui/react-use-layout-effect@1.1.1",
+      "license": "MIT",
+      "reason": "The published Radix subpackage omits a root text; the same repository's MIT notice is retained by sibling Radix packages in the generated inventory."
+    },
+    {
+      "key": "@radix-ui/react-use-previous@1.1.1",
+      "license": "MIT",
+      "reason": "The published Radix subpackage omits a root text; the same repository's MIT notice is retained by sibling Radix packages in the generated inventory."
+    },
+    {
+      "key": "@radix-ui/react-use-rect@1.1.1",
+      "license": "MIT",
+      "reason": "The published Radix subpackage omits a root text; the same repository's MIT notice is retained by sibling Radix packages in the generated inventory."
+    },
+    {
+      "key": "@radix-ui/react-use-size@1.1.1",
+      "license": "MIT",
+      "reason": "The published Radix subpackage omits a root text; the same repository's MIT notice is retained by sibling Radix packages in the generated inventory."
+    },
+    {
+      "key": "@radix-ui/rect@1.1.1",
+      "license": "MIT",
+      "reason": "The published Radix subpackage omits a root text; the same repository's MIT notice is retained by sibling Radix packages in the generated inventory."
+    },
+    {
+      "key": "@remixicon/react@4.9.0",
+      "license": "Remix Icon License 1.0",
+      "manualLicenseFile": "legal/third-party/Remix-Icon-4.9.0-LICENSE.txt",
+      "reason": "The React package omits its root license; the exact v4.9.0 Remix Icon License is retained manually."
+    },
+    {
+      "key": "@simple-git/args-pathspec@1.0.3",
+      "license": "MIT",
+      "reason": "The published git-js subpackage declares MIT but omits a root license file; package metadata and upstream repository were reviewed."
+    },
+    {
+      "key": "@simple-git/argv-parser@1.1.1",
+      "license": "MIT",
+      "reason": "The published git-js subpackage declares MIT but omits a root license file; package metadata and upstream repository were reviewed."
+    },
+    {
+      "key": "guid-typescript@1.0.9",
+      "license": "ISC",
+      "reason": "The published package declares ISC but omits a root license file; package metadata and upstream repository were reviewed."
+    },
+    {
+      "key": "http_ece@1.2.0",
+      "license": "MIT",
+      "reason": "The published package declares MIT but omits a root license file; package metadata and upstream repository were reviewed."
+    },
+    {
+      "key": "lazy-val@1.0.5",
+      "license": "MIT",
+      "targets": ["windows-x64"],
+      "reason": "The Electron-only package declares MIT but omits a root license file; package metadata and upstream repository were reviewed."
+    },
+    {
+      "key": "lru_map@0.4.1",
+      "license": "MIT",
+      "reason": "The published package declares MIT but omits a root license file; package metadata and upstream repository were reviewed."
+    },
+    {
+      "key": "onnxruntime-common@1.14.0",
+      "license": "MIT",
+      "reason": "The published ONNX Runtime package declares MIT but omits a root license file; package metadata and upstream repository were reviewed."
+    },
+    {
+      "key": "onnxruntime-node@1.14.0",
+      "license": "MIT",
+      "reason": "The published ONNX Runtime package declares MIT but omits a root license file; package metadata and upstream repository were reviewed."
+    },
+    {
+      "key": "onnxruntime-web@1.14.0",
+      "license": "MIT",
+      "reason": "The published ONNX Runtime package declares MIT but omits a root license file; package metadata and upstream repository were reviewed."
+    },
+    {
+      "key": "react-remove-scroll-bar@2.3.8",
+      "license": "MIT",
+      "reason": "The published package declares MIT but omits a root license file; package metadata and upstream repository were reviewed."
+    },
+    {
+      "key": "rehype-katex@7.0.1",
+      "license": "MIT",
+      "reason": "The published unified package declares MIT but omits a root license file; package metadata and upstream repository were reviewed."
+    },
+    {
+      "key": "remark-math@6.0.0",
+      "license": "MIT",
+      "reason": "The published unified package declares MIT but omits a root license file; package metadata and upstream repository were reviewed."
+    },
+    {
+      "key": "sherpa-onnx-node@1.12.28",
+      "license": "Apache-2.0",
+      "manualLicenseFile": "legal/third-party/Apache-2.0-LICENSE.txt",
+      "reason": "The npm API package omits the root text; the exact v1.12.28 upstream Apache-2.0 license is retained manually."
+    },
+    {
+      "key": "sherpa-onnx-win-x64@1.13.3",
+      "license": "Apache-2.0",
+      "targets": ["windows-x64"],
+      "manualLicenseFile": "legal/third-party/Apache-2.0-LICENSE.txt",
+      "reason": "The Windows native package omits the root text; the sherpa-onnx Apache-2.0 license is retained manually."
+    },
+    {
+      "key": "sherpa-onnx-linux-x64@1.13.3",
+      "license": "Apache-2.0",
+      "targets": ["docker-linux-x64"],
+      "manualLicenseFile": "legal/third-party/Apache-2.0-LICENSE.txt",
+      "reason": "The Linux native package omits the root text; the sherpa-onnx Apache-2.0 license is retained manually."
+    },
+    {
+      "key": "simple-git@3.36.0",
+      "license": "MIT",
+      "reason": "The published git-js package declares MIT but omits a root license file; package metadata and upstream repository were reviewed."
+    },
+    {
+      "key": "tr46@0.0.3",
+      "license": "MIT",
+      "reason": "The published package declares MIT but omits a root license file; package metadata and upstream repository were reviewed."
+    },
+    {
+      "key": "undici-types@5.26.5",
+      "license": "MIT",
+      "reason": "The published package declares MIT but omits a root license file; package metadata and upstream repository were reviewed."
+    }
+  ]
+}

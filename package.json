@@ -20,6 +20,14 @@
   ],
   "author": "OpenDeputy contributors",
   "license": "MIT",
+  "homepage": "https://github.com/sinabrm/open-deputy#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sinabrm/open-deputy.git"
+  },
+  "bugs": {
+    "url": "https://github.com/sinabrm/open-deputy/issues"
+  },
   "scripts": {
     "dev": "node ./scripts/dev-web-hmr.mjs",
     "oc-dev": "node scripts/oc-dev.mjs",
@@ -39,6 +47,8 @@
     "test:integrations": "node scripts/validate-opendeputy-integrations.mjs",
     "test:release-contract": "node --test scripts/opendeputy-release-contract.test.mjs",
     "test:windows-package": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/test-windows-package.ps1",
+    "licenses:generate": "node scripts/generate-third-party-licenses.mjs --target=windows-x64",
+    "licenses:check": "node scripts/generate-third-party-licenses.mjs --target=windows-x64 --check",
     "clean": "bun run --filter '*' clean",
     "postinstall": "node ./fix-deprecation.js && patch-package && node ./packages/electron/scripts/ensure-electron.mjs --best-effort",
     "dev:web": "bun run --cwd packages/web build:watch",
@@ -61,7 +71,7 @@
     "brand:assets": "node scripts/generate-opendeputy-brand-assets.mjs",
     "themes:port:opencode": "tsx scripts/port-opencode-theme.ts",
     "version:bump": "node scripts/bump-version.mjs",
-    "release:prepare": "bun run type-check && bun run lint && bun run test && bun run build && bun run test:release-contract",
+    "release:prepare": "bun run licenses:check && bun run type-check && bun run lint && bun run test && bun run build && bun run test:release-contract",
     "profile:idle": "node scripts/profile-idle.mjs",
     "profile:session": "node scripts/profile-session.mjs",
     "profile:animation": "node scripts/profile-animation.mjs"

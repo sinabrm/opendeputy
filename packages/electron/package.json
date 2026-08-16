@@ -4,6 +4,16 @@
   "private": true,
   "description": "Electron desktop runtime for OpenDeputy",
   "author": "OpenDeputy contributors",
+  "license": "MIT",
+  "homepage": "https://github.com/sinabrm/open-deputy#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sinabrm/open-deputy.git",
+    "directory": "packages/electron"
+  },
+  "bugs": {
+    "url": "https://github.com/sinabrm/open-deputy/issues"
+  },
   "type": "module",
   "main": "./dist-bundle/main.mjs",
   "dependencies": {
@@ -43,7 +53,7 @@
     "test:updater": "node --test ./updater-capability.test.mjs ./updater-channel.test.mjs ./updater-check.test.mjs ./updater-feed.test.mjs ./scripts/finalize-latest-yml.test.mjs ./scripts/updater-e2e-fixture.test.mjs",
     "updater:e2e:fixture": "node ./scripts/updater-e2e-fixture.mjs",
     "verify:update-manifest": "node ./scripts/verify-update-manifest.mjs",
-    "package": "bun run build:web-assets && bun run prepare:opencode-cli && bun run bundle:main && bun run rebuild:native && node ./scripts/package.mjs",
+    "package": "node ../../scripts/generate-third-party-licenses.mjs --target=windows-x64 --check && bun run build:web-assets && bun run prepare:opencode-cli && bun run bundle:main && bun run rebuild:native && node ./scripts/package.mjs",
     "finalize:latest-yml": "node ./scripts/finalize-latest-yml.mjs",
     "type-check": "node --check ./main.mjs && node --check ./preload.mjs",
     "lint": "node -e \"process.exit(0)\""
@@ -83,6 +93,29 @@
           "dist/**",
           "LICENSE",
           "README.md"
+        ]
+      },
+      {
+        "from": "../../LICENSE",
+        "to": "legal/LICENSE"
+      },
+      {
+        "from": "../../THIRD_PARTY_NOTICES.md",
+        "to": "legal/THIRD_PARTY_NOTICES.md"
+      },
+      {
+        "from": "../../THIRD_PARTY_LICENSES.txt",
+        "to": "legal/THIRD_PARTY_LICENSES.txt"
+      },
+      {
+        "from": "../../docs/OPEN_SOURCE_COMPONENTS.md",
+        "to": "legal/OPEN_SOURCE_COMPONENTS.md"
+      },
+      {
+        "from": "../../legal/third-party",
+        "to": "legal/third-party",
+        "filter": [
+          "**/*"
         ]
       }
     ],

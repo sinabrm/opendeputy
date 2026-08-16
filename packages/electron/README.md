@@ -19,7 +19,7 @@ Use `bun run electron:dev:bundled` to validate staged web assets. Development us
 
 `bun run electron:build` builds the web UI, stages the matching OpenCode CLI, bundles the main process, rebuilds native modules for Electron, and creates an NSIS installer in `packages/electron/dist`.
 
-The installer includes Electron, compiled OpenDeputy web assets, the pinned OpenCode CLI, Open Computer Use, and all Windows/tray/application icons. End users do not install those components separately.
+The installer includes Electron, compiled OpenDeputy web assets, the pinned OpenCode CLI, Open Computer Use, all Windows/tray/application icons, and generated and manually retained third-party legal notices under `resources/legal`. End users do not install the bundled runtime components separately.
 
 Unsigned local builds are supported and must be labeled clearly. Releases are produced only by the Windows release workflow and are created as GitHub drafts.
 

@@ -4,7 +4,7 @@
 
 OpenDeputy is an open-source AI coworker for Windows. It combines OpenCode agents with a visual workspace for projects, files, terminals, websites, and desktop applications.
 
-OpenDeputy is based on the MIT-licensed [OpenChamber](https://github.com/openchamber/openchamber) project. Compatibility identifiers such as `@openchamber/*`, `OPENCHAMBER_*`, and existing configuration directories remain intentionally unchanged where renaming them would break upgrades.
+OpenDeputy is a modified distribution of the MIT-licensed [OpenChamber](https://github.com/openchamber/openchamber) project. Compatibility identifiers such as `@openchamber/*`, `OPENCHAMBER_*`, and existing configuration directories remain intentionally unchanged where renaming them would break upgrades.
 
 ## What it can do
 
@@ -15,11 +15,27 @@ OpenDeputy is based on the MIT-licensed [OpenChamber](https://github.com/opencha
 - Continue in the tray when **Minimize to tray** is enabled.
 - Add optional document conversion, local speech, and ActivityWatch history integrations.
 
-OpenDeputy does not bundle an AI model or provider account. On first run, connect a provider in **Settings → Providers** and select one of that provider's models. Credentials are handled by OpenCode.
+OpenDeputy does not bundle a generative AI model or provider account. On first run, connect a provider in **Settings → Providers** and select one of that provider's models. Credentials are handled by OpenCode.
+
+## What is included
+
+The Windows installer contains the OpenDeputy application and web interface, Electron, a matching OpenCode CLI, and the approval-gated Open Computer Use runtime. Local speech models download only when selected. LibreOffice, Piper, ActivityWatch, tunnel clients, provider plugins, skills, and user-configured MCP servers are optional and are not silently added to Windows.
+
+OpenDeputy uses many open-source projects. The main foundations are:
+
+| Project | How OpenDeputy uses it |
+| --- | --- |
+| [OpenChamber](https://github.com/openchamber/openchamber) | Original application foundation; OpenDeputy contains modifications and is not an official OpenChamber release. |
+| [OpenCode](https://github.com/anomalyco/opencode) | Agent runtime, provider integration, SDK, and bundled CLI. |
+| [Open Computer Use](https://github.com/iFurySt/open-codex-computer-use) | Bundled MCP runtime for approval-gated desktop inspection and control. |
+| [Electron](https://github.com/electron/electron) | Windows desktop shell. |
+| [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx) | Local speech-to-text and text-to-speech runtime; model archives are downloaded separately on demand. |
+
+See [Open-source components](docs/OPEN_SOURCE_COMPONENTS.md) for the complete distribution map, including versions, licenses, optional integrations, plugins, skills, model downloads, Docker-only software, development tools, and items that are **not** shipped. Legal notices are in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md), the generated Windows-x64 packaged dependency inventory is in [`THIRD_PARTY_LICENSES.txt`](THIRD_PARTY_LICENSES.txt), and manually retained upstream texts are in [`legal/third-party`](legal/third-party/README.md).
 
 ## Install on Windows
 
-Download the `.exe` from the repository's Releases page and run it. The installer contains OpenDeputy, Electron, the matching OpenCode CLI, Open Computer Use, and the web interface. End users do not need Node.js, Bun, or a separate OpenCode installation.
+Download the `.exe` from the repository's Releases page and run it. End users do not need Node.js, Bun, or a separate OpenCode installation.
 
 The first public release candidate is unsigned, so Windows may show a SmartScreen warning. Verify its SHA-256 checksum against `SHA256SUMS.txt` before running it.
 
@@ -59,6 +75,8 @@ Run `bun run tools:windows` to choose optional tools interactively. Nothing is i
 - `OPENDEPUTY_PIPER_VOICES_DIR`
 - `OPENDEPUTY_ACTIVITYWATCH_BINARY`
 
+Provider plugins, skills, and MCP servers are also user-selected extensions. OpenDeputy does not redistribute them as part of the Windows installer; each extension's own license, privacy policy, service terms, and security behavior apply.
+
 ## Security
 
 Computer and browser actions are approval-gated. Browser pages do not receive privileged Electron APIs, remote access binds to localhost by default, and ActivityWatch integration remains opt-in. Never commit provider keys, tokens, personal data, local memory databases, or browser data.
@@ -67,6 +85,6 @@ Report vulnerabilities privately through GitHub's security advisory form. See [S
 
 ## Attribution and license
 
-OpenDeputy is a modified distribution of OpenChamber. The original MIT copyright notice remains in [LICENSE](LICENSE), upstream history is preserved in [UPSTREAM_CHANGELOG.md](UPSTREAM_CHANGELOG.md), and bundled components are listed in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+OpenDeputy is a modified distribution of OpenChamber. The original MIT copyright notice remains in [LICENSE](LICENSE), upstream history is preserved in [UPSTREAM_CHANGELOG.md](UPSTREAM_CHANGELOG.md), and third-party distribution details are recorded in [Open-source components](docs/OPEN_SOURCE_COMPONENTS.md), [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md), the retained [`legal/third-party`](legal/third-party/README.md) license texts, and the Windows-x64 packaged dependency inventory in [`THIRD_PARTY_LICENSES.txt`](THIRD_PARTY_LICENSES.txt).
 
 OpenDeputy is released under the MIT License.

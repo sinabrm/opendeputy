@@ -43,6 +43,15 @@ if ($LibreOffice) {
 }
 
 if ($Piper) {
+  $piperVersion = '1.7.0'
+  $piperSource = 'https://github.com/OHF-Voice/piper1-gpl'
+  Write-Warning "Piper $piperVersion is an optional third-party tool licensed GPL-3.0-or-later. Source and license: $piperSource"
+
+  $windowsArchitecture = [System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture.ToString()
+  if ($windowsArchitecture -ne 'X64') {
+    throw "Piper $piperVersion publishes a Windows AMD64 wheel only; this installer does not support $windowsArchitecture. Install a compatible Piper build manually and set OPENDEPUTY_PIPER_BINARY instead."
+  }
+
   $pythonCommand = Get-Command python -ErrorAction SilentlyContinue
   if (-not $pythonCommand) { $pythonCommand = Get-Command py -ErrorAction SilentlyContinue }
   if (-not $pythonCommand) { throw 'Python 3 is required for Piper. Install Python, then run with -Piper again.' }
@@ -59,9 +68,9 @@ if ($Piper) {
   if ($LASTEXITCODE -ne 0) { throw 'Could not create the Piper virtual environment.' }
 
   $venvPython = Join-Path $venvRoot 'Scripts\python.exe'
-  & $venvPython -m pip install --disable-pip-version-check --upgrade piper-tts
+  & $venvPython -m pip install --disable-pip-version-check --upgrade "piper-tts==$piperVersion"
   if ($LASTEXITCODE -ne 0) { throw 'Could not install piper-tts.' }
-  Write-Host "Piper installed at $venvRoot. Add a compatible .onnx voice under $toolRoot\voices before speech synthesis." -ForegroundColor Green
+  Write-Host "Piper $piperVersion installed from PyPI at $venvRoot. Add a compatible .onnx voice under $toolRoot\voices before speech synthesis." -ForegroundColor Green
 }
 
 if ($ActivityWatch) {

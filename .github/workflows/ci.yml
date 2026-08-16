@@ -31,10 +31,33 @@ jobs:
       - run: bun run build
       - run: bun run test:release-contract
 
+  validate-docker:
+    name: Build and inspect Linux x64 container
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Docker image
+        run: docker build --platform linux/amd64 --tag opendeputy:ci .
+      - name: Verify Docker legal inventory
+        run: |
+          docker run --rm --entrypoint sh opendeputy:ci -c '
+            set -eu
+            legal=/usr/share/licenses/opendeputy
+            test -s "$legal/LICENSE"
+            test -s "$legal/THIRD_PARTY_NOTICES.md"
+            test -s "$legal/THIRD_PARTY_LICENSES.docker-linux-x64.txt"
+            test -s "$legal/OPEN_SOURCE_COMPONENTS.md"
+            test -s "$legal/third-party/OpenCode-1.18.18-LICENSE.txt"
+            test -s "$legal/third-party/Apache-2.0-LICENSE.txt"
+            grep -q "docker-linux-x64" "$legal/THIRD_PARTY_LICENSES.docker-linux-x64.txt"
+            ! grep -q "^electron@" "$legal/THIRD_PARTY_LICENSES.docker-linux-x64.txt"
+          '
+
   package-windows:
     name: Package private Windows artifact
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: validate
+    needs: [validate, validate-docker]
     runs-on: windows-latest
     timeout-minutes: 60
     steps:
@@ -59,3 +82,8 @@ jobs:
             packages/electron/dist/OpenDeputy-*-win-*.exe.blockmap
             packages/electron/dist/latest.yml
             packages/electron/dist/SHA256SUMS.txt
+            LICENSE
+            THIRD_PARTY_NOTICES.md
+            THIRD_PARTY_LICENSES.txt
+            docs/OPEN_SOURCE_COMPONENTS.md
+            legal/third-party/**
