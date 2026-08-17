@@ -1,0 +1,15 @@
+{
+  "name": "@opendeputy/agent-kit",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.29.0",
+    "@playwright/mcp": "0.0.79",
+    "@zavora-ai/computer-use-mcp": "7.0.0",
+    "open-browser-use": "0.1.41",
+    "sharp": "0.35.3",
+    "zod": "4.3.6"
+  }
+}

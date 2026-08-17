@@ -39,7 +39,8 @@ const currentOrigin = (() => {
   }
 })();
 const isLocalPage = currentOrigin !== 'null'
-  && (currentOrigin === 'openchamber-ui://app'
+  && (currentOrigin === 'opendeputy-ui://app'
+  || currentOrigin === 'openchamber-ui://app'
   || (localOrigin && currentOrigin === localOrigin));
 
 // Remote pages need __OPENCHAMBER_LOCAL_ORIGIN__ so the HostSwitcher knows

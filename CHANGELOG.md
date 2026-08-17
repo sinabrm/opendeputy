@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- **Built-in agent tools:** Windows installations now include eight managed MCP entries and five skills by default, with their commands resolved from the installed OpenDeputy package instead of user-specific paths.
 - **Open-source transparency and release integrity:** Distribution boundaries, exact runtime pins, downloadable model provenance and checksums, generated dependency licenses, and packaged legal notices are now documented and enforced by release checks.
 
 ## [1.19.0] - 2026-08-15

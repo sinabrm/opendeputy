@@ -26,6 +26,14 @@ An OpenCode-supported AI provider, model, account, API key, or subscription is n
 
 Windows desktop packages include [Open Computer Use](https://github.com/iFurySt/open-codex-computer-use), version 0.3.1, licensed under the MIT License. OpenDeputy packages its `LICENSE` and `README.md` beside the runtime and exposes it as an approval-gated MCP computer-use capability.
 
+### Managed agent kit
+
+Windows desktop packages include [Playwright MCP](https://github.com/microsoft/playwright-mcp) 0.0.79 under Apache-2.0, [Open Browser Use](https://github.com/iFurySt/open-browser-use) 0.1.41 under MIT, and [`@zavora-ai/computer-use-mcp`](https://www.npmjs.com/package/@zavora-ai/computer-use-mcp) 7.0.0 under MIT. Their package and transitive license texts are recorded in [`THIRD_PARTY_LICENSES.txt`](THIRD_PARTY_LICENSES.txt). The Chrome extension used by Open Browser Use is not silently installed by the Windows package.
+
+Windows desktop packages also include [TouchPoint](https://github.com/Touchpoint-Labs/touchpoint) `touchpoint-py` 0.3.0 under MIT and the official Python 3.12.10 embeddable runtime under the Python Software Foundation License. Python package metadata and retained license files ship beside the portable runtime under `resources/touchpoint-runtime`; the JavaScript/npm inventory remains in [`THIRD_PARTY_LICENSES.txt`](THIRD_PARTY_LICENSES.txt).
+
+The managed visual-grounding server uses Sharp 0.35.3. Its Windows native package declares `Apache-2.0 AND LGPL-3.0-or-later` because it carries the Sharp addon and dynamically linked libvips runtime; the generated license inventory preserves the package declaration and shipped license text.
+
 ### Electron
 
 The Windows desktop shell includes [Electron](https://github.com/electron/electron), resolved from the release lockfile under the MIT License. Electron includes Chromium, Node.js, and other components whose notices are distributed with Electron, including Electron's generated Chromium license notice.
@@ -71,7 +79,7 @@ The following items are not redistributed in the Windows installer:
 - [ActivityWatch](https://github.com/ActivityWatch/activitywatch) for optional local activity history.
 - `cloudflared` and [ngrok](https://ngrok.com/) tunnel clients on Windows.
 - Optional OpenCode provider plugins, including [`@openchamber/opencode-claude`](https://github.com/openchamber/opencode-claude), [`@openchamber/opencode-commandcode`](https://github.com/openchamber/opencode-commandcode), and [`@openchamber/opencode-cursor`](https://github.com/openchamber/opencode-cursor).
-- Optional skills selected from [Anthropic's public skills repository](https://github.com/anthropics/skills), [ClawdHub](https://clawdhub.com/), or another Git repository.
-- MCP servers, plugins, commands, skills, models, themes, and executables added to a user's OpenCode or OpenDeputy configuration.
+- Additional skills selected from [Anthropic's public skills repository](https://github.com/anthropics/skills), [ClawdHub](https://clawdhub.com/), or another Git repository beyond the four managed skills shipped in the Windows agent kit.
+- MCP servers, plugins, commands, skills, models, themes, and executables added to a user's OpenCode or OpenDeputy configuration beyond the managed agent kit.
 
 Each item remains subject to its own license and, where applicable, its publisher's privacy and service terms. Installing or configuring an item does not make it part of OpenDeputy or place it under OpenDeputy's MIT License.

@@ -14,9 +14,14 @@ the user can want independently:
   and optional activity history. It follows the agent-control setting.
 
 The control settings default to on, are toggled in Settings → General → OpenCode
-CLI, and apply on the next managed OpenCode restart. Desktop packages
-also inject `open_deputy_computer` when the bundled Open Computer Use runtime is
-available; discovery is allowed by default and actions require approval.
+CLI, and apply on the next managed OpenCode restart. Desktop packages also
+inject the managed agent kit. It defines `playwright`, `open_computer_use`,
+`open_browser_use`, `computer_use`, `agent_overlay`, `touchpoint`,
+`visual_grounding`, and `workspace_tools`; all eight start by default. TouchPoint
+runs from the portable Python runtime bundled in the Windows installer, so it
+does not depend on a system Python or an OpenChamber tools directory. Discovery is allowed by default and
+computer-changing actions require approval. Four packaged skill paths join
+OpenCode's built-in `customize-opencode` skill.
 
 Each tool carries only its own actions and
 only the parameters those actions use, so turning one off removes its inputs

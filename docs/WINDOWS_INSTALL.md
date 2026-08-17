@@ -14,7 +14,7 @@
 4. Start OpenDeputy. The bundled OpenCode service starts automatically.
 5. Open **Settings → Providers**, connect a provider, then choose a model in chat.
 
-The installer already contains Electron, OpenCode CLI, Open Computer Use, and the web interface. Do not install those separately.
+The installer already contains Electron, OpenCode CLI, Open Computer Use, the portable TouchPoint/Python runtime, the web interface, eight enabled managed MCPs, and four managed skills. OpenCode contributes the fifth built-in skill. Do not install those components separately. Open Browser Use still requires its Chrome extension to be installed and connected before it can control the user's real Chrome profile.
 
 ## If startup fails
 

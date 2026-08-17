@@ -1143,6 +1143,39 @@ const exposeBundledComputerUse = () => {
   const binary = resolveBundledComputerUseBinary();
   if (binary) process.env.OPENDEPUTY_COMPUTER_USE_BINARY = binary;
 };
+const resolveBundledAgentKitRoot = () => {
+  const candidate = isDev
+    ? path.join(__dirname, 'agent-kit')
+    : path.join(process.resourcesPath, 'agent-kit');
+  return fs.existsSync(path.join(candidate, 'package.json')) ? candidate : null;
+};
+const resolveBundledTouchpointPython = () => {
+  if (process.platform !== 'win32') return null;
+  const candidate = path.join(resourceRoot(), 'touchpoint-runtime', 'python.exe');
+  return fs.existsSync(candidate) ? candidate : null;
+};
+const resolveBundledOpenCodeBinary = () => {
+  const executable = process.platform === 'win32' ? 'opencode.exe' : 'opencode';
+  const candidate = path.join(resourceRoot(), 'opencode-cli', executable);
+  return fs.existsSync(candidate) ? candidate : null;
+};
+const exposeBundledAgentKit = () => {
+  const agentKitRoot = resolveBundledAgentKitRoot();
+  if (agentKitRoot && !process.env.OPENDEPUTY_AGENT_KIT_ROOT) {
+    process.env.OPENDEPUTY_AGENT_KIT_ROOT = agentKitRoot;
+  }
+  if (!process.env.OPENDEPUTY_NODE_BINARY) {
+    process.env.OPENDEPUTY_NODE_BINARY = process.execPath;
+  }
+  const touchpointPython = resolveBundledTouchpointPython();
+  if (touchpointPython && !process.env.OPENDEPUTY_TOUCHPOINT_PYTHON) {
+    process.env.OPENDEPUTY_TOUCHPOINT_PYTHON = touchpointPython;
+  }
+  const openCodeBinary = resolveBundledOpenCodeBinary();
+  if (openCodeBinary && !process.env.OPENDEPUTY_OPENCODE_BINARY) {
+    process.env.OPENDEPUTY_OPENCODE_BINARY = openCodeBinary;
+  }
+};
 const shouldUsePackagedUi = () => {
   if (process.env.OPENCHAMBER_ELECTRON_LOAD_SERVER_UI === '1') return false;
   if (process.env.OPENCHAMBER_ELECTRON_USE_BUNDLED_UI === '1') return true;
@@ -1516,6 +1549,7 @@ const spawnLocalServer = async () => {
   recordElectronStartupPerformance('electron.server.start');
   inheritUserShellEnv();
   exposeBundledComputerUse();
+  exposeBundledAgentKit();
 
   const settings = readSettingsRoot();
   const storedPort = Number.isFinite(settings.desktopLocalPort) ? settings.desktopLocalPort : null;

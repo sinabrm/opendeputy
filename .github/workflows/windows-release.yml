@@ -28,6 +28,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.10'
       - run: bun install --frozen-lockfile
       - run: bun run release:prepare
       - run: bun run electron:build

@@ -1482,6 +1482,7 @@ async function main(options = {}) {
   const app = express();
   const serverStartedAt = new Date().toISOString();
   const packagedClientOrigins = new Set([
+    'opendeputy-ui://app',
     'openchamber-ui://app',
     'capacitor://localhost',
     'http://localhost',

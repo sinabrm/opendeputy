@@ -1,0 +1,14 @@
+interface:
+  display_name: "Desktop Workspace"
+  short_description: "Local memory, documents, voice, and optional history"
+  default_prompt: "Use $desktop-workspace to remember approved facts, preview or convert documents, create English or Persian speech, and use optional local history."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "workspace_tools"
+      description: "Local SQLite memory, LibreOffice previews, Piper speech, and optional ActivityWatch history"
+      transport: "stdio"
+
+policy:
+  allow_implicit_invocation: true

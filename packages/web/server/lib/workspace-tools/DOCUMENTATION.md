@@ -9,7 +9,8 @@ This module provides local, user-controlled workspace capabilities to the manage
 - `service.js` owns validation, local storage, optional executable discovery, and action execution.
 - `../agent-tool/runtime.js` exposes the fixed action allowlist as `opendeputy_workspace` and forwards calls over its authenticated loopback callback.
 - `../../index.js` routes workspace actions to this service. No workspace action is available to an external OpenCode server because the plugin is injected only into an OpenCode process managed by OpenDeputy.
-- Open Computer Use is a separate bundled MCP server. Browser actions remain in the first-party `opendeputy_web` tool.
+- The managed agent kit also supplies `workspace_tools` for compatibility with the default desktop skill set. The first-party `opendeputy_workspace` tool remains the owning implementation for OpenDeputy's UI and managed callback path.
+- Open Computer Use and the other default desktop MCP entries are packaged separately. Browser actions remain available through the first-party `opendeputy_web` tool as well.
 
 ## Safety invariants
 

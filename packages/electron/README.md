@@ -13,13 +13,15 @@ bun run setup:windows
 bun run electron:dev
 ```
 
+Packaging the self-contained Windows installer also requires Python 3.12 x64 on the build machine. End users do not need Python installed.
+
 Use `bun run electron:dev:bundled` to validate staged web assets. Development uses a separate `OpenDeputy Dev` data directory.
 
 ## Packaging
 
 `bun run electron:build` builds the web UI, stages the matching OpenCode CLI, bundles the main process, rebuilds native modules for Electron, and creates an NSIS installer in `packages/electron/dist`.
 
-The installer includes Electron, compiled OpenDeputy web assets, the pinned OpenCode CLI, Open Computer Use, all Windows/tray/application icons, and generated and manually retained third-party legal notices under `resources/legal`. End users do not install the bundled runtime components separately.
+The installer includes Electron, compiled OpenDeputy web assets, the pinned OpenCode CLI, all eight enabled managed MCPs, four managed skills, Open Computer Use, a portable Python 3.12/TouchPoint runtime, all Windows/tray/application icons, and generated and manually retained third-party legal notices under `resources/legal`. End users do not install the bundled runtime components separately.
 
 Unsigned local builds are supported and must be labeled clearly. Releases are produced only by the Windows release workflow and are created as GitHub drafts.
 

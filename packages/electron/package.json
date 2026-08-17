@@ -33,9 +33,10 @@
     "electron"
   ],
   "desktopPrerequisites": [
-    "Electron runtime dependencies installed via bun install",
-    "Bun available for sidecar compilation",
-    "Windows 10 or newer",
+      "Electron runtime dependencies installed via bun install",
+      "Bun available for sidecar compilation",
+      "Python 3.12 x64 available while packaging the bundled TouchPoint runtime",
+      "Windows 10 or newer",
     "NSIS support downloaded by electron-builder"
   ],
   "scripts": {
@@ -43,7 +44,11 @@
     "build:web-assets": "node ./scripts/build-web-assets.mjs",
     "build": "bun -e \"process.exit(0)\"",
     "ensure:electron": "node ./scripts/ensure-electron.mjs",
+    "prepare:agent-kit": "node ./scripts/prepare-agent-kit.mjs",
     "prepare:opencode-cli": "node ./scripts/prepare-opencode-cli.mjs",
+    "prepare:touchpoint": "node ./scripts/prepare-touchpoint-runtime.mjs",
+    "verify:touchpoint": "node ./scripts/verify-touchpoint-runtime.mjs",
+    "verify:touchpoint:packaged": "node ./scripts/verify-touchpoint-runtime.mjs --packaged",
     "verify:opencode-cli": "node ./scripts/verify-opencode-cli.mjs --staged",
     "verify:opencode-cli:packaged": "node ./scripts/verify-opencode-cli.mjs --packaged",
     "bundle:main": "bun ./scripts/bundle-main.mjs",
@@ -53,7 +58,7 @@
     "test:updater": "node --test ./updater-capability.test.mjs ./updater-channel.test.mjs ./updater-check.test.mjs ./updater-feed.test.mjs ./scripts/finalize-latest-yml.test.mjs ./scripts/updater-e2e-fixture.test.mjs",
     "updater:e2e:fixture": "node ./scripts/updater-e2e-fixture.mjs",
     "verify:update-manifest": "node ./scripts/verify-update-manifest.mjs",
-    "package": "node ../../scripts/generate-third-party-licenses.mjs --target=windows-x64 --check && bun run build:web-assets && bun run prepare:opencode-cli && bun run bundle:main && bun run rebuild:native && node ./scripts/package.mjs",
+    "package": "bun run prepare:agent-kit && node ../../scripts/generate-third-party-licenses.mjs --target=windows-x64 --check && bun run build:web-assets && bun run prepare:opencode-cli && bun run prepare:touchpoint && bun run verify:touchpoint && bun run bundle:main && bun run rebuild:native && node ./scripts/package.mjs",
     "finalize:latest-yml": "node ./scripts/finalize-latest-yml.mjs",
     "type-check": "node --check ./main.mjs && node --check ./preload.mjs",
     "lint": "node -e \"process.exit(0)\""
@@ -93,6 +98,35 @@
           "dist/**",
           "LICENSE",
           "README.md"
+        ]
+      },
+      {
+        "from": "resources/touchpoint-runtime",
+        "to": "touchpoint-runtime",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "agent-kit",
+        "to": "agent-kit",
+        "filter": [
+          "package.json",
+          "package-lock.json",
+          "servers/**/*",
+          "skills/**/*"
+        ]
+      },
+      {
+        "from": "agent-kit/node_modules",
+        "to": "agent-kit/node_modules",
+        "filter": [
+          "**/*",
+          "!open-browser-use/native/darwin-*/**/*",
+          "!open-browser-use/native/linux-*/**/*",
+          "!open-browser-use/native/windows-arm64/**/*",
+          "!@zavora-ai/computer-use-mcp/*.darwin-*.node",
+          "!@zavora-ai/computer-use-mcp/*.linux-*.node"
         ]
       },
       {

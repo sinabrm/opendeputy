@@ -39,6 +39,24 @@ $requiredPaths = @(
   (Join-Path $resourcesRoot 'icons\tray'),
   (Join-Path $resourcesRoot 'opencode-cli\opencode.exe'),
   (Join-Path $resourcesRoot 'open-computer-use\dist\windows\amd64\open-computer-use.exe'),
+  (Join-Path $resourcesRoot 'agent-kit\package.json'),
+  (Join-Path $resourcesRoot 'agent-kit\servers\open-browser-use.mjs'),
+  (Join-Path $resourcesRoot 'agent-kit\servers\agent-overlay\server.mjs'),
+  (Join-Path $resourcesRoot 'agent-kit\servers\agent-overlay\overlay.ps1'),
+  (Join-Path $resourcesRoot 'agent-kit\servers\visual-grounding\server.mjs'),
+  (Join-Path $resourcesRoot 'agent-kit\servers\workspace-tools\server.mjs'),
+  (Join-Path $resourcesRoot 'agent-kit\skills\computer-control\SKILL.md'),
+  (Join-Path $resourcesRoot 'agent-kit\skills\desktop-workspace\SKILL.md'),
+  (Join-Path $resourcesRoot 'agent-kit\skills\open-browser-use\SKILL.md'),
+  (Join-Path $resourcesRoot 'agent-kit\skills\open-computer-use\SKILL.md'),
+  (Join-Path $resourcesRoot 'agent-kit\node_modules\@playwright\mcp\cli.js'),
+  (Join-Path $resourcesRoot 'agent-kit\node_modules\open-browser-use\native\windows-amd64\open-browser-use.exe'),
+  (Join-Path $resourcesRoot 'agent-kit\node_modules\@zavora-ai\computer-use-mcp\dist\server.js'),
+  (Join-Path $resourcesRoot 'agent-kit\node_modules\@zavora-ai\computer-use-mcp\computer-use-napi.win32-x64.node'),
+  (Join-Path $resourcesRoot 'touchpoint-runtime\python.exe'),
+  (Join-Path $resourcesRoot 'touchpoint-runtime\LICENSE.txt'),
+  (Join-Path $resourcesRoot 'touchpoint-runtime\opendeputy-touchpoint-runtime.json'),
+  (Join-Path $resourcesRoot 'touchpoint-runtime\Lib\site-packages\touchpoint\__init__.py'),
   (Join-Path $resourcesRoot 'legal\LICENSE'),
   (Join-Path $resourcesRoot 'legal\THIRD_PARTY_NOTICES.md'),
   (Join-Path $resourcesRoot 'legal\THIRD_PARTY_LICENSES.txt'),
@@ -67,6 +85,23 @@ if ($LASTEXITCODE -ne 0 -or -not $openCodeVersion) { throw 'Bundled OpenCode CLI
 $computerUse = Join-Path $resourcesRoot 'open-computer-use\dist\windows\amd64\open-computer-use.exe'
 $computerUseOutput = (& $computerUse call list_apps | Out-String)
 if ($LASTEXITCODE -ne 0 -or $computerUseOutput -notmatch 'content') { throw 'Bundled Open Computer Use list_apps check failed.' }
+
+$touchpointPython = Join-Path $resourcesRoot 'touchpoint-runtime\python.exe'
+$previousPythonNoUserSite = $env:PYTHONNOUSERSITE
+$previousPythonUtf8 = $env:PYTHONUTF8
+try {
+  $env:PYTHONNOUSERSITE = '1'
+  $env:PYTHONUTF8 = '1'
+  $touchpointOutput = (& $touchpointPython -c 'import json, touchpoint; print(json.dumps(touchpoint.diagnostics()))' | Out-String).Trim()
+} finally {
+  $env:PYTHONNOUSERSITE = $previousPythonNoUserSite
+  $env:PYTHONUTF8 = $previousPythonUtf8
+}
+if ($LASTEXITCODE -ne 0 -or -not $touchpointOutput) { throw 'Bundled TouchPoint diagnostics failed.' }
+$touchpointDiagnostics = $touchpointOutput | ConvertFrom-Json
+if (-not $touchpointDiagnostics.backend.available -or -not $touchpointDiagnostics.input_provider.available) {
+  throw 'Bundled TouchPoint Windows backend or input provider is unavailable.'
+}
 
 $hash = Get-Sha256Hex -LiteralPath $installer.FullName
 $checksumPath = Join-Path $distRoot 'SHA256SUMS.txt'
@@ -132,6 +167,7 @@ if ($LaunchSmoke) {
   SHA256 = $hash
   OpenCodeVersion = $openCodeVersion
   ComputerUse = 'list_apps passed'
+  TouchPoint = 'Windows diagnostics passed'
   Startup = $startupResult
   ChecksumFile = $checksumPath
 } | Format-List

@@ -248,7 +248,124 @@ export const OpenChamberPlugin = OpenDeputyPlugin
 `;
 };
 
-const mergeManagedConfig = (rawConfig, pluginUrl, computerUseBinary) => {
+const createManagedMcpDefaults = ({
+  path,
+  dataDir,
+  env,
+  computerUseBinary,
+  touchpointPython,
+  agentKitRoot,
+  nodeBinary,
+  openCodeBinary,
+}) => {
+  const defaults = {};
+  if (asNonEmptyString(computerUseBinary)) {
+    defaults.open_computer_use = {
+      type: 'local',
+      command: [computerUseBinary, 'mcp'],
+      enabled: true,
+      timeout: 30_000,
+    };
+  }
+  if (!asNonEmptyString(agentKitRoot) || !asNonEmptyString(nodeBinary)) return defaults;
+
+  const server = (...segments) => path.join(agentKitRoot, ...segments);
+  const nodeEnvironment = {
+    ELECTRON_RUN_AS_NODE: '1',
+    OPENDEPUTY_AGENT_KIT_DATA_DIR: path.join(dataDir, 'agent-kit'),
+    OPENDEPUTY_LEGACY_TOOLS_ROOT: asNonEmptyString(env.OPENDEPUTY_LEGACY_TOOLS_ROOT)
+      || path.join(env.LOCALAPPDATA || dataDir, 'OpenChamberTools'),
+    ...(asNonEmptyString(openCodeBinary) ? { OPENDEPUTY_OPENCODE_BINARY: openCodeBinary } : {}),
+  };
+  const nodeServer = (scriptPath, timeout, extra = {}) => ({
+    type: 'local',
+    command: [nodeBinary, scriptPath],
+    enabled: true,
+    timeout,
+    environment: { ...nodeEnvironment, ...extra },
+  });
+
+  return {
+    playwright: {
+      type: 'local',
+      command: [nodeBinary, server('node_modules', '@playwright', 'mcp', 'cli.js'), '--browser', 'chrome'],
+      enabled: true,
+      environment: nodeEnvironment,
+    },
+    ...defaults,
+    open_browser_use: nodeServer(server('servers', 'open-browser-use.mjs'), 30_000),
+    computer_use: nodeServer(
+      server('node_modules', '@zavora-ai', 'computer-use-mcp', 'dist', 'server.js'),
+      30_000,
+      {
+        COMPUTER_USE_AUDIT_LOG: 'true',
+        COMPUTER_USE_FS_ROOTS: env.USERPROFILE || env.HOME || dataDir,
+        COMPUTER_USE_LEGACY_FOCUS_TAG: 'true',
+      },
+    ),
+    agent_overlay: nodeServer(server('servers', 'agent-overlay', 'server.mjs'), 30_000),
+    ...(asNonEmptyString(touchpointPython) ? {
+      touchpoint: {
+        type: 'local',
+        command: [touchpointPython, '-m', 'touchpoint.mcp.server'],
+        enabled: true,
+        timeout: 30_000,
+        environment: {
+          PYTHONNOUSERSITE: '1',
+          PYTHONUTF8: '1',
+          TOUCHPOINT_CDP_DISCOVER: 'true',
+          TOUCHPOINT_FALLBACK_INPUT: 'false',
+        },
+      },
+    } : {}),
+    visual_grounding: nodeServer(server('servers', 'visual-grounding', 'server.mjs'), 240_000),
+    workspace_tools: nodeServer(server('servers', 'workspace-tools', 'server.mjs'), 120_000),
+  };
+};
+
+const MANAGED_PERMISSION_DEFAULTS = {
+  'open_computer_use_*': 'ask',
+  open_computer_use_list_apps: 'allow',
+  open_computer_use_get_app_state: 'allow',
+  'open_browser_use_*': 'ask',
+  open_browser_use_ping: 'allow',
+  open_browser_use_info: 'allow',
+  open_browser_use_tabs: 'allow',
+  open_browser_use_user_tabs: 'allow',
+  open_browser_use_wait_load: 'allow',
+  open_browser_use_page_info: 'allow',
+  open_browser_use_finalize_tabs: 'allow',
+  open_browser_use_turn_ended: 'allow',
+  'computer_use_*': 'ask',
+  computer_use_agent_pointer: 'deny',
+  'agent_overlay_*': 'allow',
+  'touchpoint_*': 'ask',
+  touchpoint_apps: 'allow',
+  touchpoint_diagnostics: 'allow',
+  touchpoint_windows: 'allow',
+  touchpoint_find: 'allow',
+  touchpoint_get_element: 'allow',
+  touchpoint_snapshot: 'allow',
+  touchpoint_screenshot: 'allow',
+  touchpoint_read_text: 'allow',
+  touchpoint_wait_for: 'allow',
+  touchpoint_wait_for_app: 'allow',
+  touchpoint_wait_for_window: 'allow',
+  'visual_grounding_*': 'ask',
+  visual_grounding_status: 'allow',
+  visual_grounding_detect_regions: 'allow',
+  'workspace_tools_*': 'ask',
+  workspace_tools_status: 'allow',
+  workspace_tools_memory_search: 'allow',
+  workspace_tools_memory_add: 'ask',
+  workspace_tools_document_preview: 'allow',
+  workspace_tools_document_convert: 'allow',
+  workspace_tools_voice_list: 'allow',
+  workspace_tools_voice_synthesize: 'allow',
+  workspace_tools_history_status: 'allow',
+};
+
+const mergeManagedConfig = (rawConfig, pluginUrl, managedDefaults) => {
   const errors = [];
   const parsed = asNonEmptyString(rawConfig) ? parseJsonc(rawConfig, errors, { allowTrailingComma: true }) : {};
   if (errors.length > 0 || !parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
@@ -262,27 +379,39 @@ const mergeManagedConfig = (rawConfig, pluginUrl, computerUseBinary) => {
     ...configured.filter((value) => value !== pluginUrl && (!Array.isArray(value) || value[0] !== pluginUrl)),
     pluginUrl,
   ];
-  if (asNonEmptyString(computerUseBinary)) {
+  const mcpDefaults = createManagedMcpDefaults(managedDefaults);
+  if (Object.keys(mcpDefaults).length > 0) {
     if (parsed.mcp !== undefined && (!parsed.mcp || typeof parsed.mcp !== 'object' || Array.isArray(parsed.mcp))) {
-      throw new Error('OPENCODE_CONFIG_CONTENT mcp must be an object before OpenDeputy can inject Computer Use');
+      throw new Error('OPENCODE_CONFIG_CONTENT mcp must be an object before OpenDeputy can inject its bundled MCP defaults');
     }
     parsed.mcp = {
+      ...mcpDefaults,
       ...(parsed.mcp || {}),
-      open_deputy_computer: {
-        type: 'local',
-        command: [computerUseBinary, 'mcp'],
-        enabled: true,
-        timeout: 30_000,
-      },
     };
     if (parsed.permission !== undefined && (!parsed.permission || typeof parsed.permission !== 'object' || Array.isArray(parsed.permission))) {
-      throw new Error('OPENCODE_CONFIG_CONTENT permission must be an object before OpenDeputy can protect Computer Use');
+      throw new Error('OPENCODE_CONFIG_CONTENT permission must be an object before OpenDeputy can protect its bundled MCP defaults');
     }
     parsed.permission = {
-      'open_deputy_computer_*': 'ask',
-      'open_deputy_computer_list_apps': 'allow',
-      'open_deputy_computer_get_app_state': 'allow',
+      ...MANAGED_PERMISSION_DEFAULTS,
       ...(parsed.permission || {}),
+    };
+  }
+  if (asNonEmptyString(managedDefaults.agentKitRoot)) {
+    if (parsed.skills !== undefined && (!parsed.skills || typeof parsed.skills !== 'object' || Array.isArray(parsed.skills))) {
+      throw new Error('OPENCODE_CONFIG_CONTENT skills must be an object before OpenDeputy can inject its bundled skills');
+    }
+    if (parsed.skills?.paths !== undefined && !Array.isArray(parsed.skills.paths)) {
+      throw new Error('OPENCODE_CONFIG_CONTENT skills.paths must be an array before OpenDeputy can inject its bundled skills');
+    }
+    const bundledSkillPaths = [
+      'computer-control',
+      'desktop-workspace',
+      'open-browser-use',
+      'open-computer-use',
+    ].map((name) => managedDefaults.path.join(managedDefaults.agentKitRoot, 'skills', name));
+    parsed.skills = {
+      ...(parsed.skills || {}),
+      paths: [...new Set([...(parsed.skills?.paths || []), ...bundledSkillPaths])],
     };
   }
   return JSON.stringify(parsed);
@@ -315,7 +444,16 @@ export const createAgentToolRuntime = (dependencies) => {
     activeToken = crypto.randomBytes(32).toString('base64url');
     const pluginUrl = pathToFileURL(pluginPath).href;
     return {
-      OPENCODE_CONFIG_CONTENT: mergeManagedConfig(env.OPENCODE_CONFIG_CONTENT, pluginUrl, env.OPENDEPUTY_COMPUTER_USE_BINARY),
+      OPENCODE_CONFIG_CONTENT: mergeManagedConfig(env.OPENCODE_CONFIG_CONTENT, pluginUrl, {
+        path,
+        dataDir,
+        env,
+        computerUseBinary: env.OPENDEPUTY_COMPUTER_USE_BINARY,
+        touchpointPython: env.OPENDEPUTY_TOUCHPOINT_PYTHON,
+        agentKitRoot: env.OPENDEPUTY_AGENT_KIT_ROOT,
+        nodeBinary: env.OPENDEPUTY_NODE_BINARY,
+        openCodeBinary: env.OPENDEPUTY_OPENCODE_BINARY,
+      }),
       OPENCHAMBER_AGENT_TOOL_URL: `http://127.0.0.1:${port}/api/openchamber/agent-tool`,
       OPENCHAMBER_AGENT_TOOL_TOKEN: activeToken,
     };

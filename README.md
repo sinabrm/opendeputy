@@ -19,7 +19,7 @@ OpenDeputy does not bundle a generative AI model or provider account. On first r
 
 ## What is included
 
-The Windows installer contains the OpenDeputy application and web interface, Electron, a matching OpenCode CLI, and the approval-gated Open Computer Use runtime. Local speech models download only when selected. LibreOffice, Piper, ActivityWatch, tunnel clients, provider plugins, skills, and user-configured MCP servers are optional and are not silently added to Windows.
+The Windows installer contains the OpenDeputy application and web interface, Electron, a matching OpenCode CLI, and a managed agent kit. The agent kit supplies eight enabled default MCPs, including TouchPoint through a bundled portable Python runtime, plus four packaged skills; OpenCode supplies the built-in `customize-opencode` skill. Local speech models download only when selected. LibreOffice, Piper, ActivityWatch, tunnel clients, provider plugins, and additional user-configured skills or MCP servers remain optional.
 
 OpenDeputy uses many open-source projects. The main foundations are:
 
@@ -75,7 +75,7 @@ Run `bun run tools:windows` to choose optional tools interactively. Nothing is i
 - `OPENDEPUTY_PIPER_VOICES_DIR`
 - `OPENDEPUTY_ACTIVITYWATCH_BINARY`
 
-Provider plugins, skills, and MCP servers are also user-selected extensions. OpenDeputy does not redistribute them as part of the Windows installer; each extension's own license, privacy policy, service terms, and security behavior apply.
+Provider plugins and any skills or MCP servers beyond the managed agent kit are user-selected extensions. Each extension's own license, privacy policy, service terms, and security behavior apply.
 
 ## Security
 
