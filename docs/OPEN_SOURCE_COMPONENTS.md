@@ -31,12 +31,18 @@ The `.exe` installer is self-contained for OpenDeputy's core features. End users
 | [Electron](https://github.com/electron/electron) | Windows desktop shell and embedded Chromium/Node.js runtime | Release manifest and lockfile | Bundled | MIT; Chromium and other notices ship with Electron |
 | [OpenCode](https://github.com/anomalyco/opencode) | Agent runtime and provider/plugin API | CLI and SDK `1.18.18` | Bundled | MIT |
 | [Open Computer Use](https://github.com/iFurySt/open-codex-computer-use) | Approval-gated desktop inspection and control through MCP | `0.3.1` | Bundled | MIT |
+| [Playwright MCP](https://github.com/microsoft/playwright-mcp) | Isolated browser automation MCP | `0.0.79` | Bundled in the managed agent kit | Apache-2.0 |
+| [Open Browser Use](https://github.com/iFurySt/open-browser-use) | MCP and CLI for a connected real Chrome profile | `0.1.41` | Bundled in the managed agent kit; Chrome extension connection is external | MIT |
+| [`@zavora-ai/computer-use-mcp`](https://www.npmjs.com/package/@zavora-ai/computer-use-mcp) | Windows accessibility and coordinate-control compatibility MCP | `7.0.0` | Bundled in the managed agent kit | MIT |
+| [TouchPoint](https://github.com/Touchpoint-Labs/touchpoint) | Windows UI Automation and CDP accessibility MCP | `touchpoint-py 0.3.0` on portable Python `3.12.10` | Bundled in the managed agent kit; Python packages retain their license metadata beside the runtime | MIT for TouchPoint; Python Software Foundation License for Python; transitive packages retain their own licenses |
+| [Sharp](https://sharp.pixelplumbing.com/) | Image decoding for visual grounding | `0.35.3` | Bundled in the managed agent kit; Windows native package includes dynamically linked libvips | Apache-2.0; native package declares Apache-2.0 AND LGPL-3.0-or-later |
+| OpenDeputy agent-kit adapters | Overlay, visual grounding, workspace MCP, and four managed skills | Current source | Bundled | MIT, subject to third-party notices |
 | [`sherpa-onnx-node`](https://github.com/k2-fsa/sherpa-onnx) | Native local speech inference runtime | API package `1.12.28`; Windows-x64 native package `1.13.3` resolved through its upstream optional range | Bundled; model files are not | Apache-2.0 for the runtime |
 | JavaScript/native packages | UI, server, terminal, Git, authentication, Markdown, diagrams, and other application functions | Exact versions in `bun.lock` | Bundled where reached by the packaged application | Per-package; see [`THIRD_PARTY_LICENSES.txt`](../THIRD_PARTY_LICENSES.txt) |
 
-OpenDeputy's in-app browser is implemented with Electron's Chromium view and first-party `opendeputy_web` control plumbing. It does not require or bundle Playwright MCP, Open Browser Use, a hosted browser service, or a browser extension.
+OpenDeputy's in-app browser is implemented with Electron's Chromium view and first-party `opendeputy_web` control plumbing. The desktop agent kit additionally bundles Playwright MCP and the Open Browser Use CLI/MCP. Open Browser Use needs its separately installed Chrome extension to control a real user profile.
 
-Open Computer Use is the bundled external MCP server. The `opendeputy`, `opendeputy_web`, and `opendeputy_workspace` tools are OpenDeputy code materialized for a managed OpenCode process; they are not separate third-party MCP projects.
+Managed desktop OpenCode receives eight enabled MCP entries. TouchPoint uses its self-contained packaged Python runtime and does not rely on a system Python or another application installation. The `opendeputy`, `opendeputy_web`, and `opendeputy_workspace` tools are also materialized from OpenDeputy code; they are not separate third-party MCP projects.
 
 ## Major bundled interface foundations
 
@@ -119,9 +125,9 @@ OpenDeputy shows these provider plugins in Settings, but does not preinstall or 
 
 OpenDeputy also supports arbitrary OpenCode plugin package specs and local plugin files. Those are user-added code and run with the permissions granted to OpenCode; review them before installation.
 
-## Optional skills
+## Skills
 
-The skills catalog can scan and install skills from [Anthropic's public skills repository](https://github.com/anthropics/skills), the [ClawdHub](https://clawdhub.com/) community registry, or a user-provided Git repository. Skills are not preinstalled by the OpenDeputy Windows package.
+The Windows agent kit includes `computer-control`, `desktop-workspace`, `open-browser-use`, and `open-computer-use`. OpenCode supplies the built-in `customize-opencode` skill, producing five default discovered skills. The skills catalog can also scan and install skills from [Anthropic's public skills repository](https://github.com/anthropics/skills), the [ClawdHub](https://clawdhub.com/) community registry, or a user-provided Git repository.
 
 Installed skills may contain instructions, scripts, references, and assets. Their licenses and security behavior vary by repository and sometimes by individual skill. Review each selected skill's `SKILL.md`, supporting files, source, and license before installing it. A catalog listing is not an endorsement or a claim that the skill is covered by OpenDeputy's MIT License.
 
@@ -129,7 +135,7 @@ Installed skills may contain instructions, scripts, references, and assets. Thei
 
 OpenDeputy can read and manage user- or project-scoped OpenCode configuration. As a result, a running installation may show MCP servers, plugins, commands, agents, skills, models, themes, external executables, or provider integrations that are not present in this repository.
 
-Examples include Playwright/browser MCP servers, Open Browser Use, visual-grounding services, office-automation MCP servers, custom local tools, and personal skills. OpenDeputy does not bundle those projects merely because a user configured them. Their installation, updates, permissions, network access, data handling, and license obligations remain the user's and the extension publisher's responsibility.
+Examples include additional browser or office-automation MCP servers, custom local tools, and personal skills beyond the managed agent kit. OpenDeputy does not bundle an extension merely because a user configured it. Its installation, updates, permissions, network access, data handling, and license obligations remain the user's and the extension publisher's responsibility.
 
 Compatibility is also not inclusion: support for an `opencode-snippets`-compatible file format or discovery of an installed terminal/application does not mean that OpenDeputy copied or distributed that project.
 
@@ -137,7 +143,7 @@ Compatibility is also not inclusion: support for an `opencode-snippets`-compatib
 
 The source checkout uses tools such as Bun, TypeScript, Vite, Vitest, ESLint, electron-builder, NSIS support downloaded by electron-builder, patch-package, and repository automation. These tools build or validate release artifacts; they are not separate end-user capabilities in the Windows app. Their exact resolved versions are recorded by the lockfile; packages included in the packaged Windows-x64 dependency graph also appear in the generated license inventory.
 
-Repository `.agents/skills`, tests, fixtures, build scripts, and contributor documentation guide development. They are not automatically installed into a user's OpenCode skills directories or included as advertised runtime extensions.
+Repository `.agents/skills` outside `packages/electron/agent-kit/skills`, tests, fixtures, build scripts, and contributor documentation guide development. They are not automatically installed into a user's OpenCode skills directories or included as advertised runtime extensions.
 
 ## Sources of truth
 

@@ -12,8 +12,8 @@ included only when installed for the declared target platform.
 Packages with omitted root license files require an exact reviewed exception
 in scripts/third-party-license-policy.json.
 
-Packages: 668
-Unique retained license/notice texts: 297
+Packages: 708
+Unique retained license/notice texts: 318
 
 DEPENDENCY INVENTORY
 ====================
@@ -539,12 +539,36 @@ Retained files:
   - LICENSE (SHA-256 9dd7ef86e682bd27a468f7e0225b6bfac7c5048627b8bfcc05bc484b9f35be41)
 
 --------------------------------------------------------------------------------
+@hono/node-server@1.19.17
+License: MIT
+Repository: https://github.com/honojs/node-server
+Included by: managed desktop agent kit
+Retained files:
+  - LICENSE (SHA-256 35d16fc259cf940287dbd8f7106d6e80f5316e00a51b46b399c26d4c4b377574)
+
+--------------------------------------------------------------------------------
 @huggingface/jinja@0.2.2
 License: MIT
 Repository: https://github.com/huggingface/huggingface.js
 Included by: root application runtime; shared browser UI
 Retained files:
   - LICENSE (SHA-256 6930e6fa431d44bce40c7e60463141c6ce9444c8111e899d6df033e441c4662a)
+
+--------------------------------------------------------------------------------
+@img/colour@1.1.0
+License: MIT
+Repository: https://github.com/lovell/colour
+Included by: managed desktop agent kit
+Retained files:
+  - LICENSE.md (SHA-256 da3044f63e02b6d689405434efdd9729918a1578b49101075442d1b394ff2284)
+
+--------------------------------------------------------------------------------
+@img/sharp-win32-x64@0.35.3
+License: Apache-2.0 AND LGPL-3.0-or-later
+Repository: https://github.com/lovell/sharp
+Included by: managed desktop agent kit
+Retained files:
+  - LICENSE (SHA-256 9ff562631a04b8cb1030c53fdf461bd749c9af0655d86e4f17eb270e935a7fe2)
 
 --------------------------------------------------------------------------------
 @internationalized/date@3.11.0
@@ -745,6 +769,14 @@ Repository: https://github.com/marijnh/find-cluster-break
 Included by: root application runtime; shared browser UI
 Retained files:
   - LICENSE (SHA-256 081220319c27e9247dfc67a9ee5b3dcdd879724422b86da7bc7b40ad0bd5a615)
+
+--------------------------------------------------------------------------------
+@modelcontextprotocol/sdk@1.29.0
+License: MIT
+Repository: https://github.com/modelcontextprotocol/typescript-sdk
+Included by: managed desktop agent kit
+Retained files:
+  - LICENSE (SHA-256 8694aa57bec3f3e9ad0559e91c63a795904e967104efb9d6fc9d153e56f567c2)
 
 --------------------------------------------------------------------------------
 @octokit/auth-token@6.0.0
@@ -971,6 +1003,14 @@ Included by: shared browser UI
 Retained files: (none found in the installed package root)
 Reviewed exception: The published subpackage omits a root license file; its declared Apache-2.0 expression was reviewed.
 Manual license: legal/third-party/Apache-2.0-LICENSE.txt
+
+--------------------------------------------------------------------------------
+@playwright/mcp@0.0.79
+License: Apache-2.0
+Repository: https://github.com/microsoft/playwright-mcp
+Included by: managed desktop agent kit
+Retained files:
+  - LICENSE (SHA-256 72de958052e494b0882a16da141b5524dcc8b87153a3a86323ab2e3dc1fc03a1)
 
 --------------------------------------------------------------------------------
 @protobufjs/aspromise@1.1.2
@@ -1734,6 +1774,14 @@ Retained files:
   - LICENSE (SHA-256 58d1e17ffe5109a7ae296caafcadfdbe6a7d176f0bc4ab01e12a689b0499d8bd)
 
 --------------------------------------------------------------------------------
+@zavora-ai/computer-use-mcp@7.0.0
+License: MIT
+Repository: (not declared)
+Included by: managed desktop agent kit
+Retained files:
+  - LICENSE (SHA-256 af396a93e64b544d23b88f7b8338281da0465291554fe88345221d12ff448910)
+
+--------------------------------------------------------------------------------
 @zumer/snapdom@2.12.8
 License: MIT
 Repository: https://github.com/zumerlab/snapdom
@@ -1753,7 +1801,7 @@ Retained files:
 accepts@2.0.0
 License: MIT
 Repository: jshttp/accepts
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - LICENSE (SHA-256 a3fb4c94aaf6d3f8f8c8302b56cb6680cc8da3f34618bda29f70491cacb36fb3)
 
@@ -1780,6 +1828,22 @@ Repository: https://github.com/node-modules/agentkeepalive
 Included by: web server and browser application
 Retained files:
   - LICENSE (SHA-256 d445be1c5d8732ffe06b1b25d394f71ab28c2dcad4b5339590bff54f0b831aa4)
+
+--------------------------------------------------------------------------------
+ajv-formats@3.0.1
+License: MIT
+Repository: https://github.com/ajv-validator/ajv-formats
+Included by: managed desktop agent kit
+Retained files:
+  - LICENSE (SHA-256 0eb7e0538bf86badc8cc36fc66164d495630f21f6998529188406fb00c782a5e)
+
+--------------------------------------------------------------------------------
+ajv@8.20.0
+License: MIT
+Repository: ajv-validator/ajv
+Included by: managed desktop agent kit
+Retained files:
+  - LICENSE (SHA-256 f2fde84e6c1f177681e152a4459f025a87e855c0aa374238ba79b2e72a15b57c)
 
 --------------------------------------------------------------------------------
 ansi-regex@5.0.1
@@ -1967,6 +2031,14 @@ Retained files:
   - LICENSE (SHA-256 7cb4d976f1c892a7c9dd32d4caf33d88c4d9f99447ba12f09ae295eae440cecb)
 
 --------------------------------------------------------------------------------
+body-parser@2.3.0
+License: MIT
+Repository: expressjs/body-parser
+Included by: managed desktop agent kit
+Retained files:
+  - LICENSE (SHA-256 7cb4d976f1c892a7c9dd32d4caf33d88c4d9f99447ba12f09ae295eae440cecb)
+
+--------------------------------------------------------------------------------
 braces@3.0.3
 License: MIT
 Repository: micromatch/braces
@@ -2010,7 +2082,7 @@ Retained files:
 bytes@3.1.2
 License: MIT
 Repository: visionmedia/bytes.js
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - LICENSE (SHA-256 811223f2d33910a962de4d6dc12bcb545252992e9d004f78936b94afde443749)
 
@@ -2018,7 +2090,7 @@ Retained files:
 call-bind-apply-helpers@1.0.2
 License: MIT
 Repository: https://github.com/ljharb/call-bind-apply-helpers
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - LICENSE (SHA-256 3df72862fb6dc141ca353b587ef1000832784160195073506daf8a56417144c7)
 
@@ -2026,7 +2098,7 @@ Retained files:
 call-bound@1.0.4
 License: MIT
 Repository: https://github.com/ljharb/call-bound
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - LICENSE (SHA-256 3df72862fb6dc141ca353b587ef1000832784160195073506daf8a56417144c7)
 
@@ -2223,10 +2295,26 @@ Retained files:
   - LICENSE (SHA-256 0696190d4967590d31936e7278676d601ee1acf3a0bc53859751bcb2b093c088)
 
 --------------------------------------------------------------------------------
+content-disposition@1.1.0
+License: MIT
+Repository: jshttp/content-disposition
+Included by: managed desktop agent kit
+Retained files:
+  - LICENSE (SHA-256 0696190d4967590d31936e7278676d601ee1acf3a0bc53859751bcb2b093c088)
+
+--------------------------------------------------------------------------------
 content-type@1.0.5
 License: MIT
 Repository: jshttp/content-type
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
+Retained files:
+  - LICENSE (SHA-256 fb06d5b872e5eac1ab3d21198d91270a3073ff08ba87fab2a9f4e32ccf573884)
+
+--------------------------------------------------------------------------------
+content-type@2.1.0
+License: MIT
+Repository: jshttp/content-type
+Included by: managed desktop agent kit
 Retained files:
   - LICENSE (SHA-256 fb06d5b872e5eac1ab3d21198d91270a3073ff08ba87fab2a9f4e32ccf573884)
 
@@ -2234,7 +2322,7 @@ Retained files:
 cookie-signature@1.2.2
 License: MIT
 Repository: https://github.com/visionmedia/node-cookie-signature
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - LICENSE (SHA-256 bdbe1c003ac6addf8ac4be9c54f2e04f7436e96c99eaabab411e91ede5df5d63)
 
@@ -2242,9 +2330,17 @@ Retained files:
 cookie@0.7.2
 License: MIT
 Repository: jshttp/cookie
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - LICENSE (SHA-256 b970cfe4a7f34ca7455ca2dd6cc4fa3a229c34c67eb62e0e5f746131bead1e70)
+
+--------------------------------------------------------------------------------
+cors@2.8.6
+License: MIT
+Repository: expressjs/cors
+Included by: managed desktop agent kit
+Retained files:
+  - LICENSE (SHA-256 6efa74cb6d21cebbcfe9167d1d0147acbc0d0e6be4d9e1a5947931f980424dbd)
 
 --------------------------------------------------------------------------------
 crelt@1.0.6
@@ -2274,7 +2370,7 @@ Retained files:
 cross-spawn@7.0.6
 License: MIT
 Repository: https://github.com/moxystudio/node-cross-spawn
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - LICENSE (SHA-256 5e7b89989b946961a7f3a87fc689adf92798f4322e2a27f1852c94ff2f9fa7f6)
 
@@ -2290,7 +2386,7 @@ Retained files:
 debug@4.4.3
 License: MIT
 Repository: https://github.com/debug-js/debug
-Included by: Electron desktop shell; root application runtime; shared browser UI; web server and browser application
+Included by: Electron desktop shell; managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - LICENSE (SHA-256 d9e5aa2747f30eae5b2e977871c30b8638266900c131efa16e4caa844e89402e)
 
@@ -2354,7 +2450,7 @@ Retained files:
 depd@2.0.0
 License: MIT
 Repository: dougwilson/nodejs-depd
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - LICENSE (SHA-256 f889cb863a1fba9a882d6effaf357af3bdbff9c9ffd087594d00c614e0c31efb)
 
@@ -2370,7 +2466,7 @@ Retained files:
 detect-libc@2.1.2
 License: Apache-2.0
 Repository: https://github.com/lovell/detect-libc
-Included by: root application runtime; shared browser UI
+Included by: managed desktop agent kit; root application runtime; shared browser UI
 Retained files:
   - LICENSE (SHA-256 c5accbbd8546e94c34aed24afe689a617627d18eed5a6c48277e48db57c23851)
 
@@ -2418,7 +2514,7 @@ Retained files:
 dunder-proto@1.0.1
 License: MIT
 Repository: https://github.com/es-shims/dunder-proto
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - LICENSE (SHA-256 42fbee6b9cc2d44bbb5d831882e4fff369b9f77e1d459aa027b04d673eeaf927)
 
@@ -2434,7 +2530,7 @@ Retained files:
 ee-first@1.1.1
 License: MIT
 Repository: jonathanong/ee-first
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - LICENSE (SHA-256 d2c135d525031960ab2ac5d3cb806f76138ac496f98bddfe677066e53871defc)
 
@@ -2514,7 +2610,7 @@ Retained files:
 encodeurl@2.0.0
 License: MIT
 Repository: pillarjs/encodeurl
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - LICENSE (SHA-256 b4d257dd0d1cd5223ce2dac779673c6fcb47cbe7ee0416a0e53da2ec060046c9)
 
@@ -2546,7 +2642,7 @@ Retained files:
 es-define-property@1.0.1
 License: MIT
 Repository: https://github.com/ljharb/es-define-property
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - LICENSE (SHA-256 3df72862fb6dc141ca353b587ef1000832784160195073506daf8a56417144c7)
 
@@ -2554,7 +2650,7 @@ Retained files:
 es-errors@1.3.0
 License: MIT
 Repository: https://github.com/ljharb/es-errors
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - LICENSE (SHA-256 3df72862fb6dc141ca353b587ef1000832784160195073506daf8a56417144c7)
 
@@ -2563,6 +2659,14 @@ es-object-atoms@1.1.1
 License: MIT
 Repository: https://github.com/ljharb/es-object-atoms
 Included by: root application runtime; shared browser UI; web server and browser application
+Retained files:
+  - LICENSE (SHA-256 3df72862fb6dc141ca353b587ef1000832784160195073506daf8a56417144c7)
+
+--------------------------------------------------------------------------------
+es-object-atoms@1.1.2
+License: MIT
+Repository: https://github.com/ljharb/es-object-atoms
+Included by: managed desktop agent kit
 Retained files:
   - LICENSE (SHA-256 3df72862fb6dc141ca353b587ef1000832784160195073506daf8a56417144c7)
 
@@ -2586,7 +2690,7 @@ Retained files:
 escape-html@1.0.3
 License: MIT
 Repository: component/escape-html
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - LICENSE (SHA-256 b2bf1d8ed89e2f6d0b220a8afc51a9c0cd52f8de5213332c048255a15d81bbd6)
 
@@ -2610,7 +2714,7 @@ Retained files:
 etag@1.8.1
 License: MIT
 Repository: jshttp/etag
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - LICENSE (SHA-256 49fa72ab1de52693fd1633805f0a1945f147934adaa71f8112426f7a52805965)
 
@@ -2639,6 +2743,22 @@ Retained files:
   - LICENSE (SHA-256 43070e2d4e532684de521b885f385d0841030efa2b1a20bafb76133a5e1379c1)
 
 --------------------------------------------------------------------------------
+eventsource-parser@3.1.1
+License: MIT
+Repository: https://github.com/rexxars/eventsource-parser
+Included by: managed desktop agent kit
+Retained files:
+  - LICENSE (SHA-256 39813fa23b1960640775d387e448bd83fe86c53bf502db509570fdf18a39b4f4)
+
+--------------------------------------------------------------------------------
+eventsource@3.0.7
+License: MIT
+Repository: https://git@github.com/EventSource/eventsource
+Included by: managed desktop agent kit
+Retained files:
+  - LICENSE (SHA-256 e4f413b3ca5e13fb438a0527202f4f8c13c8c222513bc34a38663d5383994a18)
+
+--------------------------------------------------------------------------------
 expand-template@2.0.3
 License: (MIT OR WTFPL)
 Repository: https://github.com/ralphtheninja/expand-template
@@ -2647,10 +2767,18 @@ Retained files:
   - LICENSE (SHA-256 0967624813244bf47da346449804af853437433cbdeb8c977f1e0d4bd14e0a3b)
 
 --------------------------------------------------------------------------------
+express-rate-limit@8.6.2
+License: MIT
+Repository: https://github.com/express-rate-limit/express-rate-limit
+Included by: managed desktop agent kit
+Retained files:
+  - license.md (SHA-256 eabeb1e260c5cebed80e60ab0971541a2677e3ea09528eb5bf33213075b2654b)
+
+--------------------------------------------------------------------------------
 express@5.2.1
 License: MIT
 Repository: expressjs/express
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - LICENSE (SHA-256 93321073ebe5acc41f6fa518af8c63f0ad258c3f1ec5ce2a41d3f0a20642768a)
 
@@ -2687,12 +2815,28 @@ Retained files:
   - LICENSE (SHA-256 d49ce1d45d3503ffb27bcec6f8b15499065cb306553b3f1db39611f200e6f471)
 
 --------------------------------------------------------------------------------
+fast-deep-equal@3.1.3
+License: MIT
+Repository: https://github.com/epoberezkin/fast-deep-equal
+Included by: managed desktop agent kit
+Retained files:
+  - LICENSE (SHA-256 aa407ee69b3f646286f5162d0679256a0fe5b7fcc51f104ffb647efe167715ea)
+
+--------------------------------------------------------------------------------
 fast-fifo@1.3.2
 License: MIT
 Repository: https://github.com/mafintosh/fast-fifo
 Included by: root application runtime; shared browser UI
 Retained files:
   - LICENSE (SHA-256 534b9a28dc55f4880ec7212c0969ff210bf217495bc6b00df98a6c58d17f30b7)
+
+--------------------------------------------------------------------------------
+fast-uri@3.1.5
+License: BSD-3-Clause
+Repository: https://github.com/fastify/fast-uri
+Included by: managed desktop agent kit
+Retained files:
+  - LICENSE (SHA-256 b010b0dfdfdb23d7396e03b82cd4621fc9bb8f95d6b0aea70b9c24e12074c786)
 
 --------------------------------------------------------------------------------
 fflate@0.8.3
@@ -2714,7 +2858,7 @@ Retained files:
 finalhandler@2.1.1
 License: MIT
 Repository: pillarjs/finalhandler
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - LICENSE (SHA-256 887ee21f80fdb756eaf9d0bcc4a5a1941d409a4543443c194931375dee59661b)
 
@@ -2770,7 +2914,7 @@ Retained files:
 forwarded@0.2.0
 License: MIT
 Repository: jshttp/forwarded
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - LICENSE (SHA-256 0696190d4967590d31936e7278676d601ee1acf3a0bc53859751bcb2b093c088)
 
@@ -2786,7 +2930,7 @@ Retained files:
 fresh@2.0.0
 License: MIT
 Repository: jshttp/fresh
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - LICENSE (SHA-256 72bb6356e9efb4942c80e26ff54be9191267f62a8c2651d0b5fcd5f872737da0)
 
@@ -2810,7 +2954,7 @@ Retained files:
 function-bind@1.1.2
 License: MIT
 Repository: https://github.com/Raynos/function-bind
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - LICENSE (SHA-256 741668cc22140f4a3837acf3feb70734fb4f2b04403455c5c31acc3882aa92d0)
 
@@ -2842,7 +2986,7 @@ Retained files:
 get-intrinsic@1.3.0
 License: MIT
 Repository: https://github.com/ljharb/get-intrinsic
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - LICENSE (SHA-256 006a2e42087fe23821b76fdea304cc8ec0ea8f8851256fe12d3b7f8f766e4003)
 
@@ -2858,7 +3002,7 @@ Retained files:
 get-proto@1.0.1
 License: MIT
 Repository: https://github.com/ljharb/get-proto
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - LICENSE (SHA-256 c09860913a77771e9c16b6a50ea8483880b6b9561be8226e052b80fbcf738102)
 
@@ -2882,7 +3026,7 @@ Retained files:
 gopd@1.2.0
 License: MIT
 Repository: https://github.com/ljharb/gopd
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - LICENSE (SHA-256 3f7cd27a6e506293b5ee0b0ed266d54a9407690293651369a8c1f211eaaac11f)
 
@@ -2906,7 +3050,7 @@ Reviewed exception: The published package declares ISC but omits a root license 
 has-symbols@1.1.0
 License: MIT
 Repository: https://github.com/inspect-js/has-symbols
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - LICENSE (SHA-256 fdb3f0dc5ffa977dbc1724c0a54911666b5f1c50d9aceec9756d271cf4320abe)
 
@@ -2923,6 +3067,14 @@ hasown@2.0.2
 License: MIT
 Repository: https://github.com/inspect-js/hasOwn
 Included by: root application runtime; shared browser UI; web server and browser application
+Retained files:
+  - LICENSE (SHA-256 928a86b1d2984fd8ca1e148ef9c3b80ec4ee5e452aa58b0fda60a8f46f8c7dc6)
+
+--------------------------------------------------------------------------------
+hasown@2.0.4
+License: MIT
+Repository: https://github.com/inspect-js/hasOwn
+Included by: managed desktop agent kit
 Retained files:
   - LICENSE (SHA-256 928a86b1d2984fd8ca1e148ef9c3b80ec4ee5e452aa58b0fda60a8f46f8c7dc6)
 
@@ -3023,6 +3175,14 @@ Retained files:
   - LICENSE.md (SHA-256 4dd3b8d86e30d9f1954b069c32db04a7bbf0970133bda602544b9efc4f85e7d4)
 
 --------------------------------------------------------------------------------
+hono@4.13.2
+License: MIT
+Repository: https://github.com/honojs/hono
+Included by: managed desktop agent kit
+Retained files:
+  - LICENSE (SHA-256 2e0a854a11062f91280bdd32ad287d311a394f55e22b885948bfd965398327f9)
+
+--------------------------------------------------------------------------------
 html-to-image@1.11.13
 License: MIT
 Repository: https://github.com/bubkoo/html-to-image
@@ -3050,7 +3210,7 @@ Retained files:
 http-errors@2.0.1
 License: MIT
 Repository: jshttp/http-errors
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - LICENSE (SHA-256 6a119a98281dc6d94fdbcb91563f58f0083332902fff6dd9d5f498943efdc474)
 
@@ -3103,6 +3263,14 @@ Retained files:
   - LICENSE (SHA-256 48186f5950f28caaafaa7f4c18b0b31350bea5c93f3a2d74b883b35a0d528863)
 
 --------------------------------------------------------------------------------
+iconv-lite@0.7.3
+License: MIT
+Repository: https://github.com/pillarjs/iconv-lite
+Included by: managed desktop agent kit
+Retained files:
+  - LICENSE (SHA-256 48186f5950f28caaafaa7f4c18b0b31350bea5c93f3a2d74b883b35a0d528863)
+
+--------------------------------------------------------------------------------
 ieee754@1.2.1
 License: BSD-3-Clause
 Repository: https://github.com/feross/ieee754
@@ -3114,7 +3282,7 @@ Retained files:
 inherits@2.0.4
 License: ISC
 Repository: https://github.com/isaacs/inherits
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - LICENSE (SHA-256 3a395674c5c917a5c484fbb4825d855da35333cc24cf770efa7e2f0420ecba14)
 
@@ -3143,10 +3311,18 @@ Retained files:
   - LICENSE.md (SHA-256 74ad53cfe5ea394ab661ff5b7b9962cc07cd8c653c6c277e365e49475f6bd7c3)
 
 --------------------------------------------------------------------------------
+ip-address@10.5.0
+License: MIT
+Repository: https://github.com/beaugunderson/ip-address
+Included by: managed desktop agent kit
+Retained files:
+  - LICENSE (SHA-256 02d42589c6442c0408b2ed382ffd4eca16ba62565ba748fd08a1e5c07bd1a42e)
+
+--------------------------------------------------------------------------------
 ipaddr.js@1.9.1
 License: MIT
 Repository: https://github.com/whitequark/ipaddr.js
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - LICENSE (SHA-256 ad66ea5b7919ff9ec5a234a131e09ca4ac761bacb9d2c840f2d2c5d1691ee5e1)
 
@@ -3258,7 +3434,7 @@ Retained files:
 is-promise@4.0.0
 License: MIT
 Repository: https://github.com/then/is-promise
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - LICENSE (SHA-256 44191656d296391e0ec97e32f5385f0d02b6f2992694082d22ea04ba0f66f9e4)
 
@@ -3266,7 +3442,7 @@ Retained files:
 isexe@2.0.0
 License: ISC
 Repository: https://github.com/isaacs/isexe
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - LICENSE (SHA-256 0ae52fe329ccfd23fedbd688361bd0dedaf5cae3e3516eb2ad17831f2d8b347c)
 
@@ -3279,12 +3455,36 @@ Retained files:
   - LICENSE.md (SHA-256 d6f4fc856b9900ac2bb491c9c82cfbb5ff8d9b8fb3d22c7dc47dd5ac644c79c4)
 
 --------------------------------------------------------------------------------
+jose@6.2.9
+License: MIT
+Repository: panva/jose
+Included by: managed desktop agent kit
+Retained files:
+  - LICENSE.md (SHA-256 d6f4fc856b9900ac2bb491c9c82cfbb5ff8d9b8fb3d22c7dc47dd5ac644c79c4)
+
+--------------------------------------------------------------------------------
 js-yaml@4.1.1
 License: MIT
 Repository: nodeca/js-yaml
 Included by: Electron desktop shell
 Retained files:
   - LICENSE (SHA-256 bd470a9114ffb0c125553667203e65dce3ed50a339a3f5c43de24e225c040b7a)
+
+--------------------------------------------------------------------------------
+json-schema-traverse@1.0.0
+License: MIT
+Repository: https://github.com/epoberezkin/json-schema-traverse
+Included by: managed desktop agent kit
+Retained files:
+  - LICENSE (SHA-256 aa407ee69b3f646286f5162d0679256a0fe5b7fcc51f104ffb647efe167715ea)
+
+--------------------------------------------------------------------------------
+json-schema-typed@8.0.2
+License: BSD-2-Clause
+Repository: https://github.com/RemyRylan/json-schema-typed
+Included by: managed desktop agent kit
+Retained files:
+  - LICENSE.md (SHA-256 ff750f6d635d1ef5dbadc6860a5d0e6162fec8aa0bf67a9033c753c5ecba369e)
 
 --------------------------------------------------------------------------------
 json-with-bigint@3.5.7
@@ -3434,7 +3634,7 @@ Retained files:
 math-intrinsics@1.1.0
 License: MIT
 Repository: https://github.com/es-shims/math-intrinsics
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - LICENSE (SHA-256 42fbee6b9cc2d44bbb5d831882e4fff369b9f77e1d459aa027b04d673eeaf927)
 
@@ -3575,10 +3775,18 @@ Retained files:
   - LICENSE (SHA-256 0696190d4967590d31936e7278676d601ee1acf3a0bc53859751bcb2b093c088)
 
 --------------------------------------------------------------------------------
+media-typer@1.1.1
+License: MIT
+Repository: jshttp/media-typer
+Included by: managed desktop agent kit
+Retained files:
+  - LICENSE (SHA-256 0696190d4967590d31936e7278676d601ee1acf3a0bc53859751bcb2b093c088)
+
+--------------------------------------------------------------------------------
 merge-descriptors@2.0.0
 License: MIT
 Repository: sindresorhus/merge-descriptors
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - license (SHA-256 d48d15a12e71c008c4efc6324bb9ff2901a89f656adf103636dd6be38583748e)
 
@@ -3834,7 +4042,7 @@ Retained files:
 mime-db@1.54.0
 License: MIT
 Repository: jshttp/mime-db
-Included by: Electron desktop shell; root application runtime; shared browser UI; web server and browser application
+Included by: Electron desktop shell; managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - LICENSE (SHA-256 9116bd6246349c54782f0ad09542daa5f9749e10625fb2bb9801c4bf6e2fcf1e)
 
@@ -3850,7 +4058,7 @@ Retained files:
 mime-types@3.0.2
 License: MIT
 Repository: jshttp/mime-types
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - LICENSE (SHA-256 a3fb4c94aaf6d3f8f8c8302b56cb6680cc8da3f34618bda29f70491cacb36fb3)
 
@@ -3930,7 +4138,7 @@ Retained files:
 ms@2.1.3
 License: MIT
 Repository: vercel/ms
-Included by: Electron desktop shell; root application runtime; shared browser UI; web server and browser application
+Included by: Electron desktop shell; managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - license.md (SHA-256 e91069c31b4e4daee9db0e946308531fe585f091b655bb68fee44a83830ab9b6)
 
@@ -3954,7 +4162,7 @@ Retained files:
 negotiator@1.0.0
 License: MIT
 Repository: jshttp/negotiator
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - LICENSE (SHA-256 8a160f8ccc7b896ce9c171d5ab1df6ce4fe612e56c3b052f2cefcce793942fe9)
 
@@ -4015,10 +4223,18 @@ Retained files:
   - LICENSE (SHA-256 cab518dd82c2c3e6a476d3072497bc22722edb10d4809689bac41ecd377d557b)
 
 --------------------------------------------------------------------------------
+object-assign@4.1.1
+License: MIT
+Repository: sindresorhus/object-assign
+Included by: managed desktop agent kit
+Retained files:
+  - license (SHA-256 2bc4beb49d4852de32aecc72c9db954596cfcfcdc980fd7693adc89d5aa5d31f)
+
+--------------------------------------------------------------------------------
 object-inspect@1.13.4
 License: MIT
 Repository: https://github.com/inspect-js/object-inspect
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - LICENSE (SHA-256 dd58f6060d93276dff4ee03dfb9204e5bc859b58b530c401b7ade2282411969d)
 
@@ -4026,7 +4242,7 @@ Retained files:
 on-finished@2.4.1
 License: MIT
 Repository: jshttp/on-finished
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - LICENSE (SHA-256 5de22a7021a0f929478b4fdc0be2a837ec8350b296265433f56a8df8301d182c)
 
@@ -4042,7 +4258,7 @@ Retained files:
 once@1.4.0
 License: ISC
 Repository: https://github.com/isaacs/once
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - LICENSE (SHA-256 0ae52fe329ccfd23fedbd688361bd0dedaf5cae3e3516eb2ad17831f2d8b347c)
 
@@ -4093,6 +4309,14 @@ Repository: https://github.com/Microsoft/onnxruntime
 Included by: root application runtime; shared browser UI
 Retained files: (none found in the installed package root)
 Reviewed exception: The published ONNX Runtime package declares MIT but omits a root license file; package metadata and upstream repository were reviewed.
+
+--------------------------------------------------------------------------------
+open-browser-use@0.1.41
+License: MIT
+Repository: https://github.com/iFurySt/open-browser-use
+Included by: managed desktop agent kit
+Retained files: (none found in the installed package root)
+Reviewed exception: The published CLI package declares MIT but omits the repository root license from its npm files; package metadata and the upstream MIT license were reviewed.
 
 --------------------------------------------------------------------------------
 open-computer-use@0.3.1
@@ -4154,7 +4378,7 @@ Retained files:
 parseurl@1.3.3
 License: MIT
 Repository: pillarjs/parseurl
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - LICENSE (SHA-256 7f36c1a3cd7f96ab534ce82e6f5ff04011b5411130e608e4a0c3da85328b2f2e)
 
@@ -4178,7 +4402,7 @@ Retained files:
 path-key@3.1.1
 License: MIT
 Repository: sindresorhus/path-key
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - license (SHA-256 c9808a775260db5602f6a0c29f5f8b78e81f9666a33623fedfa34a22208b1063)
 
@@ -4191,6 +4415,14 @@ Retained files:
   - LICENSE (SHA-256 e257f36bcf5eed0516fea6522eb52e185f044a035538240f9e504e9239de11c0)
 
 --------------------------------------------------------------------------------
+path-to-regexp@8.4.2
+License: MIT
+Repository: https://github.com/pillarjs/path-to-regexp
+Included by: managed desktop agent kit
+Retained files:
+  - LICENSE (SHA-256 e257f36bcf5eed0516fea6522eb52e185f044a035538240f9e504e9239de11c0)
+
+--------------------------------------------------------------------------------
 picomatch@2.3.1
 License: MIT
 Repository: micromatch/picomatch
@@ -4199,12 +4431,38 @@ Retained files:
   - LICENSE (SHA-256 9219a3ebed1d1e1bc469cc605ca626c8433997a1a3013aba1338e03e381bbe11)
 
 --------------------------------------------------------------------------------
+pkce-challenge@5.0.1
+License: MIT
+Repository: https://github.com/crouchcd/pkce-challenge
+Included by: managed desktop agent kit
+Retained files:
+  - LICENSE (SHA-256 64c4e54df59cc6516ddffd512abb053e7cee2e064d2af53ce5ada164be4a67fa)
+
+--------------------------------------------------------------------------------
 platform@1.3.6
 License: MIT
 Repository: bestiejs/platform.js
 Included by: root application runtime; shared browser UI
 Retained files:
   - LICENSE (SHA-256 701af9df0b613036a1df8800dd4339c95a40350745d0b3897343341216457305)
+
+--------------------------------------------------------------------------------
+playwright-core@1.63.0-alpha-2026-08-05
+License: Apache-2.0
+Repository: https://github.com/microsoft/playwright
+Included by: managed desktop agent kit
+Retained files:
+  - LICENSE (SHA-256 bb06f5791c0314bf5527083cc3b1a6e5ed1054eaf406f7006b9e6d6c24023e6f)
+  - NOTICE (SHA-256 7b1444e03705067d36e59fc8cd3260daf245b8d06006cad06d462578fb92eab5)
+
+--------------------------------------------------------------------------------
+playwright@1.63.0-alpha-2026-08-05
+License: Apache-2.0
+Repository: https://github.com/microsoft/playwright
+Included by: managed desktop agent kit
+Retained files:
+  - LICENSE (SHA-256 bb06f5791c0314bf5527083cc3b1a6e5ed1054eaf406f7006b9e6d6c24023e6f)
+  - NOTICE (SHA-256 7b1444e03705067d36e59fc8cd3260daf245b8d06006cad06d462578fb92eab5)
 
 --------------------------------------------------------------------------------
 pngjs@5.0.0
@@ -4242,7 +4500,7 @@ Retained files:
 proxy-addr@2.0.7
 License: MIT
 Repository: jshttp/proxy-addr
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - LICENSE (SHA-256 49fa72ab1de52693fd1633805f0a1945f147934adaa71f8112426f7a52805965)
 
@@ -4303,6 +4561,14 @@ Retained files:
   - LICENSE.md (SHA-256 14d069c68fe75baa060fc5991d6e9e6ef4821a4f2092bd0861afa3be34dc379b)
 
 --------------------------------------------------------------------------------
+qs@6.15.3
+License: BSD-3-Clause
+Repository: https://github.com/ljharb/qs
+Included by: managed desktop agent kit
+Retained files:
+  - LICENSE.md (SHA-256 14d069c68fe75baa060fc5991d6e9e6ef4821a4f2092bd0861afa3be34dc379b)
+
+--------------------------------------------------------------------------------
 range-parser@1.2.1
 License: MIT
 Repository: jshttp/range-parser
@@ -4311,10 +4577,18 @@ Retained files:
   - LICENSE (SHA-256 98a2c20072962eabe8bb8612c7a0155d466dd7e9bbd304e22361a5b34ac132dd)
 
 --------------------------------------------------------------------------------
+range-parser@1.3.0
+License: MIT
+Repository: jshttp/range-parser
+Included by: managed desktop agent kit
+Retained files:
+  - LICENSE (SHA-256 98a2c20072962eabe8bb8612c7a0155d466dd7e9bbd304e22361a5b34ac132dd)
+
+--------------------------------------------------------------------------------
 raw-body@3.0.2
 License: MIT
 Repository: stream-utils/raw-body
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - LICENSE (SHA-256 b5954f59305d917a4ff54057e8af1d1c467c0de4e66be60553ff6a52b3405fbe)
 
@@ -4489,6 +4763,14 @@ Retained files:
   - LICENSE (SHA-256 c775538d3e7fb715d41e1820712886db057d79fb5ce908d6b235c418e47180f0)
 
 --------------------------------------------------------------------------------
+require-from-string@2.0.2
+License: MIT
+Repository: floatdrop/require-from-string
+Included by: managed desktop agent kit
+Retained files:
+  - license (SHA-256 937e8ea6d28e259cb0a3703148f6b292c50708013888372feae61e3520b18100)
+
+--------------------------------------------------------------------------------
 require-main-filename@2.0.0
 License: ISC
 Repository: https://github.com/yargs/require-main-filename
@@ -4516,7 +4798,7 @@ Retained files:
 router@2.2.0
 License: MIT
 Repository: pillarjs/router
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - LICENSE (SHA-256 59ebe0cf27c449a5bf54db06b0a0d622752725ffe72cff64deba876b3ecd66e1)
 
@@ -4532,7 +4814,7 @@ Retained files:
 safer-buffer@2.1.2
 License: MIT
 Repository: https://github.com/ChALkeR/safer-buffer
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - LICENSE (SHA-256 aa72fb6117e423794ec098a00d0413fa4ceb2369b68869e07d32ca32235a5f1e)
 
@@ -4564,7 +4846,7 @@ Retained files:
 semver@7.8.5
 License: ISC
 Repository: https://github.com/npm/node-semver
-Included by: root application runtime; shared browser UI
+Included by: managed desktop agent kit; root application runtime; shared browser UI
 Retained files:
   - LICENSE (SHA-256 0ae52fe329ccfd23fedbd688361bd0dedaf5cae3e3516eb2ad17831f2d8b347c)
 
@@ -4572,7 +4854,7 @@ Retained files:
 send@1.2.1
 License: MIT
 Repository: pillarjs/send
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - LICENSE (SHA-256 f4b733956caae26264fe6f47264b7ac6b7392dd2ff14ff308bcd5cb2f21c6836)
 
@@ -4580,7 +4862,7 @@ Retained files:
 serve-static@2.2.1
 License: MIT
 Repository: expressjs/serve-static
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - LICENSE (SHA-256 d80ea12109c5d9aea48cb58e6bcad56995640c17c559169474be4002a3e9753a)
 
@@ -4596,7 +4878,7 @@ Retained files:
 setprototypeof@1.2.0
 License: ISC
 Repository: https://github.com/wesleytodd/setprototypeof
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - LICENSE (SHA-256 db05b3b0f72f996b72fdd7e0766c41b723c83b36bc86249882b66c275a023e48)
 
@@ -4609,10 +4891,18 @@ Retained files:
   - LICENSE (SHA-256 9ff562631a04b8cb1030c53fdf461bd749c9af0655d86e4f17eb270e935a7fe2)
 
 --------------------------------------------------------------------------------
+sharp@0.35.3
+License: Apache-2.0
+Repository: https://github.com/lovell/sharp
+Included by: managed desktop agent kit
+Retained files:
+  - LICENSE (SHA-256 9ff562631a04b8cb1030c53fdf461bd749c9af0655d86e4f17eb270e935a7fe2)
+
+--------------------------------------------------------------------------------
 shebang-command@2.0.0
 License: MIT
 Repository: kevva/shebang-command
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - license (SHA-256 1407925f61282a6b72650585a14e4ab3674773c2ebee389fb2d0e4d11c21b5c1)
 
@@ -4620,7 +4910,7 @@ Retained files:
 shebang-regex@3.0.0
 License: MIT
 Repository: sindresorhus/shebang-regex
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - license (SHA-256 c9808a775260db5602f6a0c29f5f8b78e81f9666a33623fedfa34a22208b1063)
 
@@ -4659,10 +4949,18 @@ Retained files:
   - LICENSE (SHA-256 3df72862fb6dc141ca353b587ef1000832784160195073506daf8a56417144c7)
 
 --------------------------------------------------------------------------------
+side-channel-list@1.0.1
+License: MIT
+Repository: https://github.com/ljharb/side-channel-list
+Included by: managed desktop agent kit
+Retained files:
+  - LICENSE (SHA-256 3df72862fb6dc141ca353b587ef1000832784160195073506daf8a56417144c7)
+
+--------------------------------------------------------------------------------
 side-channel-map@1.0.1
 License: MIT
 Repository: https://github.com/ljharb/side-channel-map
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - LICENSE (SHA-256 3df72862fb6dc141ca353b587ef1000832784160195073506daf8a56417144c7)
 
@@ -4670,7 +4968,7 @@ Retained files:
 side-channel-weakmap@1.0.2
 License: MIT
 Repository: https://github.com/ljharb/side-channel-weakmap
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - LICENSE (SHA-256 7ae85337f5499c2338a73aa7fea5fd4f9b6787bf6d2d2cc93d8100d1a1b53525)
 
@@ -4679,6 +4977,14 @@ side-channel@1.1.0
 License: MIT
 Repository: https://github.com/ljharb/side-channel
 Included by: root application runtime; shared browser UI; web server and browser application
+Retained files:
+  - LICENSE (SHA-256 7ae85337f5499c2338a73aa7fea5fd4f9b6787bf6d2d2cc93d8100d1a1b53525)
+
+--------------------------------------------------------------------------------
+side-channel@1.1.1
+License: MIT
+Repository: https://github.com/ljharb/side-channel
+Included by: managed desktop agent kit
 Retained files:
   - LICENSE (SHA-256 7ae85337f5499c2338a73aa7fea5fd4f9b6787bf6d2d2cc93d8100d1a1b53525)
 
@@ -4766,7 +5072,7 @@ Retained files:
 statuses@2.0.2
 License: MIT
 Repository: jshttp/statuses
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - LICENSE (SHA-256 c67453393a42f39334f28608f66e54cbe1a2f5920476fa991b94c17f7a070cf8)
 
@@ -4958,7 +5264,7 @@ Retained files:
 toidentifier@1.0.1
 License: MIT
 Repository: component/toidentifier
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - LICENSE (SHA-256 8d512baec1ac13c1ee7f6867dcf26feeb4e1c6fe117bd0c74df13bae709aa93e)
 
@@ -5023,6 +5329,14 @@ type-is@2.0.1
 License: MIT
 Repository: jshttp/type-is
 Included by: root application runtime; shared browser UI; web server and browser application
+Retained files:
+  - LICENSE (SHA-256 7cb4d976f1c892a7c9dd32d4caf33d88c4d9f99447ba12f09ae295eae440cecb)
+
+--------------------------------------------------------------------------------
+type-is@2.1.0
+License: MIT
+Repository: jshttp/type-is
+Included by: managed desktop agent kit
 Retained files:
   - LICENSE (SHA-256 7cb4d976f1c892a7c9dd32d4caf33d88c4d9f99447ba12f09ae295eae440cecb)
 
@@ -5126,7 +5440,7 @@ Retained files:
 unpipe@1.0.0
 License: MIT
 Repository: stream-utils/unpipe
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - LICENSE (SHA-256 072fb4ea37f0b4a787194122148b7e92d90b359098705f92c008d15cbb7eed96)
 
@@ -5174,7 +5488,7 @@ Retained files:
 vary@1.1.2
 License: MIT
 Repository: jshttp/vary
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - LICENSE (SHA-256 0696190d4967590d31936e7278676d601ee1acf3a0bc53859751bcb2b093c088)
 
@@ -5270,7 +5584,7 @@ Retained files:
 which@2.0.2
 License: ISC
 Repository: https://github.com/isaacs/node-which
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - LICENSE (SHA-256 0ae52fe329ccfd23fedbd688361bd0dedaf5cae3e3516eb2ad17831f2d8b347c)
 
@@ -5302,7 +5616,7 @@ Retained files:
 wrappy@1.0.2
 License: ISC
 Repository: https://github.com/npm/wrappy
-Included by: root application runtime; shared browser UI; web server and browser application
+Included by: managed desktop agent kit; root application runtime; shared browser UI; web server and browser application
 Retained files:
   - LICENSE (SHA-256 0ae52fe329ccfd23fedbd688361bd0dedaf5cae3e3516eb2ad17831f2d8b347c)
 
@@ -5347,10 +5661,18 @@ Retained files:
   - LICENSE (SHA-256 f5b5e0e777c19c1c1991d8b290f05113287ed861379c21cfab66384356bbe653)
 
 --------------------------------------------------------------------------------
+zod-to-json-schema@3.25.2
+License: ISC
+Repository: https://github.com/StefanTerdell/zod-to-json-schema
+Included by: managed desktop agent kit
+Retained files:
+  - LICENSE (SHA-256 80d3168ad2f70f6f5bb2ab22b23414707abf6f0a392034891481ae36a1a429d4)
+
+--------------------------------------------------------------------------------
 zod@4.3.6
 License: MIT
 Repository: https://github.com/colinhacks/zod
-Included by: root application runtime; shared browser UI
+Included by: managed desktop agent kit; root application runtime; shared browser UI
 Retained files:
   - LICENSE (SHA-256 f61cacc2acb8b71aa79a128b3e732bf25e02aab40747bbbd5bf00c97c9cda28d)
 
@@ -5402,6 +5724,31 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 --------------------------------------------------------------------------------
+SHA-256: 02d42589c6442c0408b2ed382ffd4eca16ba62565ba748fd08a1e5c07bd1a42e
+Used by:
+  - ip-address@10.5.0/LICENSE
+
+Copyright (C) 2011 by Beau Gunderson
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+--------------------------------------------------------------------------------
 SHA-256: 04835848dd704fc79c3970c1aff0d907e8b684d785d601226f7da71d9a5adb71
 Used by:
   - @octokit/plugin-paginate-rest@14.0.0/LICENSE
@@ -5420,8 +5767,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 SHA-256: 0696190d4967590d31936e7278676d601ee1acf3a0bc53859751bcb2b093c088
 Used by:
   - content-disposition@1.0.1/LICENSE
+  - content-disposition@1.1.0/LICENSE
   - forwarded@0.2.0/LICENSE
   - media-typer@1.1.0/LICENSE
+  - media-typer@1.1.1/LICENSE
   - vary@1.1.2/LICENSE
 
 (The MIT License)
@@ -5769,6 +6118,33 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 --------------------------------------------------------------------------------
+SHA-256: 0eb7e0538bf86badc8cc36fc66164d495630f21f6998529188406fb00c782a5e
+Used by:
+  - ajv-formats@3.0.1/LICENSE
+
+MIT License
+
+Copyright (c) 2020 Evgeny Poberezkin
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+--------------------------------------------------------------------------------
 SHA-256: 0fb5a0e0d2eca471530998944644e4ac1695f8afa6a0161ca47eaf9450962f88
 Used by:
   - @base-ui/react@1.4.0/LICENSE
@@ -5834,6 +6210,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 SHA-256: 14d069c68fe75baa060fc5991d6e9e6ef4821a4f2092bd0861afa3be34dc379b
 Used by:
   - qs@6.15.0/LICENSE.md
+  - qs@6.15.3/LICENSE.md
 
 BSD 3-Clause License
 
@@ -6490,6 +6867,7 @@ SHA-256: 2bc4beb49d4852de32aecc72c9db954596cfcfcdc980fd7693adc89d5aa5d31f
 Used by:
   - decamelize@1.2.0/license
   - is-plain-obj@1.1.0/license
+  - object-assign@4.1.1/license
   - sort-keys@1.1.2/license
   - strip-json-comments@2.0.1/license
 
@@ -6611,6 +6989,60 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 --------------------------------------------------------------------------------
+SHA-256: 2e0a854a11062f91280bdd32ad287d311a394f55e22b885948bfd965398327f9
+Used by:
+  - hono@4.13.2/LICENSE
+
+MIT License
+
+Copyright (c) 2021 - present, Yusuke Wada and Hono contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+--------------------------------------------------------------------------------
+SHA-256: 35d16fc259cf940287dbd8f7106d6e80f5316e00a51b46b399c26d4c4b377574
+Used by:
+  - @hono/node-server@1.19.17/LICENSE
+
+MIT License
+
+Copyright (c) 2022 - present, Yusuke Wada and Hono contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+--------------------------------------------------------------------------------
 SHA-256: 377dbab447ca846c45b654a3d08992254b93a4a5fe40bd80cfdc3490ebf7f2e2
 Used by:
   - electron@43.3.0/LICENSE
@@ -6645,6 +7077,33 @@ Used by:
 MIT License
 
 Copyright (c) 2019 Paul Henschel
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+--------------------------------------------------------------------------------
+SHA-256: 39813fa23b1960640775d387e448bd83fe86c53bf502db509570fdf18a39b4f4
+Used by:
+  - eventsource-parser@3.1.1/LICENSE
+
+MIT License
+
+Copyright (c) 2026 Espen Hovlandsdal <espen@hovlandsdal.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -6789,7 +7248,9 @@ Used by:
   - es-define-property@1.0.1/LICENSE
   - es-errors@1.3.0/LICENSE
   - es-object-atoms@1.1.1/LICENSE
+  - es-object-atoms@1.1.2/LICENSE
   - side-channel-list@1.0.0/LICENSE
+  - side-channel-list@1.0.1/LICENSE
   - side-channel-map@1.0.1/LICENSE
 
 MIT License
@@ -7528,6 +7989,7 @@ SOFTWARE.
 SHA-256: 48186f5950f28caaafaa7f4c18b0b31350bea5c93f3a2d74b883b35a0d528863
 Used by:
   - iconv-lite@0.7.2/LICENSE
+  - iconv-lite@0.7.3/LICENSE
 
 Copyright (c) 2011 Alexander Shtuchkin
 
@@ -9118,6 +9580,33 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 --------------------------------------------------------------------------------
+SHA-256: 64c4e54df59cc6516ddffd512abb053e7cee2e064d2af53ce5ada164be4a67fa
+Used by:
+  - pkce-challenge@5.0.1/LICENSE
+
+MIT License
+
+Copyright (c) 2019
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+--------------------------------------------------------------------------------
 SHA-256: 667bcc38bed4b8a6dd039ad5b4bf87d1509d5fe781b7cb8e5d7f1c9b6ba31ffe
 Used by:
   - beautiful-mermaid@1.1.3/LICENSE
@@ -9285,6 +9774,34 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 --------------------------------------------------------------------------------
+SHA-256: 6efa74cb6d21cebbcfe9167d1d0147acbc0d0e6be4d9e1a5947931f980424dbd
+Used by:
+  - cors@2.8.6/LICENSE
+
+(The MIT License)
+
+Copyright (c) 2013 Troy Goode <troygoode@gmail.com>
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+'Software'), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+--------------------------------------------------------------------------------
 SHA-256: 6fdf84a73d062925aa339ef281196dfee3bd73aa825739c7fdc349b360f46993
 Used by:
   - @dnd-kit/accessibility@3.1.1/LICENSE
@@ -9449,6 +9966,213 @@ IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
 CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+--------------------------------------------------------------------------------
+SHA-256: 72de958052e494b0882a16da141b5524dcc8b87153a3a86323ab2e3dc1fc03a1
+Used by:
+  - @playwright/mcp@0.0.79/LICENSE
+
+                                 Apache License
+                           Version 2.0, January 2004
+                        http://www.apache.org/licenses/
+
+   TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
+
+   1. Definitions.
+
+      "License" shall mean the terms and conditions for use, reproduction,
+      and distribution as defined by Sections 1 through 9 of this document.
+
+      "Licensor" shall mean the copyright owner or entity authorized by
+      the copyright owner that is granting the License.
+
+      "Legal Entity" shall mean the union of the acting entity and all
+      other entities that control, are controlled by, or are under common
+      control with that entity. For the purposes of this definition,
+      "control" means (i) the power, direct or indirect, to cause the
+      direction or management of such entity, whether by contract or
+      otherwise, or (ii) ownership of fifty percent (50%) or more of the
+      outstanding shares, or (iii) beneficial ownership of such entity.
+
+      "You" (or "Your") shall mean an individual or Legal Entity
+      exercising permissions granted by this License.
+
+      "Source" form shall mean the preferred form for making modifications,
+      including but not limited to software source code, documentation
+      source, and configuration files.
+
+      "Object" form shall mean any form resulting from mechanical
+      transformation or translation of a Source form, including but
+      not limited to compiled object code, generated documentation,
+      and conversions to other media types.
+
+      "Work" shall mean the work of authorship, whether in Source or
+      Object form, made available under the License, as indicated by a
+      copyright notice that is included in or attached to the work
+      (an example is provided in the Appendix below).
+
+      "Derivative Works" shall mean any work, whether in Source or Object
+      form, that is based on (or derived from) the Work and for which the
+      editorial revisions, annotations, elaborations, or other modifications
+      represent, as a whole, an original work of authorship. For the purposes
+      of this License, Derivative Works shall not include works that remain
+      separable from, or merely link (or bind by name) to the interfaces of,
+      the Work and Derivative Works thereof.
+
+      "Contribution" shall mean any work of authorship, including
+      the original version of the Work and any modifications or additions
+      to that Work or Derivative Works thereof, that is intentionally
+      submitted to Licensor for inclusion in the Work by the copyright owner
+      or by an individual or Legal Entity authorized to submit on behalf of
+      the copyright owner. For the purposes of this definition, "submitted"
+      means any form of electronic, verbal, or written communication sent
+      to the Licensor or its representatives, including but not limited to
+      communication on electronic mailing lists, source code control systems,
+      and issue tracking systems that are managed by, or on behalf of, the
+      Licensor for the purpose of discussing and improving the Work, but
+      excluding communication that is conspicuously marked or otherwise
+      designated in writing by the copyright owner as "Not a Contribution."
+
+      "Contributor" shall mean Licensor and any individual or Legal Entity
+      on behalf of whom a Contribution has been received by Licensor and
+      subsequently incorporated within the Work.
+
+   2. Grant of Copyright License. Subject to the terms and conditions of
+      this License, each Contributor hereby grants to You a perpetual,
+      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+      copyright license to reproduce, prepare Derivative Works of,
+      publicly display, publicly perform, sublicense, and distribute the
+      Work and such Derivative Works in Source or Object form.
+
+   3. Grant of Patent License. Subject to the terms and conditions of
+      this License, each Contributor hereby grants to You a perpetual,
+      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+      (except as stated in this section) patent license to make, have made,
+      use, offer to sell, sell, import, and otherwise transfer the Work,
+      where such license applies only to those patent claims licensable
+      by such Contributor that are necessarily infringed by their
+      Contribution(s) alone or by combination of their Contribution(s)
+      with the Work to which such Contribution(s) was submitted. If You
+      institute patent litigation against any entity (including a
+      cross-claim or counterclaim in a lawsuit) alleging that the Work
+      or a Contribution incorporated within the Work constitutes direct
+      or contributory patent infringement, then any patent licenses
+      granted to You under this License for that Work shall terminate
+      as of the date such litigation is filed.
+
+   4. Redistribution. You may reproduce and distribute copies of the
+      Work or Derivative Works thereof in any medium, with or without
+      modifications, and in Source or Object form, provided that You
+      meet the following conditions:
+
+      (a) You must give any other recipients of the Work or
+          Derivative Works a copy of this License; and
+
+      (b) You must cause any modified files to carry prominent notices
+          stating that You changed the files; and
+
+      (c) You must retain, in the Source form of any Derivative Works
+          that You distribute, all copyright, patent, trademark, and
+          attribution notices from the Source form of the Work,
+          excluding those notices that do not pertain to any part of
+          the Derivative Works; and
+
+      (d) If the Work includes a "NOTICE" text file as part of its
+          distribution, then any Derivative Works that You distribute must
+          include a readable copy of the attribution notices contained
+          within such NOTICE file, excluding those notices that do not
+          pertain to any part of the Derivative Works, in at least one
+          of the following places: within a NOTICE text file distributed
+          as part of the Derivative Works; within the Source form or
+          documentation, if provided along with the Derivative Works; or,
+          within a display generated by the Derivative Works, if and
+          wherever such third-party notices normally appear. The contents
+          of the NOTICE file are for informational purposes only and
+          do not modify the License. You may add Your own attribution
+          notices within Derivative Works that You distribute, alongside
+          or as an addendum to the NOTICE text from the Work, provided
+          that such additional attribution notices cannot be construed
+          as modifying the License.
+
+      You may add Your own copyright statement to Your modifications and
+      may provide additional or different license terms and conditions
+      for use, reproduction, or distribution of Your modifications, or
+      for any such Derivative Works as a whole, provided Your use,
+      reproduction, and distribution of the Work otherwise complies with
+      the conditions stated in this License.
+
+   5. Submission of Contributions. Unless You explicitly state otherwise,
+      any Contribution intentionally submitted for inclusion in the Work
+      by You to the Licensor shall be under the terms and conditions of
+      this License, without any additional terms or conditions.
+      Notwithstanding the above, nothing herein shall supersede or modify
+      the terms of any separate license agreement you may have executed
+      with Licensor regarding such Contributions.
+
+   6. Trademarks. This License does not grant permission to use the trade
+      names, trademarks, service marks, or product names of the Licensor,
+      except as required for reasonable and customary use in describing the
+      origin of the Work and reproducing the content of the NOTICE file.
+
+   7. Disclaimer of Warranty. Unless required by applicable law or
+      agreed to in writing, Licensor provides the Work (and each
+      Contributor provides its Contributions) on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+      implied, including, without limitation, any warranties or conditions
+      of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A
+      PARTICULAR PURPOSE. You are solely responsible for determining the
+      appropriateness of using or redistributing the Work and assume any
+      risks associated with Your exercise of permissions under this License.
+
+   8. Limitation of Liability. In no event and under no legal theory,
+      whether in tort (including negligence), contract, or otherwise,
+      unless required by applicable law (such as deliberate and grossly
+      negligent acts) or agreed to in writing, shall any Contributor be
+      liable to You for damages, including any direct, indirect, special,
+      incidental, or consequential damages of any character arising as a
+      result of this License or out of the use or inability to use the
+      Work (including but not limited to damages for loss of goodwill,
+      work stoppage, computer failure or malfunction, or any and all
+      other commercial damages or losses), even if such Contributor
+      has been advised of the possibility of such damages.
+
+   9. Accepting Warranty or Additional Liability. While redistributing
+      the Work or Derivative Works thereof, You may choose to offer,
+      and charge a fee for, acceptance of support, warranty, indemnity,
+      or other liability obligations and/or rights consistent with this
+      License. However, in accepting such obligations, You may act only
+      on Your own behalf and on Your sole responsibility, not on behalf
+      of any other Contributor, and only if You agree to indemnify,
+      defend, and hold each Contributor harmless for any liability
+      incurred by, or claims asserted against, such Contributor by reason
+      of your accepting any such warranty or additional liability.
+
+   END OF TERMS AND CONDITIONS
+
+   APPENDIX: How to apply the Apache License to your work.
+
+      To apply the Apache License to your work, attach the following
+      boilerplate notice, with the fields enclosed by brackets "[]"
+      replaced with your own identifying information. (Don't include
+      the brackets!)  The text should be enclosed in the appropriate
+      comment syntax for the file format. We also recommend that a
+      file or class name and description of purpose be included on the
+      same "printed page" as the copyright notice for easier
+      identification within third-party archives.
+
+   Copyright (c) Microsoft Corporation.
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
 
 --------------------------------------------------------------------------------
 SHA-256: 7357445bac398c76c0aef75a587009fe406d40de6a79789eb5b7ecbbad317ef2
@@ -9707,6 +10431,7 @@ SHA-256: 7ae85337f5499c2338a73aa7fea5fd4f9b6787bf6d2d2cc93d8100d1a1b53525
 Used by:
   - side-channel-weakmap@1.0.2/LICENSE
   - side-channel@1.1.0/LICENSE
+  - side-channel@1.1.1/LICENSE
 
 MIT License
 
@@ -9752,6 +10477,18 @@ OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHE
  ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 --------------------------------------------------------------------------------
+SHA-256: 7b1444e03705067d36e59fc8cd3260daf245b8d06006cad06d462578fb92eab5
+Used by:
+  - playwright-core@1.63.0-alpha-2026-08-05/NOTICE
+  - playwright@1.63.0-alpha-2026-08-05/NOTICE
+
+Playwright
+Copyright (c) Microsoft Corporation
+
+This software contains code derived from the Puppeteer project (https://github.com/puppeteer/puppeteer),
+available under the Apache 2.0 license (https://github.com/puppeteer/puppeteer/blob/master/LICENSE).
+
+--------------------------------------------------------------------------------
 SHA-256: 7b26cd197f3a2b49a53c352e04f4e3f88035e6e7db0666491e65245d53245525
 Used by:
   - @aparajita/capacitor-secure-storage@8.0.0/LICENSE
@@ -9783,8 +10520,10 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 SHA-256: 7cb4d976f1c892a7c9dd32d4caf33d88c4d9f99447ba12f09ae295eae440cecb
 Used by:
   - body-parser@2.2.2/LICENSE
+  - body-parser@2.3.0/LICENSE
   - compression@1.8.1/LICENSE
   - type-is@2.0.1/LICENSE
+  - type-is@2.1.0/LICENSE
 
 (The MIT License)
 
@@ -9977,6 +10716,27 @@ OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 --------------------------------------------------------------------------------
+SHA-256: 80d3168ad2f70f6f5bb2ab22b23414707abf6f0a392034891481ae36a1a429d4
+Used by:
+  - zod-to-json-schema@3.25.2/LICENSE
+
+ISC License
+
+Copyright (c) 2020, Stefan Terdell
+
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted, provided that the above
+copyright notice and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+--------------------------------------------------------------------------------
 SHA-256: 811223f2d33910a962de4d6dc12bcb545252992e9d004f78936b94afde443749
 Used by:
   - bytes@3.1.2/LICENSE
@@ -10124,6 +10884,33 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
 ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+--------------------------------------------------------------------------------
+SHA-256: 8694aa57bec3f3e9ad0559e91c63a795904e967104efb9d6fc9d153e56f567c2
+Used by:
+  - @modelcontextprotocol/sdk@1.29.0/LICENSE
+
+MIT License
+
+Copyright (c) 2024 Anthropic, PBC
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 
 --------------------------------------------------------------------------------
 SHA-256: 86e8dc0ab734bc492d45b30c18beabccbf2645ab73b4babcdf42e11a9fdf8165
@@ -10975,6 +11762,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 SHA-256: 928a86b1d2984fd8ca1e148ef9c3b80ec4ee5e452aa58b0fda60a8f46f8c7dc6
 Used by:
   - hasown@2.0.2/LICENSE
+  - hasown@2.0.4/LICENSE
 
 MIT License
 
@@ -11299,6 +12087,33 @@ version(s), and exceptions or additional permissions here}.”
 > You may add additional accurate notices of copyright ownership.
 
 --------------------------------------------------------------------------------
+SHA-256: 937e8ea6d28e259cb0a3703148f6b292c50708013888372feae61e3520b18100
+Used by:
+  - require-from-string@2.0.2/license
+
+The MIT License (MIT)
+
+Copyright (c) Vsevolod Strukchinsky <floatdrop@gmail.com> (github.com/floatdrop)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+--------------------------------------------------------------------------------
 SHA-256: 93a9d0e67e1a6d8f8af4d725c8e5d0852af271009b40204b3e26d36a1b61329a
 Used by:
   - web-streams-polyfill@4.0.0-beta.3/LICENSE
@@ -11436,6 +12251,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 SHA-256: 98a2c20072962eabe8bb8612c7a0155d466dd7e9bbd304e22361a5b34ac132dd
 Used by:
   - range-parser@1.2.1/LICENSE
+  - range-parser@1.3.0/LICENSE
 
 (The MIT License)
 
@@ -11633,7 +12449,9 @@ SOFTWARE.
 --------------------------------------------------------------------------------
 SHA-256: 9ff562631a04b8cb1030c53fdf461bd749c9af0655d86e4f17eb270e935a7fe2
 Used by:
+  - @img/sharp-win32-x64@0.35.3/LICENSE
   - sharp@0.32.6/LICENSE
+  - sharp@0.35.3/LICENSE
 
 Apache License
 Version 2.0, January 2004
@@ -12041,6 +12859,34 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 --------------------------------------------------------------------------------
+SHA-256: aa407ee69b3f646286f5162d0679256a0fe5b7fcc51f104ffb647efe167715ea
+Used by:
+  - fast-deep-equal@3.1.3/LICENSE
+  - json-schema-traverse@1.0.0/LICENSE
+
+MIT License
+
+Copyright (c) 2017 Evgeny Poberezkin
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+--------------------------------------------------------------------------------
 SHA-256: aa72fb6117e423794ec098a00d0413fa4ceb2369b68869e07d32ca32235a5f1e
 Used by:
   - safer-buffer@2.1.2/LICENSE
@@ -12188,6 +13034,69 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+--------------------------------------------------------------------------------
+SHA-256: af396a93e64b544d23b88f7b8338281da0465291554fe88345221d12ff448910
+Used by:
+  - @zavora-ai/computer-use-mcp@7.0.0/LICENSE
+
+MIT License
+
+Copyright (c) 2026 Zavora Technologies Ltd
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+--------------------------------------------------------------------------------
+SHA-256: b010b0dfdfdb23d7396e03b82cd4621fc9bb8f95d6b0aea70b9c24e12074c786
+Used by:
+  - fast-uri@3.1.5/LICENSE
+
+Copyright (c) 2011-2021, Gary Court until https://github.com/garycourt/uri-js/commit/a1acf730b4bba3f1097c9f52e7d9d3aba8cdcaae
+Copyright (c) 2021-present The Fastify team <https://github.com/fastify/fastify#team>
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+    * The names of any contributors may not be used to endorse or promote
+      products derived from this software without specific prior written
+      permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS AND CONTRIBUTORS BE LIABLE FOR ANY
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+                                  *   *   *
+
+The complete list of contributors can be found at:
+- https://github.com/garycourt/uri-js/graphs/contributors
 
 --------------------------------------------------------------------------------
 SHA-256: b0200c8728ea0553e7a1e759e6f28b96192a488a46cce462197f516e0029e5ac
@@ -12866,6 +13775,215 @@ INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
 OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
 TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
 THIS SOFTWARE.
+
+--------------------------------------------------------------------------------
+SHA-256: bb06f5791c0314bf5527083cc3b1a6e5ed1054eaf406f7006b9e6d6c24023e6f
+Used by:
+  - playwright-core@1.63.0-alpha-2026-08-05/LICENSE
+  - playwright@1.63.0-alpha-2026-08-05/LICENSE
+
+                                 Apache License
+                           Version 2.0, January 2004
+                        http://www.apache.org/licenses/
+
+   TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
+
+   1. Definitions.
+
+      "License" shall mean the terms and conditions for use, reproduction,
+      and distribution as defined by Sections 1 through 9 of this document.
+
+      "Licensor" shall mean the copyright owner or entity authorized by
+      the copyright owner that is granting the License.
+
+      "Legal Entity" shall mean the union of the acting entity and all
+      other entities that control, are controlled by, or are under common
+      control with that entity. For the purposes of this definition,
+      "control" means (i) the power, direct or indirect, to cause the
+      direction or management of such entity, whether by contract or
+      otherwise, or (ii) ownership of fifty percent (50%) or more of the
+      outstanding shares, or (iii) beneficial ownership of such entity.
+
+      "You" (or "Your") shall mean an individual or Legal Entity
+      exercising permissions granted by this License.
+
+      "Source" form shall mean the preferred form for making modifications,
+      including but not limited to software source code, documentation
+      source, and configuration files.
+
+      "Object" form shall mean any form resulting from mechanical
+      transformation or translation of a Source form, including but
+      not limited to compiled object code, generated documentation,
+      and conversions to other media types.
+
+      "Work" shall mean the work of authorship, whether in Source or
+      Object form, made available under the License, as indicated by a
+      copyright notice that is included in or attached to the work
+      (an example is provided in the Appendix below).
+
+      "Derivative Works" shall mean any work, whether in Source or Object
+      form, that is based on (or derived from) the Work and for which the
+      editorial revisions, annotations, elaborations, or other modifications
+      represent, as a whole, an original work of authorship. For the purposes
+      of this License, Derivative Works shall not include works that remain
+      separable from, or merely link (or bind by name) to the interfaces of,
+      the Work and Derivative Works thereof.
+
+      "Contribution" shall mean any work of authorship, including
+      the original version of the Work and any modifications or additions
+      to that Work or Derivative Works thereof, that is intentionally
+      submitted to Licensor for inclusion in the Work by the copyright owner
+      or by an individual or Legal Entity authorized to submit on behalf of
+      the copyright owner. For the purposes of this definition, "submitted"
+      means any form of electronic, verbal, or written communication sent
+      to the Licensor or its representatives, including but not limited to
+      communication on electronic mailing lists, source code control systems,
+      and issue tracking systems that are managed by, or on behalf of, the
+      Licensor for the purpose of discussing and improving the Work, but
+      excluding communication that is conspicuously marked or otherwise
+      designated in writing by the copyright owner as "Not a Contribution."
+
+      "Contributor" shall mean Licensor and any individual or Legal Entity
+      on behalf of whom a Contribution has been received by Licensor and
+      subsequently incorporated within the Work.
+
+   2. Grant of Copyright License. Subject to the terms and conditions of
+      this License, each Contributor hereby grants to You a perpetual,
+      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+      copyright license to reproduce, prepare Derivative Works of,
+      publicly display, publicly perform, sublicense, and distribute the
+      Work and such Derivative Works in Source or Object form.
+
+   3. Grant of Patent License. Subject to the terms and conditions of
+      this License, each Contributor hereby grants to You a perpetual,
+      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+      (except as stated in this section) patent license to make, have made,
+      use, offer to sell, sell, import, and otherwise transfer the Work,
+      where such license applies only to those patent claims licensable
+      by such Contributor that are necessarily infringed by their
+      Contribution(s) alone or by combination of their Contribution(s)
+      with the Work to which such Contribution(s) was submitted. If You
+      institute patent litigation against any entity (including a
+      cross-claim or counterclaim in a lawsuit) alleging that the Work
+      or a Contribution incorporated within the Work constitutes direct
+      or contributory patent infringement, then any patent licenses
+      granted to You under this License for that Work shall terminate
+      as of the date such litigation is filed.
+
+   4. Redistribution. You may reproduce and distribute copies of the
+      Work or Derivative Works thereof in any medium, with or without
+      modifications, and in Source or Object form, provided that You
+      meet the following conditions:
+
+      (a) You must give any other recipients of the Work or
+          Derivative Works a copy of this License; and
+
+      (b) You must cause any modified files to carry prominent notices
+          stating that You changed the files; and
+
+      (c) You must retain, in the Source form of any Derivative Works
+          that You distribute, all copyright, patent, trademark, and
+          attribution notices from the Source form of the Work,
+          excluding those notices that do not pertain to any part of
+          the Derivative Works; and
+
+      (d) If the Work includes a "NOTICE" text file as part of its
+          distribution, then any Derivative Works that You distribute must
+          include a readable copy of the attribution notices contained
+          within such NOTICE file, excluding those notices that do not
+          pertain to any part of the Derivative Works, in at least one
+          of the following places: within a NOTICE text file distributed
+          as part of the Derivative Works; within the Source form or
+          documentation, if provided along with the Derivative Works; or,
+          within a display generated by the Derivative Works, if and
+          wherever such third-party notices normally appear. The contents
+          of the NOTICE file are for informational purposes only and
+          do not modify the License. You may add Your own attribution
+          notices within Derivative Works that You distribute, alongside
+          or as an addendum to the NOTICE text from the Work, provided
+          that such additional attribution notices cannot be construed
+          as modifying the License.
+
+      You may add Your own copyright statement to Your modifications and
+      may provide additional or different license terms and conditions
+      for use, reproduction, or distribution of Your modifications, or
+      for any such Derivative Works as a whole, provided Your use,
+      reproduction, and distribution of the Work otherwise complies with
+      the conditions stated in this License.
+
+   5. Submission of Contributions. Unless You explicitly state otherwise,
+      any Contribution intentionally submitted for inclusion in the Work
+      by You to the Licensor shall be under the terms and conditions of
+      this License, without any additional terms or conditions.
+      Notwithstanding the above, nothing herein shall supersede or modify
+      the terms of any separate license agreement you may have executed
+      with Licensor regarding such Contributions.
+
+   6. Trademarks. This License does not grant permission to use the trade
+      names, trademarks, service marks, or product names of the Licensor,
+      except as required for reasonable and customary use in describing the
+      origin of the Work and reproducing the content of the NOTICE file.
+
+   7. Disclaimer of Warranty. Unless required by applicable law or
+      agreed to in writing, Licensor provides the Work (and each
+      Contributor provides its Contributions) on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+      implied, including, without limitation, any warranties or conditions
+      of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A
+      PARTICULAR PURPOSE. You are solely responsible for determining the
+      appropriateness of using or redistributing the Work and assume any
+      risks associated with Your exercise of permissions under this License.
+
+   8. Limitation of Liability. In no event and under no legal theory,
+      whether in tort (including negligence), contract, or otherwise,
+      unless required by applicable law (such as deliberate and grossly
+      negligent acts) or agreed to in writing, shall any Contributor be
+      liable to You for damages, including any direct, indirect, special,
+      incidental, or consequential damages of any character arising as a
+      result of this License or out of the use or inability to use the
+      Work (including but not limited to damages for loss of goodwill,
+      work stoppage, computer failure or malfunction, or any and all
+      other commercial damages or losses), even if such Contributor
+      has been advised of the possibility of such damages.
+
+   9. Accepting Warranty or Additional Liability. While redistributing
+      the Work or Derivative Works thereof, You may choose to offer,
+      and charge a fee for, acceptance of support, warranty, indemnity,
+      or other liability obligations and/or rights consistent with this
+      License. However, in accepting such obligations, You may act only
+      on Your own behalf and on Your sole responsibility, not on behalf
+      of any other Contributor, and only if You agree to indemnify,
+      defend, and hold each Contributor harmless for any liability
+      incurred by, or claims asserted against, such Contributor by reason
+      of your accepting any such warranty or additional liability.
+
+   END OF TERMS AND CONDITIONS
+
+   APPENDIX: How to apply the Apache License to your work.
+
+      To apply the Apache License to your work, attach the following
+      boilerplate notice, with the fields enclosed by brackets "[]"
+      replaced with your own identifying information. (Don't include
+      the brackets!)  The text should be enclosed in the appropriate
+      comment syntax for the file format. We also recommend that a
+      file or class name and description of purpose be included on the
+      same "printed page" as the copyright notice for easier
+      identification within third-party archives.
+
+   Portions Copyright (c) Microsoft Corporation.
+   Portions Copyright 2017 Google Inc.
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
 
 --------------------------------------------------------------------------------
 SHA-256: bb59eb35f694a158d8f9892e7ce188428bc5d1e719910c7a29444d7c0787e57d
@@ -14257,6 +15375,7 @@ THE SOFTWARE.
 SHA-256: d6f4fc856b9900ac2bb491c9c82cfbb5ff8d9b8fb3d22c7dc47dd5ac644c79c4
 Used by:
   - jose@6.1.3/LICENSE.md
+  - jose@6.2.9/LICENSE.md
 
 The MIT License (MIT)
 
@@ -14686,6 +15805,94 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN 
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 --------------------------------------------------------------------------------
+SHA-256: da3044f63e02b6d689405434efdd9729918a1578b49101075442d1b394ff2284
+Used by:
+  - @img/colour@1.1.0/LICENSE.md
+
+# Licensing
+
+## color
+
+Copyright (c) 2012 Heather Arthur
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+## color-convert
+
+Copyright (c) 2011-2016 Heather Arthur <fayearthur@gmail.com>.
+Copyright (c) 2016-2021 Josh Junon <josh@junon.me>.
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+## color-string
+
+Copyright (c) 2011 Heather Arthur <fayearthur@gmail.com>
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+## color-name
+
+The MIT License (MIT)
+Copyright (c) 2015 Dmitry Ivanov
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+--------------------------------------------------------------------------------
 SHA-256: db05b3b0f72f996b72fdd7e0766c41b723c83b36bc86249882b66c275a023e48
 Used by:
   - setprototypeof@1.2.0/LICENSE
@@ -14922,6 +16129,7 @@ THE SOFTWARE.
 SHA-256: e257f36bcf5eed0516fea6522eb52e185f044a035538240f9e504e9239de11c0
 Used by:
   - path-to-regexp@8.3.0/LICENSE
+  - path-to-regexp@8.4.2/LICENSE
 
 The MIT License (MIT)
 
@@ -15024,6 +16232,34 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+--------------------------------------------------------------------------------
+SHA-256: e4f413b3ca5e13fb438a0527202f4f8c13c8c222513bc34a38663d5383994a18
+Used by:
+  - eventsource@3.0.7/LICENSE
+
+The MIT License
+
+Copyright (c) EventSource GitHub organisation
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 --------------------------------------------------------------------------------
 SHA-256: e5a8da5b43b01f431431db9cb0a25e878701f5664d54fbb0057838bea07c8bd1
@@ -15228,6 +16464,32 @@ IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
 CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+--------------------------------------------------------------------------------
+SHA-256: eabeb1e260c5cebed80e60ab0971541a2677e3ea09528eb5bf33213075b2654b
+Used by:
+  - express-rate-limit@8.6.2/license.md
+
+﻿# MIT License
+
+Copyright 2023 Nathan Friedly, Vedant K
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 --------------------------------------------------------------------------------
 SHA-256: eb99a0d61b507ad0182e18e9d2a91537c1d9025c94e098e4e7603a53b4b5218a
@@ -15873,6 +17135,33 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 --------------------------------------------------------------------------------
+SHA-256: f2fde84e6c1f177681e152a4459f025a87e855c0aa374238ba79b2e72a15b57c
+Used by:
+  - ajv@8.20.0/LICENSE
+
+The MIT License (MIT)
+
+Copyright (c) 2015-2021 Evgeny Poberezkin
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+--------------------------------------------------------------------------------
 SHA-256: f3166fa57273c4a2424ef5ffa7ffff2893120175c79cbbabb89acfb1e9d031d9
 Used by:
   - ghostty-web@0.4.0/LICENSE
@@ -16194,6 +17483,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 SHA-256: fb06d5b872e5eac1ab3d21198d91270a3073ff08ba87fab2a9f4e32ccf573884
 Used by:
   - content-type@1.0.5/LICENSE
+  - content-type@2.1.0/LICENSE
 
 (The MIT License)
 
@@ -17137,3 +18427,66 @@ HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
+
+--------------------------------------------------------------------------------
+SHA-256: ff750f6d635d1ef5dbadc6860a5d0e6162fec8aa0bf67a9033c753c5ecba369e
+Used by:
+  - json-schema-typed@8.0.2/LICENSE.md
+
+BSD 2-Clause License
+
+Original source code is copyright (c) 2019-2025 Remy Rylan
+<https://github.com/RemyRylan>
+
+All JSON Schema documentation and descriptions are copyright (c):
+
+2009 [draft-0] IETF Trust <https://www.ietf.org/>, Kris Zyp <kris@sitepen.com>,
+and SitePen (USA) <https://www.sitepen.com/>.
+
+2009 [draft-1] IETF Trust <https://www.ietf.org/>, Kris Zyp <kris@sitepen.com>,
+and SitePen (USA) <https://www.sitepen.com/>.
+
+2010 [draft-2] IETF Trust <https://www.ietf.org/>, Kris Zyp <kris@sitepen.com>,
+and SitePen (USA) <https://www.sitepen.com/>.
+
+2010 [draft-3] IETF Trust <https://www.ietf.org/>, Kris Zyp <kris@sitepen.com>,
+Gary Court <gary.court@gmail.com>, and SitePen (USA) <https://www.sitepen.com/>.
+
+2013 [draft-4] IETF Trust <https://www.ietf.org/>), Francis Galiegue
+<fgaliegue@gmail.com>, Kris Zyp <kris@sitepen.com>, Gary Court
+<gary.court@gmail.com>, and SitePen (USA) <https://www.sitepen.com/>.
+
+2018 [draft-7] IETF Trust <https://www.ietf.org/>, Austin Wright <aaa@bzfx.net>,
+Henry Andrews <henry@cloudflare.com>, Geraint Luff <luffgd@gmail.com>, and
+Cloudflare, Inc. <https://www.cloudflare.com/>.
+
+2019 [draft-2019-09] IETF Trust <https://www.ietf.org/>, Austin Wright
+<aaa@bzfx.net>, Henry Andrews <andrews_henry@yahoo.com>, Ben Hutton
+<bh7@sanger.ac.uk>, and Greg Dennis <gregsdennis@yahoo.com>.
+
+2020 [draft-2020-12] IETF Trust <https://www.ietf.org/>, Austin Wright
+<aaa@bzfx.net>, Henry Andrews <andrews_henry@yahoo.com>, Ben Hutton
+<ben@jsonschema.dev>, and Greg Dennis <gregsdennis@yahoo.com>.
+
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.

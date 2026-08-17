@@ -1,0 +1,34 @@
+interface:
+  display_name: "Computer Control"
+  short_description: "Operate web and Windows UI with visual fallback"
+  default_prompt: "Use $computer-control to complete this UI task with structured controls first and visual grounding only when needed."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "open_browser_use"
+      description: "Control the user's real Chrome profile through its extension and native host"
+      transport: "stdio"
+    - type: "mcp"
+      value: "open_computer_use"
+      description: "Inspect and operate Windows applications through native accessibility"
+      transport: "stdio"
+    - type: "mcp"
+      value: "playwright"
+      description: "Structured browser navigation and web element control"
+      transport: "stdio"
+    - type: "mcp"
+      value: "computer_use"
+      description: "Local Windows screenshot, mouse, keyboard, and application control"
+      transport: "stdio"
+    - type: "mcp"
+      value: "visual_grounding"
+      description: "Local OmniParser region detection with MiMo vision labels for text-only planners"
+      transport: "stdio"
+    - type: "mcp"
+      value: "agent_overlay"
+      description: "Visible shaded desktop border and emergency stop button"
+      transport: "stdio"
+
+policy:
+  allow_implicit_invocation: true

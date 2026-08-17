@@ -16,6 +16,7 @@ const targetConfigs = {
       { label: 'web server and browser application', manifest: 'packages/web/package.json' },
       { label: 'shared browser UI', manifest: 'packages/ui/package.json' },
       { label: 'Electron desktop shell', manifest: 'packages/electron/package.json' },
+      { label: 'managed desktop agent kit', manifest: 'packages/electron/agent-kit/package.json' },
     ],
     includeElectronRuntime: true,
   },

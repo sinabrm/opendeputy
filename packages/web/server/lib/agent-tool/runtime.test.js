@@ -78,7 +78,12 @@ describe('managed agent tool runtime', () => {
   it('materializes the plugin and preserves configured plugin entries', async () => {
     const { runtime, dataDir, env } = await createRuntime();
     env.OPENCODE_CONFIG_CONTENT = '{ // existing\n "plugin": ["file:///existing.js", ["example-plugin", {"flag": true}]], "model": "test/model" }';
-    env.OPENDEPUTY_COMPUTER_USE_BINARY = 'C:\\OpenDeputy\\open-computer-use.exe';
+    env.OPENDEPUTY_COMPUTER_USE_BINARY = path.join(dataDir, 'open-computer-use.exe');
+    env.OPENDEPUTY_TOUCHPOINT_PYTHON = path.join(dataDir, 'touchpoint-runtime', 'python.exe');
+    env.OPENDEPUTY_AGENT_KIT_ROOT = path.join(dataDir, 'packaged-agent-kit');
+    env.OPENDEPUTY_NODE_BINARY = path.join(dataDir, 'OpenDeputy.exe');
+    env.OPENDEPUTY_OPENCODE_BINARY = path.join(dataDir, 'opencode.exe');
+    env.USERPROFILE = dataDir;
 
     const preparedEnv = await runtime.prepareManagedOpenCodeEnv();
     const config = JSON.parse(preparedEnv.OPENCODE_CONFIG_CONTENT);
@@ -91,14 +96,49 @@ describe('managed agent tool runtime', () => {
       ['example-plugin', { flag: true }],
       expect.stringContaining('/agent-tool/opendeputy-plugin.js'),
     ]);
-    expect(config.mcp.open_deputy_computer).toEqual({
+    expect(Object.keys(config.mcp)).toEqual([
+      'playwright',
+      'open_computer_use',
+      'open_browser_use',
+      'computer_use',
+      'agent_overlay',
+      'touchpoint',
+      'visual_grounding',
+      'workspace_tools',
+    ]);
+    expect(config.mcp.open_computer_use).toEqual({
       type: 'local',
-      command: ['C:\\OpenDeputy\\open-computer-use.exe', 'mcp'],
+      command: [env.OPENDEPUTY_COMPUTER_USE_BINARY, 'mcp'],
       enabled: true,
       timeout: 30_000,
     });
-    expect(config.permission['open_deputy_computer_*']).toBe('ask');
-    expect(config.permission.open_deputy_computer_list_apps).toBe('allow');
+    expect(config.mcp.playwright.command).toEqual([
+      env.OPENDEPUTY_NODE_BINARY,
+      path.join(env.OPENDEPUTY_AGENT_KIT_ROOT, 'node_modules', '@playwright', 'mcp', 'cli.js'),
+      '--browser',
+      'chrome',
+    ]);
+    expect(config.mcp.touchpoint).toEqual({
+      type: 'local',
+      command: [env.OPENDEPUTY_TOUCHPOINT_PYTHON, '-m', 'touchpoint.mcp.server'],
+      enabled: true,
+      timeout: 30_000,
+      environment: {
+        PYTHONNOUSERSITE: '1',
+        PYTHONUTF8: '1',
+        TOUCHPOINT_CDP_DISCOVER: 'true',
+        TOUCHPOINT_FALLBACK_INPUT: 'false',
+      },
+    });
+    expect(config.mcp.agent_overlay.timeout).toBe(30_000);
+    expect(config.skills.paths).toEqual([
+      path.join(env.OPENDEPUTY_AGENT_KIT_ROOT, 'skills', 'computer-control'),
+      path.join(env.OPENDEPUTY_AGENT_KIT_ROOT, 'skills', 'desktop-workspace'),
+      path.join(env.OPENDEPUTY_AGENT_KIT_ROOT, 'skills', 'open-browser-use'),
+      path.join(env.OPENDEPUTY_AGENT_KIT_ROOT, 'skills', 'open-computer-use'),
+    ]);
+    expect(config.permission['open_computer_use_*']).toBe('ask');
+    expect(config.permission.open_computer_use_list_apps).toBe('allow');
     expect(preparedEnv.OPENCHAMBER_AGENT_TOOL_URL).toBe('http://127.0.0.1:3901/api/openchamber/agent-tool');
     expect(preparedEnv.OPENCHAMBER_AGENT_TOOL_TOKEN).toMatch(/^[A-Za-z0-9_-]+$/);
     expect(source).toContain('opendeputy: {');

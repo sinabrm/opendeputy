@@ -4,6 +4,7 @@
     "0BSD",
     "Apache 2.0",
     "Apache-2.0",
+    "Apache-2.0 AND LGPL-3.0-or-later",
     "apache-2.0",
     "(BSD-2-Clause OR MIT OR Apache-2.0)",
     "BSD-2-Clause",
@@ -170,6 +171,12 @@
       "key": "onnxruntime-web@1.14.0",
       "license": "MIT",
       "reason": "The published ONNX Runtime package declares MIT but omits a root license file; package metadata and upstream repository were reviewed."
+    },
+    {
+      "key": "open-browser-use@0.1.41",
+      "license": "MIT",
+      "targets": ["windows-x64"],
+      "reason": "The published CLI package declares MIT but omits the repository root license from its npm files; package metadata and the upstream MIT license were reviewed."
     },
     {
       "key": "react-remove-scroll-bar@2.3.8",

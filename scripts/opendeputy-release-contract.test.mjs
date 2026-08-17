@@ -35,6 +35,8 @@ test('Windows package is branded and self-contained', () => {
     'web-dist',
     'opencode-cli',
     'open-computer-use',
+    'touchpoint-runtime',
+    'agent-kit',
     'icons/icon.ico',
     'icons/tray',
     'legal/LICENSE',
@@ -119,6 +121,7 @@ test('external runtime installers use reviewed exact versions and platform gates
 test('component documentation follows the exact shipped dependency pins', () => {
   const rootPackage = json('package.json');
   const electronPackage = json('packages/electron/package.json');
+  const agentKitPackage = json('packages/electron/agent-kit/package.json');
   const webPackage = json('packages/web/package.json');
   const notices = read('THIRD_PARTY_NOTICES.md');
   const componentMap = read('docs/OPEN_SOURCE_COMPONENTS.md');
@@ -126,16 +129,25 @@ test('component documentation follows the exact shipped dependency pins', () => 
 
   const openCode = rootPackage.dependencies['@opencode-ai/sdk'];
   const openComputerUse = electronPackage.dependencies['open-computer-use'];
+  const playwrightMcp = agentKitPackage.dependencies['@playwright/mcp'];
+  const openBrowserUse = agentKitPackage.dependencies['open-browser-use'];
+  const computerUseMcp = agentKitPackage.dependencies['@zavora-ai/computer-use-mcp'];
+  const touchpointRequirements = read('packages/electron/touchpoint-requirements.txt');
   const sherpa = webPackage.dependencies['sherpa-onnx-node'];
   for (const [name, version] of [
     ['OpenCode', openCode],
     ['Open Computer Use', openComputerUse],
+    ['Playwright MCP', playwrightMcp],
+    ['Open Browser Use', openBrowserUse],
+    ['computer-use-mcp', computerUseMcp],
+    ['TouchPoint', '0.3.0'],
     ['sherpa-onnx', sherpa],
   ]) {
     assert.ok(componentMap.includes(version), `${name} ${version} is missing from the component map`);
     assert.ok(notices.includes(version), `${name} ${version} is missing from third-party notices`);
   }
   assert.ok(dockerfile.includes(`opencode-ai@${openCode}`), 'Docker OpenCode pin differs from the SDK pin');
+  assert.match(touchpointRequirements, /^touchpoint-py==0\.3\.0$/m);
 });
 
 test('CI builds the Linux x64 image and checks its artifact-specific legal bundle', () => {
@@ -185,6 +197,9 @@ test('generated third-party license inventory is current and release-scoped', ()
   for (const dependency of [
     'electron@',
     'open-computer-use@',
+    '@playwright/mcp@',
+    'open-browser-use@',
+    '@zavora-ai/computer-use-mcp@',
     'sherpa-onnx-node@',
     '@opencode-ai/sdk@',
     '@remixicon/react@',
