@@ -182,6 +182,21 @@ test('required Windows release documentation exists', () => {
 });
 
 test('generated third-party license inventory is current and release-scoped', () => {
+  const rootPackage = json('package.json');
+  for (const scriptName of ['test', 'test:release-contract', 'licenses:generate', 'licenses:check']) {
+    assert.match(
+      rootPackage.scripts[scriptName],
+      /bun run prepare:agent-kit/,
+      `${scriptName} must prepare the managed agent kit before checking its shipped dependencies`,
+    );
+  }
+  const electronPackage = json('packages/electron/package.json');
+  assert.ok(
+    electronPackage.scripts.package.indexOf('bun run prepare:agent-kit')
+      < electronPackage.scripts.package.indexOf('generate-third-party-licenses.mjs'),
+    'Electron packaging must prepare the managed agent kit before checking its license inventory',
+  );
+
   const result = spawnSync(process.execPath, [
     'scripts/generate-third-party-licenses.mjs',
     '--target=windows-x64',

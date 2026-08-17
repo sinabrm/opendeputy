@@ -58,7 +58,7 @@
     "test:updater": "node --test ./updater-capability.test.mjs ./updater-channel.test.mjs ./updater-check.test.mjs ./updater-feed.test.mjs ./scripts/finalize-latest-yml.test.mjs ./scripts/updater-e2e-fixture.test.mjs",
     "updater:e2e:fixture": "node ./scripts/updater-e2e-fixture.mjs",
     "verify:update-manifest": "node ./scripts/verify-update-manifest.mjs",
-    "package": "node ../../scripts/generate-third-party-licenses.mjs --target=windows-x64 --check && bun run build:web-assets && bun run prepare:opencode-cli && bun run prepare:agent-kit && bun run prepare:touchpoint && bun run verify:touchpoint && bun run bundle:main && bun run rebuild:native && node ./scripts/package.mjs",
+    "package": "bun run prepare:agent-kit && node ../../scripts/generate-third-party-licenses.mjs --target=windows-x64 --check && bun run build:web-assets && bun run prepare:opencode-cli && bun run prepare:touchpoint && bun run verify:touchpoint && bun run bundle:main && bun run rebuild:native && node ./scripts/package.mjs",
     "finalize:latest-yml": "node ./scripts/finalize-latest-yml.mjs",
     "type-check": "node --check ./main.mjs && node --check ./preload.mjs",
     "lint": "node -e \"process.exit(0)\""
