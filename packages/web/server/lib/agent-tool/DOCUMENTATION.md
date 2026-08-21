@@ -17,7 +17,7 @@ The control settings default to on, are toggled in Settings → General → Open
 CLI, and apply on the next managed OpenCode restart. Desktop packages also
 inject the managed agent kit. It defines `playwright`, `open_computer_use`,
 `open_browser_use`, `computer_use`, `agent_overlay`, `touchpoint`,
-`visual_grounding`, and `workspace_tools`; all eight start by default. TouchPoint
+`visual_grounding`, and `workspace_tools`; all eight start by default. Visual grounding uses Muse Spark for unresolved screenshot targets and task-relevant local images, audio, video, and PDFs. It reports attachment types rejected by the installed OpenCode transport rather than guessing their contents. TouchPoint
 runs from the portable Python runtime bundled in the Windows installer, so it
 does not depend on a system Python or an OpenChamber tools directory. Discovery is allowed by default and
 computer-changing actions require approval. Four packaged skill paths join

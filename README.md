@@ -12,10 +12,11 @@ OpenDeputy is a modified distribution of the MIT-licensed [OpenChamber](https://
 - Read and change project files, run terminal commands, use Git, and keep project notes.
 - Browse real websites using DOM and accessibility information, then click, type, scroll, and take screenshots.
 - Control Windows applications through the bundled, approval-gated Open Computer Use runtime.
+- Route task-relevant images, screenshots, audio, video, and PDFs to the hosted Muse Spark model, whose catalog advertises those input types and text-only output.
 - Continue in the tray when **Minimize to tray** is enabled.
 - Add optional document conversion, local speech, and ActivityWatch history integrations.
 
-OpenDeputy does not bundle a generative AI model or provider account. On first run, connect a provider in **Settings → Providers** and select one of that provider's models. Credentials are handled by OpenCode.
+OpenDeputy does not bundle model weights. It is configured to use OpenCode's hosted `opencode/muse-spark-1.2-contributor-free` model by default; other providers can be connected in **Settings → Providers**, with credentials handled by OpenCode. The managed visual-grounding tool also uses Muse Spark for multimodal understanding. It returns text or code and does not generate media. If the installed OpenCode runtime cannot transport an advertised attachment type, the agent must report that limitation instead of inferring content from the filename.
 
 ## What is included
 
