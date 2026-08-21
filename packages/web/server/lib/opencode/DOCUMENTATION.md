@@ -46,6 +46,7 @@ This module provides OpenCode server integration utilities for the web server ru
 - `packages/web/server/lib/opencode/proxy.js`: OpenCode API/SSE forwarding and readiness-gate route registration.
 - `packages/web/server/lib/opencode/session-runtime.js`: session status/attention/activity runtime for OpenCode SSE events.
 - `packages/web/server/lib/opencode/watcher.js`: global SSE watcher runtime for push/session event fanout.
+- `packages/web/server/lib/session-recovery/runtime.js`: bounded hidden continuation for completed, empty `finish: unknown` assistant turns.
 - `packages/web/server/lib/opencode/shared.js`: shared utilities for config, markdown, skills, and git helpers.
 - `packages/web/server/lib/ui-auth/ui-auth.js`: UI session authentication runtime (outside OpenCode module).
 - `packages/web/server/lib/ui-auth/ui-passkeys.js`: UI passkey storage and WebAuthn registration/authentication helpers (outside OpenCode module).
@@ -408,6 +409,7 @@ an authoritative loopback callback URL even when OpenChamber binds port `0`.
   - Can still create its own `/global/event` reader when no shared hub is provided, which keeps module tests and isolated reuse simple.
   - Reuses event-stream parsing, `Last-Event-ID`, stall timeout, and reconnect behavior.
   - Forwards unwrapped global event payloads into notification/session side effects.
+  - The same global event hub drives empty unknown-finish recovery. Recovery revalidates the session tail and sends at most two fully synthetic continuations per visible user turn, so no automatic request appears in chat.
 
 ## Storage and configuration
 - Provider auth: `~/.local/share/opencode/auth.json`.
