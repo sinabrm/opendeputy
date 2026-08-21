@@ -23,7 +23,7 @@ dependencies:
       transport: "stdio"
     - type: "mcp"
       value: "visual_grounding"
-      description: "Local OmniParser region detection with MiMo vision labels for text-only planners"
+      description: "Local OmniParser region detection with Muse Spark vision labels for the main agent"
       transport: "stdio"
     - type: "mcp"
       value: "agent_overlay"
