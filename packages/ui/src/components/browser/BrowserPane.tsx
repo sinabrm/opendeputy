@@ -50,6 +50,7 @@ export type BrowserPaneProps = {
   initialUrl: string;
   directory: string;
   tabID: string;
+  isActive: boolean;
 };
 
 /**
@@ -81,7 +82,7 @@ const DEV_SERVER_RETRY_DELAY_MS = 600;
  */
 const GATEWAY_WAIT_MS = 20_000;
 
-const WebviewBrowser: React.FC<BrowserPaneProps> = ({ initialUrl, directory, tabID }) => {
+const WebviewBrowser: React.FC<BrowserPaneProps> = ({ initialUrl, directory, tabID, isActive }) => {
   const { t } = useI18n();
   const { currentTheme } = useThemeSystem();
   const webviewRef = React.useRef<WebviewElement | null>(null);
@@ -452,10 +453,14 @@ const WebviewBrowser: React.FC<BrowserPaneProps> = ({ initialUrl, directory, tab
     return result;
   }, [annotationHost, loadUrl, waitForIdle]);
 
-  React.useEffect(
-    () => registerBrowserController({ run: runControlAction }),
-    [runControlAction],
-  );
+  React.useEffect(() => {
+    // Browser tabs stay mounted to preserve their page state. Only the tab the
+    // user can currently see may answer agent actions; otherwise a closed
+    // panel (or another active surface) would navigate a hidden page and keep
+    // the right panel closed.
+    if (!isActive) return;
+    return registerBrowserController({ run: runControlAction });
+  }, [isActive, runControlAction]);
 
   // Leaving the tab must not strand an overlay or live style overrides on the page.
   React.useEffect(() => {

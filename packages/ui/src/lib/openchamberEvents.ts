@@ -39,6 +39,7 @@ let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
 let heartbeatTimer: ReturnType<typeof setTimeout> | null = null;
 let reconnectAttempt = 0;
 let runtimeChangeUnsubscribe: (() => void) | null = null;
+let panelControlCapable = false;
 const listeners = new Set<Listener>();
 
 const MAX_RECONNECT_DELAY_MS = 30_000;
@@ -209,14 +210,17 @@ const connect = () => {
 
   cleanupSource();
 
-  // Tell the server what this client can do while the connection lasts. Only a
-  // Chromium host can drive a page; a browser tab can display one but not be
-  // driven, and the agent tool needs to know which it is talking to without a
-  // setting anyone has to remember to change.
+  // Tell the server what this client can do while the connection lasts. These
+  // are live renderer capabilities, not persisted settings: panel control is
+  // advertised only while the mounted ContextPanel has registered its owner.
   const canControlBrowser = typeof window !== 'undefined' && Boolean(window.__OPENCHAMBER_ELECTRON__);
+  const capabilities = {
+    ...(canControlBrowser ? { browser: '1' } : {}),
+    ...(panelControlCapable ? { panel: '1' } : {}),
+  };
   const source = new EventSource(getRuntimeUrlResolver().sse(
     '/api/openchamber/events',
-    canControlBrowser ? { browser: '1' } : undefined,
+    Object.keys(capabilities).length > 0 ? capabilities : undefined,
   ));
   source.onopen = () => {
     resetHeartbeatTimer();
@@ -250,6 +254,16 @@ const ensureRuntimeChangeSubscription = () => {
 const cleanupRuntimeChangeSubscription = () => {
   runtimeChangeUnsubscribe?.();
   runtimeChangeUnsubscribe = null;
+};
+
+/** Reconnects the shared stream when the renderer gains or loses panel ownership. */
+export const setOpenchamberPanelControlCapable = (capable: boolean): void => {
+  if (panelControlCapable === capable) return;
+  panelControlCapable = capable;
+  if (listeners.size === 0) return;
+  cleanupSource();
+  reconnectAttempt = 0;
+  connect();
 };
 
 export const subscribeOpenchamberEvents = (listener: Listener): (() => void) => {

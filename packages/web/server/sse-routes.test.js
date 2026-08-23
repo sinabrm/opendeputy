@@ -170,6 +170,7 @@ describe('local SSE routes', () => {
 
     const handler = getRoute('GET', '/api/openchamber/events');
     const req = createMockRequest();
+    req.query = { browser: '1', panel: '1' };
     const res = createMockResponse();
 
     handler(req, res);
@@ -181,6 +182,8 @@ describe('local SSE routes', () => {
     expect(res.getHeader('x-accel-buffering')).toBe('no');
     expect(res.flushed).toBe(true);
     expect(res.body).toContain('openchamber:event-stream-ready');
+    expect(res.openchamberBrowserCapable).toBe(true);
+    expect(res.openchamberPanelCapable).toBe(true);
     expect(clients.has(res)).toBe(true);
 
     req.emit('close');

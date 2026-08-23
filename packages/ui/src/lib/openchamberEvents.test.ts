@@ -1,7 +1,12 @@
 import { afterEach, beforeEach, describe, expect, mock, test } from 'bun:test';
 
 mock.module('./runtime-url', () => ({
-  getRuntimeUrlResolver: () => ({ sse: (path: string) => `http://runtime.test${path}` }),
+  getRuntimeUrlResolver: () => ({
+    sse: (path: string, query?: Record<string, string>) => {
+      const suffix = query ? `?${new URLSearchParams(query).toString()}` : '';
+      return `http://runtime.test${path}${suffix}`;
+    },
+  }),
 }));
 
 mock.module('./runtime-switch', () => ({
@@ -70,6 +75,19 @@ describe('openchamber events', () => {
         dispatchedAsCommand: false,
       },
     ]);
+    unsubscribe();
+  });
+
+  test('reconnects with a live right-panel capability when its owner registers', async () => {
+    const { setOpenchamberPanelControlCapable, subscribeOpenchamberEvents } = await import('./openchamberEvents');
+    const unsubscribe = subscribeOpenchamberEvents(() => undefined);
+    setOpenchamberPanelControlCapable(true);
+
+    expect(MockEventSource.instances).toHaveLength(2);
+    expect(MockEventSource.instances[0]?.readyState).toBe(MockEventSource.CLOSED);
+    expect(MockEventSource.instances[1]?.url).toContain('panel=1');
+
+    setOpenchamberPanelControlCapable(false);
     unsubscribe();
   });
 });

@@ -1,11 +1,11 @@
-# Browser Control Broker
+# Renderer Control Broker
 
 ## Purpose
 
-This module carries agent browser actions from the server to the client that
-owns the in-app browser view, and the result back. The browser lives in a
-renderer, not in the server process, so the server can never act on a page
-itself; it can only ask and wait.
+This module carries agent browser and right-panel actions from the server to the
+client that owns the relevant renderer state, and the result back. Both the
+browser view and panel store live in a renderer, not the server process, so the
+server can only ask their current owner and wait.
 
 ## Boundaries
 
@@ -16,11 +16,17 @@ itself; it can only ask and wait.
   validates the envelope and hands the outcome to the broker.
 - `../../index.js` supplies `emitRequest`, which writes the request to the
   OpenChamber SSE clients and returns how many were reached.
-- `../openchamber-control/service.js` is the only caller. It maps the
-  `browser.*` actions of the `openchamber_web` tool onto `broker.request()` and
-  owns their parameter validation.
-- The client half is `packages/ui/src/lib/browser/controlClient.ts`, which
-  registers the mounted browser pane as the one responder.
+- `../openchamber-control/service.js` is the only caller. It maps `browser.*`
+  and `panel.*` actions onto `broker.request()` and owns their parameter
+  validation.
+- The client half is `packages/ui/src/lib/browser/controlClient.ts`. Only the
+  currently visible browser pane registers as the responder. Browser panes stay
+  mounted while hidden to preserve page state, but a hidden pane must not claim
+  an action: `browser.open` then uses the app-level opener to reveal and focus
+  the Browser tab in the right panel before later actions drive it.
+- The same client module registers a panel controller from `ContextPanel`.
+  `panel.*` actions execute through `packages/ui/src/lib/panel/control.ts` and
+  the Zustand store actions used by the UI. They never synthesize desktop input.
 
 ## Invariants
 
@@ -28,6 +34,9 @@ itself; it can only ask and wait.
   it can drive a page by opening its event stream with `browser=1`, which only
   a Chromium host does; the flag lives and dies with that connection, so there
   is no setting to enable and no restart to remember.
+- A mounted right-panel owner similarly reconnects with `panel=1`. The server
+  sends `panel.*` only to declared owners, and the client claims only requests
+  whose normalized directory matches the panel it currently displays.
 - `emitRequest` counts only clients that can serve the action. `browser.open`
   needs any client, because opening a tab is what creates a view; every other
   action needs a declared-capable one.

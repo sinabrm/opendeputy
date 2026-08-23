@@ -69,6 +69,14 @@ export const createBrowserControlBroker = ({
 
       const listenerCount = emitRequest({ requestId, action, parameters });
       if (!listenerCount) {
+        if (typeof action === 'string' && action.startsWith('panel.')) {
+          return Promise.reject(new BrowserControlError(
+            'No connected OpenDeputy client currently owns the right panel for '
+            + 'this project. Right-panel control is available in the open desktop '
+            + 'or web application. Nothing was changed.',
+            503,
+          ));
+        }
         // Written for the agent reading it, not the user: state what this
         // environment can do, and leave deciding whether it matters to the
         // caller rather than handing it an instruction it cannot carry out.
@@ -86,15 +94,15 @@ export const createBrowserControlBroker = ({
         const finish = (outcome) => {
           if (signal && onAbort) signal.removeEventListener('abort', onAbort);
           if (outcome.ok) resolve(outcome.data ?? null);
-          else reject(new BrowserControlError(outcome.message || 'Browser action failed', outcome.status || 400));
+          else reject(new BrowserControlError(outcome.message || 'OpenDeputy UI action failed', outcome.status || 400));
         };
 
         const onAbort = signal
-          ? () => settle(requestId, { ok: false, message: 'Browser action was cancelled', status: 499 })
+          ? () => settle(requestId, { ok: false, message: 'OpenDeputy UI action was cancelled', status: 499 })
           : null;
         if (signal) {
           if (signal.aborted) {
-            reject(new BrowserControlError('Browser action was cancelled', 499));
+            reject(new BrowserControlError('OpenDeputy UI action was cancelled', 499));
             return;
           }
           signal.addEventListener('abort', onAbort, { once: true });
@@ -103,7 +111,9 @@ export const createBrowserControlBroker = ({
         const timer = setTimer(() => {
           settle(requestId, {
             ok: false,
-            message: `The in-app browser did not respond within ${Math.round(boundedTimeout / 1000)}s`,
+            message: typeof action === 'string' && action.startsWith('panel.')
+              ? `The OpenDeputy right panel did not respond within ${Math.round(boundedTimeout / 1000)}s`
+              : `The in-app browser did not respond within ${Math.round(boundedTimeout / 1000)}s`,
             status: 504,
           });
         }, boundedTimeout);
@@ -139,7 +149,7 @@ export const createBrowserControlBroker = ({
       }
       return settle(requestId, {
         ok: false,
-        message: typeof result?.error === 'string' && result.error ? result.error : 'Browser action failed',
+        message: typeof result?.error === 'string' && result.error ? result.error : 'OpenDeputy UI action failed',
         status: 400,
       });
     },

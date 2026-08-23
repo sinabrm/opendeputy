@@ -30,7 +30,8 @@ import { setExternallyViewedSession, useDirectoryStore } from '@/sync/sync-conte
 import { ContextPanelContent } from './ContextSidebarTab';
 import { BrowserPane } from '@/components/browser/BrowserPane';
 import { browserUrlLabel } from '@/lib/browser/url';
-import { registerBrowserOpener } from '@/lib/browser/controlClient';
+import { registerBrowserOpener, registerPanelController } from '@/lib/browser/controlClient';
+import { runPanelControlAction } from '@/lib/panel/control';
 import { getRuntimeBearerTokenSync, getRuntimeExtraHeadersSync } from '@/lib/runtime-auth';
 import { getRuntimeApiBaseUrl, getRuntimeKey } from '@/lib/runtime-switch';
 import { getActiveRelayDescriptor } from '@/lib/relay/runtime-tunnel';
@@ -450,13 +451,24 @@ export const ContextPanel: React.FC = () => {
   const setActiveContextPanelTab = useUIStore((state) => state.setActiveContextPanelTab);
   const openContextBrowser = useUIStore((state) => state.openContextBrowser);
 
-  // Lets an agent's browser.open create the tab it needs when none is open yet.
-  // Registered from the panel because opening a tab is panel state, not
-  // something the browser view itself can do before it exists.
+  // Lets an agent's browser.open create or reveal the tab it needs when no
+  // browser view is visible. Registered from the panel because opening a tab
+  // is panel state, not something a hidden browser view should do itself.
   React.useEffect(() => {
     if (!effectiveDirectory) return;
     return registerBrowserOpener((url) => openContextBrowser(effectiveDirectory, url));
   }, [effectiveDirectory, openContextBrowser]);
+
+  // Panel/tab requests use store-owned actions rather than desktop mouse or
+  // keyboard input. This keeps a request such as "close one browser tab"
+  // scoped to the right panel and unable to close the Electron window.
+  React.useEffect(() => {
+    if (!effectiveDirectory) return;
+    return registerPanelController({
+      directory: effectiveDirectory,
+      run: (action, parameters) => runPanelControlAction(effectiveDirectory, action, parameters),
+    });
+  }, [effectiveDirectory]);
   const reorderContextPanelTabs = useUIStore((state) => state.reorderContextPanelTabs);
   const setSelectedFilePath = useFilesViewTabsStore((state) => state.setSelectedPath);
   const contextEditorTreeVisible = useUIStore((state) => state.contextEditorTreeVisible);
@@ -998,6 +1010,7 @@ export const ContextPanel: React.FC = () => {
           }}
           layoutMode="scrollable"
           variant="default"
+          showActiveCloseControl
         />
       ) : (
         <div className="flex min-w-0 flex-1 items-center gap-1.5 px-3">
@@ -1195,7 +1208,12 @@ export const ContextPanel: React.FC = () => {
               activeTab?.id !== tab.id && 'hidden'
             )}
           >
-            <BrowserPane initialUrl={tab.targetPath ?? ''} directory={directoryKey} tabID={tab.id} />
+            <BrowserPane
+              initialUrl={tab.targetPath ?? ''}
+              directory={directoryKey}
+              tabID={tab.id}
+              isActive={isOpen && activeTab?.id === tab.id}
+            />
           </div>
         ))}
         {diffTabs.map((tab) => (
