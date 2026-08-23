@@ -15,6 +15,7 @@ import {
 } from '@/lib/messages/inlineMessageLinks';
 import { prepareUserMarkdownContent, SKILL_TOKEN_PATTERN } from './userTextPartContent';
 import { extractTerminalContexts } from '@/lib/messages/terminalContext';
+import { AutoDirectionText } from '../../AutoDirectionText';
 
 type PartWithText = Part & { text?: string; content?: string; value?: string };
 
@@ -209,7 +210,7 @@ const UserTextPart: React.FC<UserTextPartProps> = ({ part, messageId, agentMenti
                     <Icon name="arrow-up-s" className="h-3.5 w-3.5" />
                 </button>
             )}
-            <div
+            <AutoDirectionText
                 className={cn(
                     "break-words font-sans typography-markdown-body",
                     isExpanded && "pb-3",
@@ -247,7 +248,7 @@ const UserTextPart: React.FC<UserTextPartProps> = ({ part, messageId, agentMenti
                 ) : (
                     plainTextContent
                 )}
-            </div>
+            </AutoDirectionText>
             {terminalContextState.contexts.length > 0 ? (
                 <div className="mt-2 space-y-1.5">
                     {terminalContextState.contexts.map((context, index) => (

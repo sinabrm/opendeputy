@@ -43,6 +43,7 @@ import {
   type ParsedFileReference,
 } from './fileReferenceParser';
 import { streamPerfCount, streamPerfObserve } from '@/stores/utils/streamDebug';
+import { AutoDirectionText } from './AutoDirectionText';
 
 const useCurrentMermaidTheme = () => {
   const themeSystem = useOptionalThemeSystem();
@@ -1053,9 +1054,9 @@ const MarkdownRendererImpl: React.FC<MarkdownRendererProps> = ({
   });
 
   const markdownContent = (
-    <div className={cn('break-words w-full min-w-0', className)} ref={containerRef}>
+    <AutoDirectionText className={cn('break-words w-full min-w-0', className)} ref={containerRef}>
       <div className={markdownContentClassName(variant)} data-markdown-content />
-    </div>
+    </AutoDirectionText>
   );
 
   if (isAnimated) {
@@ -1143,9 +1144,9 @@ const SimpleMarkdownRendererImpl: React.FC<{
   });
 
   return (
-    <div className={cn('break-words w-full min-w-0', className)} ref={containerRef}>
+    <AutoDirectionText className={cn('break-words w-full min-w-0', className)} ref={containerRef}>
       <div className={markdownContentClassName(variant)} data-markdown-content />
-    </div>
+    </AutoDirectionText>
   );
 };
 

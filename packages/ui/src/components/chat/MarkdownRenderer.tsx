@@ -3,6 +3,7 @@ import { lazyWithChunkRecovery } from '@/lib/chunkLoadRecovery';
 import { isMobileSurfaceRuntime } from '@/lib/runtimeSurface';
 import { cn } from '@/lib/utils';
 import { loadMarkdownRendererModule } from './markdownRendererLoader';
+import { AutoDirectionText } from './AutoDirectionText';
 
 // Thin lazy wrapper around the MarkdownRenderer implementation.
 // The full implementation (marked + Shiki highlighting + KaTeX + morphdom
@@ -21,7 +22,7 @@ const MarkdownImageGalleryLazy = lazyWithChunkRecovery(() =>
   import('./MarkdownImageGallery').then((m) => ({ default: m.MarkdownImageGallery }))
 );
 
-const fallback = <div className="break-words w-full min-w-0" />;
+const fallback = <AutoDirectionText className="break-words w-full min-w-0" />;
 
 const fallbackContentClassName = (variant: unknown): string => {
   if (variant === 'tool') return 'markdown-content markdown-tool';
@@ -35,9 +36,9 @@ const MobileMarkdownFallback = (props: { content?: unknown; className?: unknown;
   }
 
   return (
-    <div className={cn('break-words w-full min-w-0 whitespace-pre-wrap', fallbackContentClassName(props.variant), typeof props.className === 'string' ? props.className : undefined)}>
+    <AutoDirectionText className={cn('break-words w-full min-w-0 whitespace-pre-wrap', fallbackContentClassName(props.variant), typeof props.className === 'string' ? props.className : undefined)}>
       {props.content}
-    </div>
+    </AutoDirectionText>
   );
 };
 
