@@ -1,7 +1,7 @@
 interface:
   display_name: "Desktop Workspace"
   short_description: "Local memory, documents, voice, and optional history"
-  default_prompt: "Use $desktop-workspace to analyze local images, screenshots, audio, video, or PDFs with Muse Spark; remember approved facts; preview or convert documents; create English or Persian speech; and use optional local history."
+  default_prompt: "Use $desktop-workspace to analyze local images, screenshots, audio, or MP4 video with Nemotron Omni; remember approved facts; preview or convert documents; create English or Persian speech; and use optional local history."
 
 dependencies:
   tools:
