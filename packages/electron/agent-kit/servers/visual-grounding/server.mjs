@@ -9,10 +9,9 @@ import sharp from "sharp";
 import { z } from "zod";
 import { loadNative } from "../../node_modules/@zavora-ai/computer-use-mcp/dist/native.js";
 import {
-  buildMediaAnalysisArgs,
-  buildOpenCodeSpawnOptions,
-  MUSE_SPARK_MODEL,
-  resolveMediaFiles,
+  analyzeMediaWithNemotron,
+  hasNvidiaApiKey,
+  NEMOTRON_OMNI_MODEL,
 } from "./media-analysis.mjs";
 
 const root = dirname(fileURLToPath(import.meta.url));
@@ -30,7 +29,6 @@ const legacyWorkerPath = resolve(legacyToolsRoot, "visual-grounding", "detector_
 const workerPath = existsSync(legacyPythonPath) && existsSync(legacyWorkerPath)
   ? legacyWorkerPath
   : packagedWorkerPath;
-const openCodePath = process.env.OPENDEPUTY_OPENCODE_BINARY || "opencode";
 const native = loadNative();
 
 mkdirSync(captureRoot, { recursive: true });
@@ -209,65 +207,6 @@ function chooseLocalTextTarget(goal, elements) {
   return ranked[0].element;
 }
 
-function runCommand(command, args, timeoutMs) {
-  return new Promise((resolvePromise, rejectPromise) => {
-    const child = spawn(command, args, buildOpenCodeSpawnOptions({
-      workingDirectory: captureRoot,
-      environment: process.env,
-    }));
-    let stdout = "";
-    let stderr = "";
-    let settled = false;
-    const timeout = setTimeout(() => {
-      if (settled) return;
-      settled = true;
-      spawn("taskkill.exe", ["/PID", String(child.pid), "/T", "/F"], {
-        stdio: "ignore",
-        windowsHide: true,
-      });
-      rejectPromise(new Error(`Vision model timed out after ${timeoutMs} ms.`));
-    }, timeoutMs);
-    child.stdout.on("data", (chunk) => {
-      stdout += chunk;
-      if (!settled && stdout.includes('"type":"text"') && stdout.includes('"type":"step_finish"')) {
-        settled = true;
-        clearTimeout(timeout);
-        spawn("taskkill.exe", ["/PID", String(child.pid), "/T", "/F"], {
-          stdio: "ignore",
-          windowsHide: true,
-        });
-        resolvePromise({ stdout, stderr });
-      }
-    });
-    child.stderr.on("data", (chunk) => { stderr += chunk; });
-    child.on("error", (error) => {
-      if (settled) return;
-      settled = true;
-      clearTimeout(timeout);
-      rejectPromise(error);
-    });
-    child.on("close", (code) => {
-      if (settled) return;
-      settled = true;
-      clearTimeout(timeout);
-      if (code !== 0) rejectPromise(new Error(`Vision model failed (${code}): ${stderr || stdout}`));
-      else resolvePromise({ stdout, stderr });
-    });
-  });
-}
-
-function extractTextEvents(output) {
-  const parts = [];
-  for (const line of output.split(/\r?\n/)) {
-    if (!line.trim()) continue;
-    try {
-      const event = JSON.parse(line);
-      if (event.type === "text" && event.part?.text) parts.push(event.part.text);
-    } catch {}
-  }
-  return parts.join("\n").trim();
-}
-
 async function detectRegions(options) {
   const shot = await capture(options);
   const bounds = shot.bounds;
@@ -344,24 +283,12 @@ async function locateTarget(options) {
   let visionText = "";
   let visionError = null;
   try {
-    const result = await runCommand(
-      openCodePath,
-      [
-        "run",
-        prompt,
-        "--pure",
-        "--dir",
-        captureRoot,
-        "--model",
-        MUSE_SPARK_MODEL,
-        "--format",
-        "json",
-        "--file",
-        detection.annotated_path || shot.imagePath,
-      ],
-      180000,
-    );
-    visionText = extractTextEvents(result.stdout);
+    const result = await analyzeMediaWithNemotron({
+      question: prompt,
+      files: [detection.annotated_path || shot.imagePath],
+      timeoutMs: 180_000,
+    });
+    visionText = result.analysis;
   } catch (error) {
     visionError = error.message;
   }
@@ -397,7 +324,7 @@ async function locateTarget(options) {
   const selectedTarget = target || directTarget;
   return {
     goal: options.goal,
-    method: directTarget ? "muse-spark-vision-direct" : parsed ? "muse-spark-vision" : "local-detection-only",
+    method: directTarget ? "nemotron-omni-vision-direct" : parsed ? "nemotron-omni-vision" : "local-detection-only",
     target_app: options.targetApp || null,
     window_id: options.windowId || null,
     screenshot: { path: shot.imagePath, width: shot.width, height: shot.height },
@@ -409,7 +336,7 @@ async function locateTarget(options) {
       load_seconds: detection.load_seconds,
       detect_seconds: detection.detect_seconds,
     },
-    vision_model: MUSE_SPARK_MODEL,
+    vision_model: NEMOTRON_OMNI_MODEL,
     vision_analysis: parsed ?? (visionText || null),
     vision_error: visionError,
     visible_text: detection.text_elements,
@@ -422,25 +349,7 @@ async function locateTarget(options) {
 }
 
 async function analyzeMedia({ question, files }) {
-  const resolvedFiles = resolveMediaFiles(files);
-  const result = await runCommand(
-    openCodePath,
-    buildMediaAnalysisArgs({
-      question,
-      files: resolvedFiles,
-      workingDirectory: captureRoot,
-    }),
-    210000,
-  );
-  const analysis = extractTextEvents(result.stdout);
-  if (!analysis) {
-    throw new Error("Muse Spark returned no media analysis.");
-  }
-  return {
-    model: MUSE_SPARK_MODEL,
-    files: resolvedFiles,
-    analysis,
-  };
+  return analyzeMediaWithNemotron({ question, files, timeoutMs: 210_000 });
 }
 
 function toolResult(value) {
@@ -452,26 +361,26 @@ export async function startServer() {
 
   server.tool(
     "status",
-    "Check whether the local OmniParser region detector and Muse Spark vision fallback are installed.",
+    "Check whether the local OmniParser region detector and hosted Nemotron Omni media analysis are available.",
     {},
     async () => toolResult({
       python: existsSync(pythonPath),
       detector_worker: existsSync(workerPath),
-      opencode: existsSync(openCodePath),
+      nvidia_credentials: hasNvidiaApiKey(),
       detector: existsSync(pythonPath) && existsSync(workerPath)
         ? await workerRequest({ operation: "status" }, 30000)
         : { installed: false },
-      vision_model: MUSE_SPARK_MODEL,
+      vision_model: NEMOTRON_OMNI_MODEL,
       media_analysis: {
-        model: MUSE_SPARK_MODEL,
-        advertised_inputs: ["image", "audio", "video", "pdf"],
+        model: NEMOTRON_OMNI_MODEL,
+        advertised_inputs: ["image", "audio", "video"],
       },
     }),
   );
 
   server.tool(
     "analyze_media",
-    "Ask Muse Spark to analyze local images, screenshots, audio, video, or PDFs and return text. Use this for multimodal understanding instead of metadata or OCR. Pass only task-relevant absolute file paths, and report any attachment-transport rejection instead of inferring content from a filename.",
+    "Ask Nemotron Omni to analyze local images, screenshots, audio, or MP4 video and return text. Pass only task-relevant absolute file paths, and report unsupported formats instead of inferring content from a filename.",
     {
       question: z.string().min(1).max(4000),
       files: z.array(z.string().min(1)).min(1).max(16),
@@ -504,7 +413,7 @@ export async function startServer() {
 
   server.tool(
     "locate_target",
-    "Use local OmniParser region detection plus Muse Spark vision to find a target on a visual-only interface and return its exact click center to the main agent.",
+    "Use local OmniParser region detection plus Nemotron Omni vision to find a target on a visual-only interface and return its exact click center to the main agent.",
     {
       goal: z.string().min(3).max(500),
       target_app: z.string().optional(),

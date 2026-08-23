@@ -12,11 +12,11 @@ OpenDeputy is a modified distribution of the MIT-licensed [OpenChamber](https://
 - Read and change project files, run terminal commands, use Git, and keep project notes.
 - Browse real websites using DOM and accessibility information, then click, type, scroll, and take screenshots.
 - Control Windows applications through the bundled, approval-gated Open Computer Use runtime.
-- Route task-relevant images, screenshots, audio, video, and PDFs to the hosted Muse Spark model, whose catalog advertises those input types and text-only output.
+- Route task-relevant PNG/JPEG images, screenshots, WAV/MP3 audio, and MP4 video to the hosted Nemotron Omni model for text-only analysis.
 - Continue in the tray when **Minimize to tray** is enabled.
 - Add optional document conversion, local speech, and ActivityWatch history integrations.
 
-OpenDeputy does not bundle model weights. It is configured to use OpenCode's hosted `opencode/muse-spark-1.2-contributor-free` model by default; other providers can be connected in **Settings → Providers**, with credentials handled by OpenCode. The managed visual-grounding tool also uses Muse Spark for multimodal understanding. It returns text or code and does not generate media. If the installed OpenCode runtime cannot transport an advertised attachment type, the agent must report that limitation instead of inferring content from the filename.
+OpenDeputy does not bundle model weights. It is configured to use OpenCode's hosted `opencode/muse-spark-1.2-contributor-free` model by default for text and code; other providers can be connected in **Settings → Providers**, with credentials handled by OpenCode. The managed visual-grounding tool uses `nvidia/nvidia/nemotron-3-nano-omni-30b-a3b-reasoning` for multimodal understanding. It reads the locally configured NVIDIA credential and sends task-relevant supported media directly to NVIDIA's hosted endpoint. It returns text or code and does not generate media. Unsupported formats are reported instead of inferred from filenames.
 
 ## What is included
 
