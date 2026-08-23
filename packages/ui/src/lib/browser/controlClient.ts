@@ -31,7 +31,7 @@ export type BrowserController = {
 };
 
 /** Implemented by the mounted right panel, independently of its active tab. */
-export type PanelController = {
+type PanelController = {
   readonly directory: string;
   readonly run: (action: string, parameters: Record<string, unknown>) => Promise<unknown>;
 };

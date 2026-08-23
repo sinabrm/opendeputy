@@ -19,7 +19,7 @@ export const PANEL_MODES = [
   'chat',
 ] as const;
 
-export type PanelMode = typeof PANEL_MODES[number];
+type PanelMode = typeof PANEL_MODES[number];
 
 const MODE_TO_INTERNAL: Record<PanelMode, ContextPanelMode> = {
   context: 'context',
