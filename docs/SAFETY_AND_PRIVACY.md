@@ -12,7 +12,7 @@ OpenDeputy can change files, run terminal commands, browse websites, and control
 
 ## Data locations
 
-Chats, settings, project state, memory, browser storage, and optional speech files are stored locally in OpenDeputy/OpenChamber-compatible application data directories. Provider prompts and files included in prompts are sent to the selected model provider according to that provider's terms. The managed visual-grounding tool reads the locally configured NVIDIA credential and sends task-relevant supported screenshots, images, audio, or video to `nvidia/nvidia/nemotron-3-nano-omni-30b-a3b-reasoning` for text/code analysis.
+Chats, settings, project state, memory, browser storage, and optional speech files are stored locally in OpenDeputy/OpenChamber-compatible application data directories. Provider prompts and files included in prompts are sent to the selected model provider according to that provider's terms. The managed visual-grounding tool sends task-relevant screenshots, images, audio, video, PDFs, or documents through OpenCode to `opencode/muse-spark-1.2-contributor-free` for text/code analysis.
 
 OpenDeputy does not bundle a model. Provider credentials are handled by OpenCode and must never be committed to this repository. Local memory instructions prohibit passwords, API keys, tokens, financial details, and other secrets.
 
