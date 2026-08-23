@@ -796,6 +796,7 @@ interface UIStore {
   closeContextPanelTab: (directory: string, tabID: string) => void;
   closeContextPanel: (directory: string) => void;
   toggleContextPanelExpanded: (directory: string) => void;
+  setContextPanelExpanded: (directory: string, expanded: boolean) => void;
   setContextPanelWidth: (directory: string, mode: ContextPanelMode, width: number) => void;
   setNotesPanelHeight: (height: number) => void;
   setWorkStatusSectionExpanded: (sectionId: string, expanded: boolean) => void;
@@ -1326,10 +1327,23 @@ export const useUIStore = create<UIStore>()(
           const normalizedDirectory = normalizeDirectoryPath((directory || '').trim());
           if (!normalizedDirectory || isVSCodeRuntime()) return;
           const targetUrl = typeof url === 'string' && url.trim().length > 0 ? url.trim() : '';
+
+          // Agent-driven browser.open means "show the in-app browser and
+          // navigate its active tab", not "create another tab for this URL".
+          // Reusing the most recently touched browser tab also handles tabs
+          // whose stable dedupe key predates their current navigated URL.
+          const browserTabs = get().contextPanelByDirectory[normalizedDirectory]?.tabs
+            .filter((tab) => tab.mode === 'browser') ?? [];
+          if (browserTabs.length > 0) {
+            const mostRecent = browserTabs.reduce((best, tab) => (tab.touchedAt >= best.touchedAt ? tab : best));
+            get().setActiveContextPanelTab(normalizedDirectory, mostRecent.id);
+            return;
+          }
+
           get().openContextPanelTab(normalizedDirectory, {
             mode: 'browser',
             targetPath: targetUrl,
-            dedupeKey: targetUrl || 'browser',
+            dedupeKey: 'browser',
             label: null,
           });
         },
@@ -1484,6 +1498,30 @@ export const useUIStore = create<UIStore>()(
               [normalizedDirectory]: {
                 ...current,
                 expanded: !current.expanded,
+              },
+            };
+
+            return { contextPanelByDirectory: clampContextPanelRoots(byDirectory, 20) };
+          });
+        },
+
+        setContextPanelExpanded: (directory, expanded) => {
+          const normalizedDirectory = normalizeDirectoryPath((directory || '').trim());
+          if (!normalizedDirectory) {
+            return;
+          }
+
+          set((state) => {
+            const prev = state.contextPanelByDirectory[normalizedDirectory];
+            const current = touchContextPanelState(prev);
+            if (current.expanded === expanded) {
+              return state;
+            }
+            const byDirectory = {
+              ...state.contextPanelByDirectory,
+              [normalizedDirectory]: {
+                ...current,
+                expanded,
               },
             };
 

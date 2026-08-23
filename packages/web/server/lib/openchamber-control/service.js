@@ -14,6 +14,10 @@ const SCHEDULE_TASK_ID_ACTIONS = new Set([
   'schedule.delete',
   'schedule.toggle',
 ]);
+const PANEL_MODES = new Set([
+  'context', 'git', 'pr', 'changes', 'walkthrough', 'files',
+  'terminal', 'notes', 'plan', 'browser', 'chat',
+]);
 
 const asNonEmptyString = (value) => {
   if (typeof value !== 'string') return null;
@@ -453,6 +457,64 @@ export const createOpenChamberControlService = (dependencies) => {
     return result;
   };
 
+  /**
+   * Validates panel intent on the server, then lets the renderer that owns the
+   * requested directory apply it through the UI store. No desktop input is
+   * involved, so these actions cannot escape into the Electron window chrome.
+   */
+  const panelAction = async (action, input, signal, contextDirectory) => {
+    const directory = asNonEmptyString(input.directory) || asNonEmptyString(contextDirectory);
+    if (!directory) throw new OpenChamberControlError('directory is required for right-panel actions', 400);
+    const parameters = { directory };
+
+    if (action === 'panel.open') {
+      const panelMode = asNonEmptyString(input.panelMode);
+      if (!panelMode || !PANEL_MODES.has(panelMode)) {
+        throw new OpenChamberControlError(`panelMode must be one of: ${[...PANEL_MODES].join(', ')}`, 400);
+      }
+      parameters.panelMode = panelMode;
+
+      const filePath = asNonEmptyString(input.filePath);
+      if (filePath) parameters.filePath = filePath;
+      if ((input.line !== undefined || input.column !== undefined) && (panelMode !== 'files' || !filePath)) {
+        throw new OpenChamberControlError('line and column require panelMode files with filePath', 400);
+      }
+      for (const field of ['line', 'column']) {
+        if (input[field] === undefined) continue;
+        if (!Number.isSafeInteger(input[field]) || input[field] < 1) {
+          throw new OpenChamberControlError(`${field} must be a positive integer`, 400);
+        }
+        parameters[field] = input[field];
+      }
+
+      const diffScope = asNonEmptyString(input.diffScope);
+      if (diffScope && !['working', 'staged', 'turn'].includes(diffScope)) {
+        throw new OpenChamberControlError('diffScope must be working, staged, or turn', 400);
+      }
+      if (diffScope) parameters.diffScope = diffScope;
+      if (typeof input.staged === 'boolean') parameters.staged = input.staged;
+
+      const sessionID = asNonEmptyString(input.sessionId);
+      if (sessionID) parameters.sessionId = sessionID;
+      if (typeof input.readOnly === 'boolean') parameters.readOnly = input.readOnly;
+    }
+
+    if (action === 'panel.activate' || action === 'panel.closeTab') {
+      const tabID = asNonEmptyString(input.tabId);
+      if (!tabID) throw new OpenChamberControlError(`tabId is required for ${action}`, 400);
+      parameters.tabId = tabID;
+    }
+
+    if (action === 'panel.setExpanded') {
+      if (typeof input.expanded !== 'boolean') {
+        throw new OpenChamberControlError('expanded is required for panel.setExpanded', 400);
+      }
+      parameters.expanded = input.expanded;
+    }
+
+    return browserControl.request(action, parameters, { signal, timeoutMs: 20_000 });
+  };
+
   const execute = async (action, input = {}, contextDirectory, options = {}) => {
     try {
       if (!CONTROL_ACTIONS.has(action)) {
@@ -463,6 +525,12 @@ export const createOpenChamberControlService = (dependencies) => {
           throw new OpenChamberControlError('The in-app browser is not available on this server', 503);
         }
         return browserAction(action, input, options.signal, contextDirectory);
+      }
+      if (action.startsWith('panel.')) {
+        if (!browserControl) {
+          throw new OpenChamberControlError('The OpenDeputy right panel is not available on this server', 503);
+        }
+        return panelAction(action, input, options.signal, contextDirectory);
       }
       if (action === 'projects.list') return { projects: await projects() };
       if (action === 'models.list') return models();

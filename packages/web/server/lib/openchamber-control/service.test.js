@@ -266,6 +266,65 @@ describe('OpenChamber control service', () => {
   });
 });
 
+describe('right-panel control', () => {
+  const createPanelService = () => {
+    const request = vi.fn(async () => ({ isOpen: true, tabs: [] }));
+    const { service } = createService({ browserControl: { request } });
+    return { service, request };
+  };
+
+  it('scopes panel state to the current session directory', async () => {
+    const { service, request } = createPanelService();
+    await service.execute('panel.list', {}, 'C:\\work\\repo');
+    expect(request).toHaveBeenCalledWith(
+      'panel.list',
+      { directory: 'C:\\work\\repo' },
+      expect.objectContaining({ timeoutMs: 20_000 }),
+    );
+  });
+
+  it('passes typed Files, Changes, and Chat inputs to the panel owner', async () => {
+    const { service, request } = createPanelService();
+    await service.execute('panel.open', {
+      panelMode: 'files',
+      filePath: 'src/app.ts',
+      line: 9,
+      column: 2,
+    }, '/repo');
+    await service.execute('panel.open', {
+      panelMode: 'changes',
+      filePath: 'src/app.ts',
+      diffScope: 'staged',
+      staged: true,
+    }, '/repo');
+    await service.execute('panel.open', {
+      panelMode: 'chat',
+      sessionId: 'ses_1',
+      readOnly: true,
+    }, '/repo');
+
+    expect(request.mock.calls.map((call) => call[1])).toEqual([
+      { directory: '/repo', panelMode: 'files', filePath: 'src/app.ts', line: 9, column: 2 },
+      { directory: '/repo', panelMode: 'changes', filePath: 'src/app.ts', diffScope: 'staged', staged: true },
+      { directory: '/repo', panelMode: 'chat', sessionId: 'ses_1', readOnly: true },
+    ]);
+  });
+
+  it('requires exact tab IDs and explicit expanded state', async () => {
+    const { service, request } = createPanelService();
+    await expect(service.execute('panel.closeTab', {}, '/repo')).rejects.toThrow('tabId is required');
+    await expect(service.execute('panel.setExpanded', {}, '/repo')).rejects.toThrow('expanded is required');
+    expect(request).not.toHaveBeenCalled();
+  });
+
+  it('rejects invalid panel modes and file locations before waking the UI', async () => {
+    const { service, request } = createPanelService();
+    await expect(service.execute('panel.open', { panelMode: 'settings' }, '/repo')).rejects.toThrow('panelMode');
+    await expect(service.execute('panel.open', { panelMode: 'files', line: 4 }, '/repo')).rejects.toThrow('require panelMode files with filePath');
+    expect(request).not.toHaveBeenCalled();
+  });
+});
+
 describe('browser capture', () => {
   const pixel = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';
 

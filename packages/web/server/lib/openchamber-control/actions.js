@@ -1,5 +1,5 @@
 /**
- * Two capabilities, two tools.
+ * Control and page-driving are separate tools.
  *
  * Controlling sessions and driving a page are different intents, and a single
  * tool description covering both is vaguer than either — which is how a model
@@ -10,6 +10,13 @@
 export const OPENCHAMBER_CONTROL_ACTION_DEFINITIONS = Object.freeze([
   { action: 'projects.list', title: 'List configured projects', description: 'List configured projects; no parameters' },
   { action: 'models.list', title: 'Show model preferences', description: 'Show default, favorite, and recent model preferences; no parameters' },
+  { action: 'panel.list', title: 'List right-panel tabs', description: 'Read the right panel state and exact tab IDs; no parameters' },
+  { action: 'panel.open', title: 'Open a right-panel surface', description: 'Default for a named built-in surface: open and focus panelMode context, git, pr, changes, walkthrough, files, terminal, notes, plan, browser, or chat. files/changes accept filePath; chat accepts sessionId' },
+  { action: 'panel.newBrowserTab', title: 'Create a Browser tab', description: 'Create and focus one new blank Browser tab in the right panel; no parameters' },
+  { action: 'panel.activate', title: 'Activate a right-panel tab', description: 'Focus the exact tabId returned by panel.list' },
+  { action: 'panel.closeTab', title: 'Close a right-panel tab', description: 'Close only the exact tabId returned by panel.list; never closes the OpenDeputy window' },
+  { action: 'panel.close', title: 'Close the right panel', description: 'Hide the right panel without deleting its tabs; no parameters' },
+  { action: 'panel.setExpanded', title: 'Resize the right panel', description: 'Set expanded true for the wide panel or false for its normal width' },
   { action: 'session.list', title: 'List sessions', description: 'List sessions; optional directory, limit (default 10), all, or withStatus' },
   { action: 'session.create', title: 'Create a session', description: 'Create a session in the current directory by default; prompt is optional' },
   { action: 'session.send', title: 'Send a prompt', description: 'Send a new prompt to sessionId; scope with projectId or directory' },
@@ -37,7 +44,7 @@ export const OPENCHAMBER_AGENT_TOOL_ACTIONS = Object.freeze(
 );
 
 export const OPENCHAMBER_WEB_ACTION_DEFINITIONS = Object.freeze([
-  { action: 'browser.open', title: 'Open a page in the browser panel', description: 'Open url in the in-app browser panel; use it to look at the running app. Set viewport to mobile, tablet or desktop to lay the page out at that size' },
+  { action: 'browser.open', title: 'Open a page in the browser panel', description: 'Default for an unqualified browser, page, website, or URL request: open url and focus the in-app Browser tab in the right panel. Set viewport to mobile, tablet or desktop to lay the page out at that size' },
   { action: 'browser.snapshot', title: 'Read the open page', description: 'Read the open page: url, title, visible text, and interactive elements with the selectors the other browser actions accept. Pass selector to read only that part of a long page. Reports any errors the page logged' },
   { action: 'browser.click', title: 'Click on the open page', description: 'Click an element; give selector, or text to match a link or button by its visible label' },
   { action: 'browser.type', title: 'Type into the open page', description: 'Type value into the field matched by selector; set submit to press Enter afterwards' },
