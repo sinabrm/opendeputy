@@ -33,6 +33,19 @@ describe('useUIStore context panel tabs', () => {
 describe('useUIStore openContextSurface', () => {
   const directory = '/repo';
 
+  for (const mode of ['diff', 'walkthrough', 'file', 'context', 'plan', 'browser', 'git', 'pr', 'notes', 'terminal'] as const) {
+    test(`reopens the existing ${mode} surface after the right panel was closed`, () => {
+      useUIStore.getState().openContextSurface(directory, mode);
+      useUIStore.getState().closeContextPanel(directory);
+      useUIStore.getState().openContextSurface(directory, mode);
+
+      const state = useUIStore.getState().contextPanelByDirectory[directory];
+      const activeTab = state?.tabs.find((tab) => tab.id === state.activeTabId);
+      expect(state?.isOpen).toBe(true);
+      expect(activeTab?.mode).toBe(mode);
+    });
+  }
+
   test('opens a fresh singleton tab when none of that mode exists', () => {
     useUIStore.getState().openContextSurface(directory, 'diff');
 
@@ -139,6 +152,34 @@ describe('useUIStore closeContextPanelTab surface stability', () => {
     const state = useUIStore.getState().contextPanelByDirectory[directory];
     expect(state?.activeTabId).toBe('terminal');
     expect(state?.isOpen).toBe(true);
+  });
+});
+
+describe('useUIStore agent browser reveal', () => {
+  const directory = '/repo';
+
+  test('reuses the most recent Browser tab instead of duplicating its current URL', () => {
+    useUIStore.getState().openNewContextBrowserTab(directory);
+    let state = useUIStore.getState().contextPanelByDirectory[directory];
+    const tabID = state?.activeTabId as string;
+    useUIStore.getState().setContextPanelTabTargetPath(directory, tabID, 'https://www.google.com/');
+    useUIStore.getState().closeContextPanel(directory);
+
+    useUIStore.getState().openContextBrowser(directory, 'https://www.google.com/');
+
+    state = useUIStore.getState().contextPanelByDirectory[directory];
+    expect(state?.isOpen).toBe(true);
+    expect(state?.activeTabId).toBe(tabID);
+    expect(state?.tabs.filter((tab) => tab.mode === 'browser')).toHaveLength(1);
+  });
+
+  test('sets expanded state idempotently', () => {
+    useUIStore.getState().setContextPanelExpanded(directory, true);
+    useUIStore.getState().setContextPanelExpanded(directory, true);
+    expect(useUIStore.getState().contextPanelByDirectory[directory]?.expanded).toBe(true);
+
+    useUIStore.getState().setContextPanelExpanded(directory, false);
+    expect(useUIStore.getState().contextPanelByDirectory[directory]?.expanded).toBe(false);
   });
 });
 

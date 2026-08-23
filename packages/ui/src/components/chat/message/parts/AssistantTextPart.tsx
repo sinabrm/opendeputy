@@ -8,6 +8,7 @@ import { resolveAssistantDisplayText, shouldRenderAssistantText } from './assist
 import { streamPerfCount, streamPerfObserve } from '@/stores/utils/streamDebug';
 import { GeneratedJsonResultCard } from './GeneratedJsonResultCard';
 import { parseGeneratedJsonResult } from './generatedJsonResult';
+import { AutoDirectionText } from '../../AutoDirectionText';
 
 type PartWithText = Part & { text?: string; content?: string; value?: string; time?: { start?: number; end?: number } };
 
@@ -78,17 +79,17 @@ const AssistantTextPart: React.FC<AssistantTextPartProps> = ({
     const generatedResult = !isStreaming && isFinalized ? parseGeneratedJsonResult(displayTextContent) : null;
     if (generatedResult) {
         return (
-            <div
+            <AutoDirectionText
                 className={`group/assistant-text relative break-words ${chatRenderMode === 'live' ? 'my-1' : ''}`}
                 key={part.id || `${messageId}-text`}
             >
                 <GeneratedJsonResultCard result={generatedResult} />
-            </div>
+            </AutoDirectionText>
         );
     }
 
     return (
-        <div
+        <AutoDirectionText
             className={`group/assistant-text relative break-words ${chatRenderMode === 'live' ? 'my-1' : ''}`}
             key={part.id || `${messageId}-text`}
         >
@@ -103,7 +104,7 @@ const AssistantTextPart: React.FC<AssistantTextPartProps> = ({
                 enableFileReferences={isFinalized}
                 onShowPopup={onShowPopup}
             />
-        </div>
+        </AutoDirectionText>
     );
 };
 

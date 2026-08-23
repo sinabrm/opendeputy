@@ -13,7 +13,10 @@
  * opening does not cost the agent a second call.
  */
 import { runtimeFetch } from '@/lib/runtime-fetch';
-import { subscribeOpenchamberEvents } from '@/lib/openchamberEvents';
+import {
+  setOpenchamberPanelControlCapable,
+  subscribeOpenchamberEvents,
+} from '@/lib/openchamberEvents';
 
 type BrowserControlRequest = {
   readonly requestId: string;
@@ -21,13 +24,19 @@ type BrowserControlRequest = {
   readonly parameters: Record<string, unknown>;
 };
 
-/** Implemented by the mounted browser pane. */
+/** Implemented by the visible browser pane. */
 export type BrowserController = {
   /** Runs one action and resolves with its JSON-serializable result. */
   readonly run: (action: string, parameters: Record<string, unknown>) => Promise<unknown>;
 };
 
-/** Opens a URL when no browser view exists yet. */
+/** Implemented by the mounted right panel, independently of its active tab. */
+type PanelController = {
+  readonly directory: string;
+  readonly run: (action: string, parameters: Record<string, unknown>) => Promise<unknown>;
+};
+
+/** Opens a URL when no browser view is visible. */
 export type BrowserOpener = (url: string) => void;
 
 /**
@@ -39,6 +48,7 @@ const VIEW_ATTACH_TIMEOUT_MS = 2_000;
 const VIEW_ATTACH_POLL_MS = 50;
 
 let activeController: BrowserController | null = null;
+let activePanelController: PanelController | null = null;
 let opener: BrowserOpener | null = null;
 let unsubscribe: (() => void) | null = null;
 
@@ -90,7 +100,7 @@ const postResult = async (requestId: string, outcome: { ok: boolean; data?: unkn
 };
 
 /**
- * Waits for a browser view to register itself, or gives up.
+ * Waits for the opened browser view to become visible and register, or gives up.
  *
  * Polls rather than subscribes because registration is a plain assignment made
  * by whichever pane mounts; a callback would have to be maintained by every
@@ -106,7 +116,32 @@ const waitForController = async (
   return activeController;
 };
 
+const normalizeDirectoryForComparison = (value: unknown): string => {
+  if (typeof value !== 'string') return '';
+  const normalized = value.trim().replace(/\\/g, '/').replace(/\/+$/g, '');
+  return /^[a-z]:\//i.test(normalized) ? normalized.toLocaleLowerCase('en-US') : normalized;
+};
+
 const handleRequest = async (request: BrowserControlRequest): Promise<void> => {
+  if (request.action.startsWith('panel.')) {
+    const panelController = activePanelController;
+    if (!panelController) return;
+    const requestedDirectory = normalizeDirectoryForComparison(request.parameters.directory);
+    if (requestedDirectory && requestedDirectory !== normalizeDirectoryForComparison(panelController.directory)) return;
+
+    if (!await claimRequest(request.requestId)) return;
+    try {
+      const data = await panelController.run(request.action, request.parameters);
+      await postResult(request.requestId, { ok: true, data });
+    } catch (error) {
+      await postResult(request.requestId, {
+        ok: false,
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+    return;
+  }
+
   const isOpen = request.action === 'browser.open';
   const controller = activeController;
 
@@ -124,41 +159,18 @@ const handleRequest = async (request: BrowserControlRequest): Promise<void> => {
       }
       opener?.(url);
 
-      const requestedViewport = typeof request.parameters.viewport === 'string'
-        ? request.parameters.viewport
-        : '';
-      if (!requestedViewport || requestedViewport === 'fill') {
-        await postResult(request.requestId, { ok: true, data: { url, opened: true } });
-        return;
-      }
-
       // The tab was just created, so its view is a few frames away. Waiting for
-      // it lets the layout the agent asked for be applied to the page it is
-      // opening, rather than to the next call it has to make.
+      // it lets this same request navigate the tab that was revealed. Merely
+      // changing stored tab metadata can neither navigate a mounted webview nor
+      // prove that the requested page actually opened.
       const attached = await waitForController();
       if (!attached) {
-        // Still no view. Reporting a plain success here would leave the agent
-        // believing a size it asked for was applied to a page nobody is showing.
-        await postResult(request.requestId, {
-          ok: true,
-          data: {
-            url,
-            opened: true,
-            viewportApplied: false,
-            note: 'The panel had no browser view yet, so the viewport was not applied. Call browser.resize now that one exists.',
-          },
-        });
+        await postResult(request.requestId, { ok: false, error: 'The Browser tab opened but its view did not become ready' });
         return;
       }
 
-      const resized = await attached.run('browser.resize', { viewport: requestedViewport });
-      const viewport = resized && typeof resized === 'object'
-        ? (resized as { viewport?: unknown }).viewport ?? null
-        : null;
-      await postResult(request.requestId, {
-        ok: true,
-        data: { url, opened: true, viewportApplied: true, viewport },
-      });
+      const data = await attached.run('browser.open', request.parameters);
+      await postResult(request.requestId, { ok: true, data });
       return;
     }
 
@@ -185,15 +197,16 @@ const ensureSubscribed = (): void => {
 };
 
 const releaseIfIdle = (): void => {
-  if (activeController || opener || !unsubscribe) return;
+  if (activeController || activePanelController || opener || !unsubscribe) return;
   unsubscribe();
   unsubscribe = null;
 };
 
 /**
- * Registers the mounted browser view. The most recently mounted view wins;
- * unregistering only clears the registry when it still points at the caller,
- * so a stale unmount cannot detach a newer view.
+ * Registers the visible browser view. Browser panes stay mounted while hidden
+ * to preserve page state, so their owner must unregister them whenever their
+ * tab or the right panel is no longer visible. The most recently visible view
+ * wins; a stale cleanup cannot detach a newer one.
  */
 export const registerBrowserController = (controller: BrowserController): (() => void) => {
   activeController = controller;
@@ -204,7 +217,20 @@ export const registerBrowserController = (controller: BrowserController): (() =>
   };
 };
 
-/** Registers the app-level fallback that can open a browser tab on demand. */
+/** Registers safe store-backed controls for the complete right panel. */
+export const registerPanelController = (controller: PanelController): (() => void) => {
+  activePanelController = controller;
+  setOpenchamberPanelControlCapable(true);
+  ensureSubscribed();
+  return () => {
+    if (activePanelController !== controller) return;
+    activePanelController = null;
+    setOpenchamberPanelControlCapable(false);
+    releaseIfIdle();
+  };
+};
+
+/** Registers the app-level fallback that can open or reveal a browser tab on demand. */
 export const registerBrowserOpener = (open: BrowserOpener): (() => void) => {
   opener = open;
   ensureSubscribed();

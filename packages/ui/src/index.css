@@ -981,6 +981,16 @@ html:not(.dark) .chat-scroll {
   line-height: inherit;
 }
 
+/* Message prose uses the browser's Unicode bidirectional algorithm. Keep code
+   isolated so punctuation and identifiers retain their normal LTR ordering
+   inside RTL messages. */
+.markdown-content [data-component="markdown-code"],
+.markdown-content code[data-markdown="inline-code"] {
+  direction: ltr;
+  text-align: left;
+  unicode-bidi: isolate;
+}
+
 .markdown-content p,
 .markdown-content li,
 .markdown-content blockquote,

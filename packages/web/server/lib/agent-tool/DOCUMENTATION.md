@@ -3,13 +3,20 @@
 ## Purpose
 
 This module exposes OpenDeputy to agents as typed OpenCode custom tools. There
-are three, because controlling sessions, driving a page, and using local workspace capabilities are separate intents
+are four, because controlling sessions, managing the right panel, driving a page, and using local workspace capabilities are separate intents
 the user can want independently:
 
 - `opendeputy` — projects, sessions, worktrees, and scheduled tasks. Enabled
   while the persisted `agentControlToolEnabled` setting is not `false`.
-- `opendeputy_web` — looking at and interacting with the page in OpenDeputy's
-  browser panel. Enabled while `agentWebToolEnabled` is not `false`.
+- `opendeputy_panel` — the default in every language for unqualified requests
+  to open, show, use, inspect, edit, or work with Context, Git, PR, Changes,
+  Walkthrough, Files, Terminal, Notes, Plan, Browser, Chat, or a right-panel tab. `panel.list`
+  returns exact tab IDs; the remaining `panel.*` actions open, activate, close,
+  or expand app state without desktop input. It follows the agent-control setting.
+- `opendeputy_web` — the default for an unqualified request to open a browser,
+  page, website, or URL. `browser.open` creates or reuses and focuses the Browser tab in
+  OpenDeputy's right context panel. Real Chrome tabs remain the explicit
+  Open Browser Use path. Enabled while `agentWebToolEnabled` is not `false`.
 - `opendeputy_workspace` — local memory, document conversion, speech synthesis,
   and optional activity history. It follows the agent-control setting.
 
@@ -17,7 +24,7 @@ The control settings default to on, are toggled in Settings → General → Open
 CLI, and apply on the next managed OpenCode restart. Desktop packages also
 inject the managed agent kit. It defines `playwright`, `open_computer_use`,
 `open_browser_use`, `computer_use`, `agent_overlay`, `touchpoint`,
-`visual_grounding`, and `workspace_tools`; all eight start by default. Visual grounding uses Nemotron Omni for unresolved screenshot targets and task-relevant local images, audio, and MP4 video. It reads the locally configured NVIDIA credential and sends only task-relevant media to NVIDIA's hosted endpoint. Unsupported formats are reported instead of inferred from filenames. TouchPoint
+`visual_grounding`, and `workspace_tools`; all eight start by default. Visual grounding uses Muse Spark for unresolved screenshot targets and task-relevant local images, audio, video, PDFs, and documents. It reports attachment types rejected by the installed OpenCode transport instead of guessing their contents. TouchPoint
 runs from the portable Python runtime bundled in the Windows installer, so it
 does not depend on a system Python or an OpenChamber tools directory. Discovery is allowed by default and
 computer-changing actions require approval. Four packaged skill paths join
@@ -28,6 +35,17 @@ only the parameters those actions use, so turning one off removes its inputs
 from the schema rather than leaving them visible. The plugin is injected only
 when OpenDeputy launches and owns the OpenCode process, and not at all when
 both settings are `false`.
+
+The generated plugin also owns internal-surface routing. Its always-loaded
+system rule makes every supported right-panel surface the default and tells the
+agent to work through native file/edit, shell/Git/GitHub, plan, and session data
+tools before showing the result in the matching panel. A per-session pre-tool
+guard rejects desktop mouse/keyboard control when a turn refers to a supported
+surface. Explicitly named external apps and requests with no built-in surface or
+direct tool remain available. Browser routing is stricter: per-session intent
+keeps external browser tools available after an explicit external-browser
+request, while the guard rejects Open Browser Use, Playwright, or
+browser-targeted desktop control for unqualified requests.
 
 - The plugin accepts the action's inputs either inside `parameters` or beside
   `action`, because models produce both shapes; an explicit `parameters` object

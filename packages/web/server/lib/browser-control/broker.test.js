@@ -50,6 +50,11 @@ describe('browser control broker', () => {
     }
   });
 
+  test('reports a missing right-panel owner without pretending it is a browser failure', async () => {
+    const { broker } = createBroker({ listeners: 0 });
+    await expect(broker.request('panel.list', { directory: '/repo' })).rejects.toThrow('right panel');
+  });
+
   test('surfaces a client-reported failure with its message', async () => {
     const { broker, emitted } = createBroker();
     const inflight = broker.request('browser.click', { selector: '#missing' });

@@ -9,8 +9,8 @@ other.
 
 ## Boundaries
 
-- `service.js` validates and executes the fixed project, model, session, and
-  scheduled-task action allowlist. `actions.js` marks CLI-only actions with
+- `service.js` validates and executes the fixed project, model, session,
+  scheduled-task, browser, and right-panel action allowlist. `actions.js` marks CLI-only actions with
   `agentExposed: false` (currently `schedule.status`); the agent tool consumes
   the filtered `OPENCHAMBER_AGENT_TOOL_*` exports. `schedule.toggle` requires
   the `disabled` boolean and replaces separate enable/disable actions;
@@ -53,6 +53,11 @@ other.
   directory and does not erase other session results.
 - Destructive session/worktree deletion and project-path registration are not
   part of the action contract.
+- `panel.*` requests carry the authoritative session directory through the
+  renderer broker. The matching `ContextPanel` owner applies them through its
+  store actions and returns the complete tab state. Exact activate/close calls
+  require a `tabId` from `panel.list`; no mouse, keyboard shortcut, or Electron
+  window command is part of this path.
 - `browser.capture` writes its image on the server, into
   `.openchamber/screenshots/` under the scoped project directory, and returns
   the project-relative path rather than the image bytes. The client that took
