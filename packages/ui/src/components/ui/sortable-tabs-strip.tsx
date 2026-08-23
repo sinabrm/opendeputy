@@ -44,6 +44,8 @@ type SortableTabsStripProps = {
   inactiveTabsIconOnly?: boolean;
   animateActivePill?: boolean;
   activePillLowercase?: boolean;
+  /** Keep the active tab's close control visible even when the pointer is not hovering it. */
+  showActiveCloseControl?: boolean;
   /** Position the active-pill indicator with left/top instead of translate3d.
       Use when the strip lives inside an ancestor that transform-animates
       (e.g. a sliding mobile drawer): creating a composited layer mid-slide
@@ -105,6 +107,7 @@ export const SortableTabsStrip: React.FC<SortableTabsStripProps> = ({
   inactiveTabsIconOnly = false,
   animateActivePill,
   activePillLowercase = true,
+  showActiveCloseControl = false,
   nonCompositedIndicator = false,
   className,
 }) => {
@@ -453,6 +456,7 @@ export const SortableTabsStrip: React.FC<SortableTabsStripProps> = ({
           const useIntrinsicActiveTab = inactiveTabsIconOnly && usesActivePillIndicator && isActive && !isScrollable && !useIntrinsicPillSizing;
           const closable = item.closable !== false && Boolean(onClose);
           const closeReplacesIcon = closable && Boolean(item.icon);
+          const showCloseControl = alwaysShowCloseControls || (showActiveCloseControl && isActive);
           const wrapperClassName = (isScrollable || useIntrinsicPillSizing)
             ? undefined
             : usesActivePillIndicator
@@ -549,12 +553,12 @@ export const SortableTabsStrip: React.FC<SortableTabsStripProps> = ({
                     <>
                       {shouldShowIcon ? (
                         <span className="relative flex h-4 w-4 shrink-0 items-center justify-center">
-                          <span className={cn('flex items-center justify-center transition-opacity', closeReplacesIcon && (alwaysShowCloseControls ? 'opacity-0' : 'group-hover:opacity-0'))}>{item.icon}</span>
+                          <span className={cn('flex items-center justify-center transition-opacity', closeReplacesIcon && (showCloseControl ? 'opacity-0' : 'group-hover:opacity-0'))}>{item.icon}</span>
                           {closeReplacesIcon ? (
                             <span
                               role="button"
                               tabIndex={-1}
-                              className={cn('absolute inset-0 z-20 flex !min-h-0 !min-w-0 items-center justify-center rounded-sm text-muted-foreground transition-opacity hover:text-foreground', alwaysShowCloseControls ? 'opacity-100' : 'opacity-0 group-hover:opacity-100')}
+                              className={cn('absolute inset-0 z-20 flex !min-h-0 !min-w-0 items-center justify-center rounded-sm text-muted-foreground transition-opacity hover:text-foreground', showCloseControl ? 'opacity-100' : 'opacity-0 group-hover:opacity-100')}
                               onPointerDown={(event) => {
                                 event.stopPropagation();
                               }}
@@ -581,12 +585,12 @@ export const SortableTabsStrip: React.FC<SortableTabsStripProps> = ({
                             isActive ? 'text-[var(--primary-base)]' : 'text-muted-foreground'
                           )}
                         >
-                          <span className={cn('flex items-center justify-center transition-opacity', closeReplacesIcon && (alwaysShowCloseControls ? 'opacity-0' : 'group-hover:opacity-0'))}>{item.icon}</span>
+                          <span className={cn('flex items-center justify-center transition-opacity', closeReplacesIcon && (showCloseControl ? 'opacity-0' : 'group-hover:opacity-0'))}>{item.icon}</span>
                           {closeReplacesIcon ? (
                             <span
                               role="button"
                               tabIndex={-1}
-                              className={cn('absolute inset-0 z-20 flex !min-h-0 !min-w-0 items-center justify-center rounded-sm text-muted-foreground transition-opacity hover:text-foreground', alwaysShowCloseControls ? 'opacity-100' : 'opacity-0 group-hover:opacity-100')}
+                              className={cn('absolute inset-0 z-20 flex !min-h-0 !min-w-0 items-center justify-center rounded-sm text-muted-foreground transition-opacity hover:text-foreground', showCloseControl ? 'opacity-100' : 'opacity-0 group-hover:opacity-100')}
                               onPointerDown={(event) => {
                                 event.stopPropagation();
                               }}
