@@ -1,10 +1,45 @@
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
 import path from 'node:path';
 import test from 'node:test';
 import {
   resolveOpenBrowserUseBinary,
   spawnOpenBrowserUse,
 } from './agent-kit/servers/open-browser-use-launcher.mjs';
+
+test('routes ordinary browser requests to the in-app panel before real Chrome', () => {
+  const skill = fs.readFileSync(
+    path.resolve('agent-kit', 'skills', 'computer-control', 'SKILL.md'),
+    'utf8',
+  );
+  const inAppRule = skill.indexOf('Treat an unqualified request');
+  const externalBrowserRule = skill.indexOf('explicitly asks for an external/system/desktop browser');
+
+  assert.ok(inAppRule >= 0);
+  assert.ok(externalBrowserRule > inAppRule);
+  assert.match(skill, /Manage it with `opendeputy_panel`/);
+  assert.match(skill, /`opendeputy_web` with `browser\.open`/);
+  assert.match(skill, /creates or reuses and focuses the Browser tab in the right context panel/);
+});
+
+test('keeps every OpenDeputy right-panel action inside the app state boundary', () => {
+  const skill = fs.readFileSync(
+    path.resolve('agent-kit', 'skills', 'computer-control', 'SKILL.md'),
+    'utf8',
+  );
+
+  for (const surface of ['Context', 'Git', 'PR', 'Changes', 'Walkthrough', 'Files', 'Terminal', 'Notes', 'Plan', 'Browser', 'Chat']) {
+    assert.match(skill, new RegExp(`\\b${surface}\\b`));
+  }
+  assert.match(skill, /`panel\.list` first/);
+  assert.match(skill, /`panel\.closeTab`/);
+  assert.match(skill, /Never use desktop mouse\/keyboard control/);
+  assert.match(skill, /`Ctrl\+W`/);
+  assert.match(skill, /close the whole application/);
+  assert.match(skill, /Do the work through the surface's native data path/);
+  assert.match(skill, /Use an external application when the user explicitly names one/);
+  assert.match(skill, /Do not silently replace a supported internal surface/);
+});
 
 test('spawns the native Windows Open Browser Use binary with its console hidden', () => {
   const root = path.resolve('agent-kit-fixture');
