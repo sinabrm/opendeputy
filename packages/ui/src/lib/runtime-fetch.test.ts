@@ -310,7 +310,7 @@ describe('runtimeFetch read coalescing', () => {
       expect(await a.json()).toEqual({ ok: true });
       expect(await b.json()).toEqual({ ok: true });
 
-      // After settle the entry is gone — a later call re-fetches.
+      // After settle the entry is gone \u2014 a later call re-fetches.
       await runtimeFetch('/api/config/providers');
       expect(calls).toBe(2);
     } finally {
@@ -331,7 +331,7 @@ describe('runtimeFetch read coalescing', () => {
         return new Response('{}', { status: 200, headers: { 'content-type': 'application/json' } });
       }) as typeof fetch;
 
-      // POST to an allowlisted path → not coalesced.
+      // POST to an allowlisted path \u2192 not coalesced.
       await Promise.all([
         runtimeFetch('/api/config/providers', { method: 'POST' }),
         runtimeFetch('/api/config/providers', { method: 'POST' }),
@@ -339,7 +339,7 @@ describe('runtimeFetch read coalescing', () => {
       expect(calls).toBe(2);
 
       calls = 0;
-      // GET to a non-allowlisted path → not coalesced.
+      // GET to a non-allowlisted path \u2192 not coalesced.
       await Promise.all([
         runtimeFetch('/api/session'),
         runtimeFetch('/api/session'),
@@ -347,7 +347,7 @@ describe('runtimeFetch read coalescing', () => {
       expect(calls).toBe(2);
 
       calls = 0;
-      // GET to an allowlisted path but carrying an AbortSignal → not coalesced.
+      // GET to an allowlisted path but carrying an AbortSignal \u2192 not coalesced.
       await Promise.all([
         runtimeFetch('/api/config/providers', { signal: AbortSignal.timeout(1000) }),
         runtimeFetch('/api/config/providers', { signal: AbortSignal.timeout(1000) }),
@@ -370,23 +370,23 @@ describe('runtimeFetch header sanitization', () => {
   });
 
   test('isLatin1Safe returns false for strings with characters above U+00FF', () => {
-    expect(isLatin1Safe('你好')).toBe(false);
-    expect(isLatin1Safe('D:\\文件')).toBe(false);
+    expect(isLatin1Safe('\u4F60\u597D')).toBe(false);
+    expect(isLatin1Safe('D:\\\u6587\u4EF6')).toBe(false);
     expect(isLatin1Safe('\u0100')).toBe(false);
   });
 
   test('sanitizeHeadersForBrowser encodes non-Latin-1 values in object form', () => {
-    const result = sanitizeHeadersForBrowser({ 'x-test': '你好' });
+    const result = sanitizeHeadersForBrowser({ 'x-test': '\u4F60\u597D' });
     expect(result).toBeTruthy();
     expect(result![0][0]).toBe('x-test');
-    expect(result![0][1]).toBe(encodeURIComponent('你好'));
+    expect(result![0][1]).toBe(encodeURIComponent('\u4F60\u597D'));
   });
 
   test('sanitizeHeadersForBrowser encodes non-Latin-1 values in array form', () => {
-    const result = sanitizeHeadersForBrowser([['x-test', 'こんにちは']]);
+    const result = sanitizeHeadersForBrowser([['x-test', '\u3053\u3093\u306B\u3061\u306F']]);
     expect(result).toBeTruthy();
     expect(result![0][0]).toBe('x-test');
-    expect(result![0][1]).toBe(encodeURIComponent('こんにちは'));
+    expect(result![0][1]).toBe(encodeURIComponent('\u3053\u3093\u306B\u3061\u306F'));
   });
 
   test('sanitizeHeadersForBrowser returns undefined when no encoding needed', () => {
@@ -401,7 +401,7 @@ describe('runtimeFetch header sanitization', () => {
   });
 
   test('sanitizeHeadersForBrowser encodes non-Latin-1 directory hints with marker', () => {
-    const path = 'D:\\文件夹';
+    const path = 'D:\\\u6587\u4EF6\u5939';
     const result = sanitizeHeadersForBrowser({ 'x-opencode-directory': path });
     expect(result).toBeTruthy();
     const encoded = Object.fromEntries(result!);
@@ -417,14 +417,14 @@ describe('runtimeFetch header sanitization', () => {
   test('sanitizeHeadersForBrowser only encodes non-Latin-1 values, leaves Latin-1 unchanged', () => {
     const result = sanitizeHeadersForBrowser({
       accept: 'application/json',
-      'x-chinese': '文件',
+      'x-chinese': '\u6587\u4EF6',
       'content-type': 'text/plain',
     });
     expect(result).toBeTruthy();
     const encoded = Object.fromEntries(result!);
     expect(encoded.accept).toBe('application/json');
     expect(encoded['content-type']).toBe('text/plain');
-    expect(encoded['x-chinese']).toBe(encodeURIComponent('文件'));
+    expect(encoded['x-chinese']).toBe(encodeURIComponent('\u6587\u4EF6'));
   });
 
   test('runtimeFetch encodes directory request headers with marker', async () => {
@@ -445,14 +445,14 @@ describe('runtimeFetch header sanitization', () => {
       }) as typeof fetch;
 
       await runtimeFetch('/api/config/providers', {
-        headers: { 'x-opencode-directory': 'D:\\文件夹' },
+        headers: { 'x-opencode-directory': 'D:\\\u6587\u4EF6\u5939' },
       });
 
       expect(calls).toHaveLength(1);
       const encoded = calls[0].headers.get('x-opencode-directory');
-      expect(encoded).not.toBe('D:\\文件夹');
+      expect(encoded).not.toBe('D:\\\u6587\u4EF6\u5939');
       // decodeURIComponent round-trips back to original
-      expect(decodeURIComponent(encoded!)).toBe('D:\\文件夹');
+      expect(decodeURIComponent(encoded!)).toBe('D:\\\u6587\u4EF6\u5939');
       expect(calls[0].headers.get('x-opencode-directory-encoding')).toBe('uri');
     } finally {
       setRuntimeUrlResolver(previous);

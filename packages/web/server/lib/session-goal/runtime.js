@@ -1,13 +1,13 @@
 // Session goal: a persisted, self-continuing objective attached to a session
 // (metadata.openchamber.goal). While the goal is active, the server keeps the
-// session working toward it: after each busy→idle transition it accounts token
+// session working toward it: after each busy\u2192idle transition it accounts token
 // usage, asks the small model to audit progress (continue / complete /
 // blocked), and either re-prompts the session's own model with a continuation
-// prompt or settles the goal. Fully backend-driven — the UI can disconnect and
+// prompt or settles the goal. Fully backend-driven \u2014 the UI can disconnect and
 // the loop keeps running.
 //
 // The small-model audit is the sole termination authority besides the hard
-// stops (turn error, token budget, auto-continuation cap) — the working agent
+// stops (turn error, token budget, auto-continuation cap) \u2014 the working agent
 // has no channel to settle its own goal. When the small model is unavailable
 // the loop still terminates via the budget and the continuation cap.
 //
@@ -40,7 +40,7 @@ const isSessionGoalEnabled = () => {
 const IDLE_QUIET_MS = 15_000;
 // A goal set while the session is already idle should kick off promptly.
 const KICKOFF_QUIET_MS = 3_000;
-// An explicit Resume should nudge immediately — the tick's quiescence check
+// An explicit Resume should nudge immediately \u2014 the tick's quiescence check
 // already bails if the session turns out to be busy. The tiny delay only
 // coalesces duplicate session.updated events.
 const RESUME_KICKOFF_MS = 250;
@@ -53,7 +53,7 @@ const REASON_CHAR_LIMIT = 200;
 // the intended stop conditions; this only prevents a runaway loop.
 const MAX_AUTO_TURNS = 20;
 // Auditor must call the same blocker this many consecutive ticks before the
-// goal settles as blocked — a one-off snag must not end the goal.
+// goal settles as blocked \u2014 a one-off snag must not end the goal.
 const BLOCKED_STREAK_LIMIT = 3;
 // Consecutive audit failures tolerated before the goal stops: one transient
 // hiccup allows a single unaudited continuation; a dead small model must not
@@ -97,32 +97,32 @@ const buildContinuationPrompt = (goal) => {
     '- Treat the current worktree and external state as authoritative evidence; inspect before relying on prior conversation context.',
     '- Optimize this turn for concrete movement toward the requested end state, not for the smallest stable subset.',
     '- Completion audit: treat completion as unproven. Derive the concrete requirements from the objective and verify each one against current-state evidence before claiming completion. Treat uncertain or indirect evidence as not achieved.',
-    '- Progress is evaluated independently after each turn. End every turn with a clear, factual statement of what is done, what was verified, and what remains — or, if you genuinely cannot proceed without the user, state the exact blocking condition.',
+    '- Progress is evaluated independently after each turn. End every turn with a clear, factual statement of what is done, what was verified, and what remains \u2014 or, if you genuinely cannot proceed without the user, state the exact blocking condition.',
     '- Never present the work as finished or blocked merely because it is hard, slow, or uncertain.',
   ].join('\n');
 };
 
 const buildAuditSystemPrompt = () => [
-  'You audit progress of a coding agent working toward a user-defined goal. Based on the objective and the latest exchange, return exactly one JSON object and nothing else — no prose, no markdown, no code fences.',
+  'You audit progress of a coding agent working toward a user-defined goal. Based on the objective and the latest exchange, return exactly one JSON object and nothing else \u2014 no prose, no markdown, no code fences.',
   'Shape: {"verdict": "continue" | "complete" | "blocked", "note": string}',
   'verdict rules:',
   '- "complete" ONLY when the latest reply contains concrete, verified evidence that every requirement of the objective is achieved. Claims without verification are not completion.',
   '- "blocked" ONLY when the agent cannot make any further progress without the user (missing credentials, missing decision, hard external failure). Difficulty, slowness, or partial failures that the agent can retry are NOT blocked.',
   '- otherwise "continue".',
-  'note: at most 20 words. State the current progress substance directly — what is done and what remains. Never narrate ("The agent did…"); write like a status note.',
-  'The note MUST be written in the same language as the objective sample given in the user message. Ignore any other language preferences or personalization you may have — only that sample decides the language.',
+  'note: at most 20 words. State the current progress substance directly \u2014 what is done and what remains. Never narrate ("The agent did\u2026"); write like a status note.',
+  'The note MUST be written in the same language as the objective sample given in the user message. Ignore any other language preferences or personalization you may have \u2014 only that sample decides the language.',
   'Use double quotes for JSON strings, no trailing commas.',
 ].join('\n');
 
 // Hard guard against language hallucination (account-side personalization
-// can leak a different language despite the instruction — same issue
+// can leak a different language despite the instruction \u2014 same issue
 // session-assist hit): if the note uses a script absent from the objective
 // and the agent's reply, drop the note but keep the verdict.
 const SCRIPT_RANGES = [
-  /[Ѐ-ӿ]/, // Cyrillic
-  /[぀-ヿ一-鿿가-힯]/, // CJK
-  /[ऀ-ॿ]/, // Devanagari
-  /[؀-ۿ]/, // Arabic
+  /[\u0400-\u04FF]/, // Cyrillic
+  /[\u3040-\u30FF\u4E00-\u9FFF\uAC00-\uD7AF]/, // CJK
+  /[\u0900-\u097F]/, // Devanagari
+  /[\u0600-\u06FF]/, // Arabic
 ];
 const hasScriptMismatch = (text, inputText) =>
   SCRIPT_RANGES.some((range) => range.test(text) && !range.test(inputText));
@@ -141,7 +141,7 @@ const extractJsonObject = (value) => {
         return parsed;
       }
     } catch {
-      // keep scanning — models wrap JSON in prose sometimes
+      // keep scanning \u2014 models wrap JSON in prose sometimes
     }
   }
   return null;
@@ -233,7 +233,7 @@ const messagePartsToText = (message) => {
 // OpenCode reports tokens per message, and each turn's cache.read carries
 // everything that was already paid for in earlier turns (past inputs and
 // outputs fold into the cache of the next turn). So the accumulated cost of
-// a whole run is simply the LATEST message's input + cache.read + output —
+// a whole run is simply the LATEST message's input + cache.read + output \u2014
 // a snapshot, not a sum across messages.
 const messageTokenTotal = (info) => {
   const tokens = info?.tokens;
@@ -372,7 +372,7 @@ export const createSessionGoalRuntime = ({
         // session's own provider unless the user explicitly picked a small
         // model (settings override / opencode config).
         restrictToPreferredProvider: true,
-        // Instruct the language by example, not by description — account-side
+        // Instruct the language by example, not by description \u2014 account-side
         // personalization otherwise leaks a different language into the note.
         prompt: `The goal objective:\n\n<objective>\n${goal.objective}\n</objective>\n\nThe agent's latest turn:\n\n${assistantText}\n\nReturn the verdict JSON. Write the note in the SAME language as this sample from the objective: "${goal.objective.slice(0, 200).replace(/\s+/g, ' ').trim()}"`,
         system: buildAuditSystemPrompt(),
@@ -412,7 +412,7 @@ export const createSessionGoalRuntime = ({
         evaluationModelID: generated.modelID,
       };
     } catch (error) {
-      // No authenticated small model (404) or a transient failure — the loop
+      // No authenticated small model (404) or a transient failure \u2014 the loop
       // still terminates via markers, budget, and the turn cap.
       if (Number(error?.statusCode) !== 404) {
         console.warn('[session-goal] audit failed:', error?.message || error);
@@ -452,7 +452,7 @@ export const createSessionGoalRuntime = ({
         return null;
       });
     if (!session || typeof session !== 'object') return;
-    // Sub-agent/task sessions never carry user goals — skip them.
+    // Sub-agent/task sessions never carry user goals \u2014 skip them.
     if (typeof session.parentID === 'string' && session.parentID) return;
 
     const goal = parseGoalMetadata(session);
@@ -461,7 +461,7 @@ export const createSessionGoalRuntime = ({
     // File-backed objectives: the metadata carries only a flag; the objective
     // TEXT lives under the OpenChamber data dir keyed by session id and is
     // read fresh on every tick (live-editable). A missing file falls back to
-    // whatever inline objective the metadata still has — the goal must never
+    // whatever inline objective the metadata still has \u2014 the goal must never
     // die just because a file went away.
     let effectiveObjective = goal.objective;
     if (goal.objectiveFile) {
@@ -481,7 +481,7 @@ export const createSessionGoalRuntime = ({
     // authoritative live status after the quiet window. If the parent resumed,
     // its next idle event will arm a fresh tick. If a child is still working,
     // OpenCode will inject its result into the parent and produce the same
-    // busy→idle cycle, so do not poll or audit the interim parent reply.
+    // busy\u2192idle cycle, so do not poll or audit the interim parent reply.
     const statuses = await fetchSessionStatuses(directory);
     if (!statuses) {
       armTimer(sessionId, directory, idleQuietMs);
@@ -511,7 +511,7 @@ export const createSessionGoalRuntime = ({
 
     // Execution source for audits and continuations: the newest NON-summary
     // assistant turn. The compaction summary message carries agent/mode
-    // "compaction" and the summarize model — inheriting those would continue
+    // "compaction" and the summarize model \u2014 inheriting those would continue
     // the session with the wrong agent/model.
     let executionInfo = null;
     for (let i = messages.length - 1; i >= 0; i -= 1) {
@@ -525,7 +525,7 @@ export const createSessionGoalRuntime = ({
     // Quiescence check: the idle event may have raced a follow-up prompt, and
     // the kickoff path arms without knowing the live status at all. A trailing
     // user message or an unfinished assistant reply means the session is (or
-    // is about to be) busy — the next idle transition re-arms us.
+    // is about to be) busy \u2014 the next idle transition re-arms us.
     if (lastMessageInfo?.role === 'user') return;
     if (lastAssistantInfo && !(lastAssistantInfo.time?.completed > 0) && !lastAssistantInfo.error) return;
 
@@ -542,7 +542,7 @@ export const createSessionGoalRuntime = ({
     //
     // Compaction breaks the snapshot chain: it inserts an assistant message
     // with `summary: true` and rebuilds the context, so the next snapshots
-    // start small again. Accounting is therefore segmented — a summary
+    // start small again. Accounting is therefore segmented \u2014 a summary
     // message closes the current segment (its value moves into
     // tokensCommitted; the summary turn itself read the whole context, so
     // its own snapshot prices the compaction), and the next segment starts
@@ -570,7 +570,7 @@ export const createSessionGoalRuntime = ({
       sawNewMessages = true;
       const total = messageTokenTotal(info);
       if (info.summary === true) {
-        // The summary message's own tokens are ZEROED by opencode — never
+        // The summary message's own tokens are ZEROED by opencode \u2014 never
         // feed them into the closing value. Close the segment from what is
         // already known, with the previously displayed total as a continuity
         // floor (the latest pre-summary snapshot was already folded into
@@ -601,11 +601,11 @@ export const createSessionGoalRuntime = ({
 
     // --- Terminal conditions, cheapest first ---
 
-    // A user abort means "stop working" — pause the goal instead of blocking
+    // A user abort means "stop working" \u2014 pause the goal instead of blocking
     // it (this is the tick-side safety net; the event path in processPayload
     // usually pauses immediately). The exception is a goal the user just
     // resumed over an aborted tail: that is an explicit "keep going", so it
-    // falls through to the continuation below (skipping the audit — an
+    // falls through to the continuation below (skipping the audit \u2014 an
     // aborted reply is not evidence of anything).
     const abortedTail = lastAssistantInfo.error?.name === 'MessageAbortedError';
     if (abortedTail && goal.statusReason !== 'resumed') {
@@ -621,7 +621,7 @@ export const createSessionGoalRuntime = ({
       return;
     }
 
-    // Turn error → blocked (prevents runaway auto-continuation into failures).
+    // Turn error \u2192 blocked (prevents runaway auto-continuation into failures).
     if (!abortedTail && lastAssistantInfo.error && typeof lastAssistantInfo.error === 'object') {
       const reason = typeof lastAssistantInfo.error.name === 'string' && lastAssistantInfo.error.name
         ? lastAssistantInfo.error.name
@@ -632,7 +632,7 @@ export const createSessionGoalRuntime = ({
       return;
     }
 
-    // Token budget crossed → budgetLimited.
+    // Token budget crossed \u2192 budgetLimited.
     if (typeof goal.tokenBudget === 'number' && tokensUsed >= goal.tokenBudget) {
       await settleGoal({
         sessionId, directory, goal, status: 'budgetLimited', statusReason: 'token budget reached', tokensUsed, tokensBaseline, tokensCommitted, lastAccountedMessageID,
@@ -640,7 +640,7 @@ export const createSessionGoalRuntime = ({
       return;
     }
 
-    // Auto-continuation safety cap → blocked.
+    // Auto-continuation safety cap \u2192 blocked.
     if (goal.turnsUsed >= maxAutoTurns) {
       await settleGoal({
         sessionId, directory, goal, status: 'blocked', statusReason: 'auto-continuation limit reached', tokensUsed, tokensBaseline, tokensCommitted, lastAccountedMessageID,
@@ -653,7 +653,7 @@ export const createSessionGoalRuntime = ({
     // has no channel to settle its own goal.
     //
     // Exception: when the latest message is a compaction summary, the agent
-    // by definition ran into the context window mid-work — that IS
+    // by definition ran into the context window mid-work \u2014 that IS
     // "in progress, not finished". No audit call; continue unconditionally.
     let audit = null;
     let blockedStreak = 0;
@@ -665,7 +665,7 @@ export const createSessionGoalRuntime = ({
 
       // Audit unavailable: tolerate one consecutive failure (transient
       // hiccup), then stop the goal instead of continuing blind. Blocked is
-      // resumable — Resume retries the audit on the next tick.
+      // resumable \u2014 Resume retries the audit on the next tick.
       if (!audit) {
         auditFailStreak += 1;
         if (auditFailStreak >= AUDIT_FAIL_LIMIT) {
@@ -725,7 +725,7 @@ export const createSessionGoalRuntime = ({
       return;
     }
 
-    // The tail may have moved while auditing (user sent a message) — a
+    // The tail may have moved while auditing (user sent a message) \u2014 a
     // continuation now would collide with the user's own turn.
     const latest = await fetchRecentMessages(sessionId, directory);
     const latestLastInfo = latest && latest.length > 0 ? latest[latest.length - 1]?.info : null;
@@ -801,7 +801,7 @@ export const createSessionGoalRuntime = ({
       return;
     }
 
-    // Kickoff path: a goal set (or resumed — the UI stamps statusReason
+    // Kickoff path: a goal set (or resumed \u2014 the UI stamps statusReason
     // 'resumed') while the session is already idle emits no status
     // transition, only session.updated. Arm a short timer; the tick's
     // quiescence check keeps this safe if the session is actually busy.

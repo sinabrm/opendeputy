@@ -4,19 +4,19 @@
   "private": false,
   "type": "module",
   "license": "MIT",
-  "homepage": "https://github.com/sinabrm/open-deputy#readme",
+  "homepage": "https://github.com/sinabrm/opendeputy#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sinabrm/open-deputy.git",
+    "url": "git+https://github.com/sinabrm/opendeputy.git",
     "directory": "packages/web"
   },
   "bugs": {
-    "url": "https://github.com/sinabrm/open-deputy/issues"
+    "url": "https://github.com/sinabrm/opendeputy/issues"
   },
   "main": "./server/index.js",
   "types": "./server/index.d.ts",
   "bin": {
-    "open-deputy": "./bin/cli.js",
+    "opendeputy": "./bin/cli.js",
     "openchamber": "./bin/cli.js"
   },
   "publishConfig": {

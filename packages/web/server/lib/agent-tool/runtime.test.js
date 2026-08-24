@@ -275,11 +275,11 @@ describe('managed agent tool runtime', () => {
   });
 
   it.each([
-    ['Persian', 'ترمینال را باز کن'],
-    ['German', 'Öffne die Git-Ansicht'],
-    ['Japanese', 'ファイルパネルを開いて'],
-    ['Chinese', '打开项目笔记'],
-    ['Arabic', 'اعرض التغييرات'],
+    ['Persian', '\u062A\u0631\u0645\u06CC\u0646\u0627\u0644 \u0631\u0627 \u0628\u0627\u0632 \u06A9\u0646'],
+    ['German', '\u00D6ffne die Git-Ansicht'],
+    ['Japanese', '\u30D5\u30A1\u30A4\u30EB\u30D1\u30CD\u30EB\u3092\u958B\u3044\u3066'],
+    ['Chinese', '\u6253\u5F00\u9879\u76EE\u7B14\u8BB0'],
+    ['Arabic', '\u0627\u0639\u0631\u0636 \u0627\u0644\u062A\u063A\u064A\u064A\u0631\u0627\u062A'],
   ])('keeps an unqualified %s surface request inside OpenDeputy', async (_language, prompt) => {
     const { runtime, dataDir } = await createRuntime();
     await runtime.prepareManagedOpenCodeEnv();
@@ -343,11 +343,11 @@ describe('managed agent tool runtime', () => {
 
   it.each([
     ['English', 'Check how many tabs are open in the browser'],
-    ['Persian', 'یه چک بکن ببین توی مرورگر چنتا تب باز داریم'],
-    ['German', 'Prüfe, wie viele Tabs im Browser geöffnet sind'],
-    ['Japanese', 'ブラウザで開いているタブがいくつあるか確認して'],
-    ['Chinese', '检查浏览器里打开了几个标签页'],
-    ['Arabic', 'تحقق من عدد علامات التبويب المفتوحة في المتصفح'],
+    ['Persian', '\u06CC\u0647 \u0686\u06A9 \u0628\u06A9\u0646 \u0628\u0628\u06CC\u0646 \u062A\u0648\u06CC \u0645\u0631\u0648\u0631\u06AF\u0631 \u0686\u0646\u062A\u0627 \u062A\u0628 \u0628\u0627\u0632 \u062F\u0627\u0631\u06CC\u0645'],
+    ['German', 'Pr\u00FCfe, wie viele Tabs im Browser ge\u00F6ffnet sind'],
+    ['Japanese', '\u30D6\u30E9\u30A6\u30B6\u3067\u958B\u3044\u3066\u3044\u308B\u30BF\u30D6\u304C\u3044\u304F\u3064\u3042\u308B\u304B\u78BA\u8A8D\u3057\u3066'],
+    ['Chinese', '\u68C0\u67E5\u6D4F\u89C8\u5668\u91CC\u6253\u5F00\u4E86\u51E0\u4E2A\u6807\u7B7E\u9875'],
+    ['Arabic', '\u062A\u062D\u0642\u0642 \u0645\u0646 \u0639\u062F\u062F \u0639\u0644\u0627\u0645\u0627\u062A \u0627\u0644\u062A\u0628\u0648\u064A\u0628 \u0627\u0644\u0645\u0641\u062A\u0648\u062D\u0629 \u0641\u064A \u0627\u0644\u0645\u062A\u0635\u0641\u062D'],
   ])('blocks external-browser fallback for an unqualified %s request', async (_language, prompt) => {
     const { runtime, dataDir } = await createRuntime();
     await runtime.prepareManagedOpenCodeEnv();
@@ -379,11 +379,11 @@ describe('managed agent tool runtime', () => {
     ['English', 'Check the tabs in Firefox'],
     ['OpenDeputy wording', 'In OpenDeputy, use Firefox to check the tabs'],
     ['Named tool', 'Use Open Browser Use to check my existing user tab'],
-    ['Persian', 'تب‌های فایرفاکس را بررسی کن'],
-    ['German', 'Prüfe die Tabs in Chrome'],
-    ['Japanese', 'Chromeのタブを確認して'],
-    ['Chinese', '检查 Firefox 标签页'],
-    ['Arabic', 'تحقق من علامات التبويب في Chrome'],
+    ['Persian', '\u062A\u0628\u200C\u0647\u0627\u06CC \u0641\u0627\u06CC\u0631\u0641\u0627\u06A9\u0633 \u0631\u0627 \u0628\u0631\u0631\u0633\u06CC \u06A9\u0646'],
+    ['German', 'Pr\u00FCfe die Tabs in Chrome'],
+    ['Japanese', 'Chrome\u306E\u30BF\u30D6\u3092\u78BA\u8A8D\u3057\u3066'],
+    ['Chinese', '\u68C0\u67E5 Firefox \u6807\u7B7E\u9875'],
+    ['Arabic', '\u062A\u062D\u0642\u0642 \u0645\u0646 \u0639\u0644\u0627\u0645\u0627\u062A \u0627\u0644\u062A\u0628\u0648\u064A\u0628 \u0641\u064A Chrome'],
   ])('allows an explicitly requested external browser in %s', async (_language, prompt) => {
     const { runtime, dataDir } = await createRuntime();
     await runtime.prepareManagedOpenCodeEnv();

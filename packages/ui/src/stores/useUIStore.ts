@@ -10,7 +10,6 @@ import { getStoredMobileKeyboardMode, type MobileKeyboardMode } from '@/lib/mobi
 import { getRuntimeKey } from '@/lib/runtime-switch';
 import type { TerminalShell } from '@/lib/api/types';
 import { useFilesViewTabsStore } from './useFilesViewTabsStore';
-import { isWindowsArm64 } from '@/lib/platform';
 import { isVSCodeRuntime } from '@/lib/desktop';
 
 export type MainTab = 'chat' | 'plan' | 'git' | 'diff' | 'terminal' | 'files' | 'context' | 'diagram';
@@ -746,7 +745,7 @@ interface UIStore {
 
   showTerminalQuickKeysOnDesktop: boolean;
   persistChatDraft: boolean;
-  showOpenCodeUpdateNotifications: boolean;
+  autoUpdateOpenCode: boolean;
   agentControlToolEnabled: boolean;
   agentWebToolEnabled: boolean;
   inputSpellcheckEnabled: boolean;
@@ -921,7 +920,7 @@ interface UIStore {
   setSummaryLength: (value: number) => void;
   setMaxLastMessageLength: (value: number) => void;
   setPersistChatDraft: (value: boolean) => void;
-  setShowOpenCodeUpdateNotifications: (value: boolean) => void;
+  setAutoUpdateOpenCode: (value: boolean) => void;
   setAgentControlToolEnabled: (value: boolean) => void;
   setAgentWebToolEnabled: (value: boolean) => void;
   setInputSpellcheckEnabled: (value: boolean) => void;
@@ -1080,7 +1079,7 @@ export const useUIStore = create<UIStore>()(
 
         showTerminalQuickKeysOnDesktop: false,
         persistChatDraft: true,
-        showOpenCodeUpdateNotifications: !isWindowsArm64(),
+        autoUpdateOpenCode: false,
         agentControlToolEnabled: true,
         agentWebToolEnabled: true,
         inputSpellcheckEnabled: false,
@@ -2335,8 +2334,8 @@ export const useUIStore = create<UIStore>()(
         setPersistChatDraft: (value) => {
           set({ persistChatDraft: value });
         },
-        setShowOpenCodeUpdateNotifications: (value) => {
-          set({ showOpenCodeUpdateNotifications: value });
+        setAutoUpdateOpenCode: (value) => {
+          set({ autoUpdateOpenCode: value });
         },
         setAgentControlToolEnabled: (value) => {
           set({ agentControlToolEnabled: value });
@@ -2724,7 +2723,7 @@ export const useUIStore = create<UIStore>()(
           summaryLength: state.summaryLength,
           maxLastMessageLength: state.maxLastMessageLength,
           persistChatDraft: state.persistChatDraft,
-          showOpenCodeUpdateNotifications: state.showOpenCodeUpdateNotifications,
+          autoUpdateOpenCode: state.autoUpdateOpenCode,
           agentControlToolEnabled: state.agentControlToolEnabled,
           agentWebToolEnabled: state.agentWebToolEnabled,
           inputSpellcheckEnabled: state.inputSpellcheckEnabled,

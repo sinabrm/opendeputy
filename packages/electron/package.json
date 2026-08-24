@@ -1,18 +1,18 @@
 {
-  "name": "open-deputy",
+  "name": "opendeputy",
   "version": "1.19.0",
   "private": true,
   "description": "Electron desktop runtime for OpenDeputy",
   "author": "OpenDeputy contributors",
   "license": "MIT",
-  "homepage": "https://github.com/sinabrm/open-deputy#readme",
+  "homepage": "https://github.com/sinabrm/opendeputy#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sinabrm/open-deputy.git",
+    "url": "git+https://github.com/sinabrm/opendeputy.git",
     "directory": "packages/electron"
   },
   "bugs": {
-    "url": "https://github.com/sinabrm/open-deputy/issues"
+    "url": "https://github.com/sinabrm/opendeputy/issues"
   },
   "type": "module",
   "main": "./dist-bundle/main.mjs",
@@ -177,7 +177,7 @@
     "publish": {
       "provider": "github",
       "owner": "sinabrm",
-      "repo": "open-deputy"
+      "repo": "opendeputy"
     }
   }
 }

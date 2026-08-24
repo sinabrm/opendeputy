@@ -16,7 +16,7 @@ import {
   SETTINGS_FIELD_LABEL_CLASS,
 } from '@/components/sections/shared/SettingsSection';
 
-const GITHUB_URL = 'https://github.com/sinabrm/open-deputy';
+const GITHUB_URL = 'https://github.com/sinabrm/opendeputy';
 
 const MIN_CHECKING_DURATION = 800; // ms
 

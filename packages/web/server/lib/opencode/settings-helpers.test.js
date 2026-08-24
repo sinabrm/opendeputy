@@ -273,14 +273,14 @@ describe('settings helpers', () => {
     });
   });
 
-  it('accepts OpenCode update notification preference as a persisted shared setting', () => {
+  it('accepts the OpenCode automatic update preference as a persisted shared setting', () => {
     const helpers = createTestHelpers();
 
-    expect(helpers.sanitizeSettingsUpdate({ showOpenCodeUpdateNotifications: false })).toEqual({
-      showOpenCodeUpdateNotifications: false,
+    expect(helpers.sanitizeSettingsUpdate({ autoUpdateOpenCode: false })).toEqual({
+      autoUpdateOpenCode: false,
     });
-    expect(helpers.sanitizeSettingsUpdate({ showOpenCodeUpdateNotifications: true })).toEqual({
-      showOpenCodeUpdateNotifications: true,
+    expect(helpers.sanitizeSettingsUpdate({ autoUpdateOpenCode: true })).toEqual({
+      autoUpdateOpenCode: true,
     });
   });
 

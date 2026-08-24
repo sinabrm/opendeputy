@@ -24,8 +24,8 @@ export const OpenCodeCliSettings: React.FC = () => {
   const [value, setValue] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(true);
   const [isSaving, setIsSaving] = React.useState(false);
-  const showOpenCodeUpdateNotifications = useUIStore((state) => state.showOpenCodeUpdateNotifications);
-  const setShowOpenCodeUpdateNotifications = useUIStore((state) => state.setShowOpenCodeUpdateNotifications);
+  const autoUpdateOpenCode = useUIStore((state) => state.autoUpdateOpenCode);
+  const setAutoUpdateOpenCode = useUIStore((state) => state.setAutoUpdateOpenCode);
 
   React.useEffect(() => {
     let cancelled = false;
@@ -95,10 +95,10 @@ export const OpenCodeCliSettings: React.FC = () => {
     }
   }, [t, value]);
 
-  const handleShowUpdateNotificationsChange = React.useCallback((enabled: boolean) => {
-    setShowOpenCodeUpdateNotifications(enabled);
-    void updateDesktopSettings({ showOpenCodeUpdateNotifications: enabled });
-  }, [setShowOpenCodeUpdateNotifications]);
+  const handleAutoUpdateChange = React.useCallback((enabled: boolean) => {
+    setAutoUpdateOpenCode(enabled);
+    void updateDesktopSettings({ autoUpdateOpenCode: enabled });
+  }, [setAutoUpdateOpenCode]);
 
   return (
     <SettingsSection title={t('settings.openchamber.opencodeCli.title')}>
@@ -145,11 +145,12 @@ export const OpenCodeCliSettings: React.FC = () => {
         <SettingsInset className={SETTINGS_OPTION_STACK_CLASS}>
           {!isWindowsArm64() && (
             <SettingsCheckboxRow
-              settingsItem="sessions.opencode-update-notifications"
-              checked={showOpenCodeUpdateNotifications}
-              onChange={handleShowUpdateNotificationsChange}
-              label={t('settings.openchamber.opencodeCli.field.showUpdateNotifications')}
-              ariaLabel={t('settings.openchamber.opencodeCli.field.showUpdateNotificationsAria')}
+              settingsItem="sessions.opencode-auto-update"
+              checked={autoUpdateOpenCode}
+              onChange={handleAutoUpdateChange}
+              label={t('settings.openchamber.opencodeCli.field.autoUpdate')}
+              description={t('settings.openchamber.opencodeCli.field.autoUpdateDescription')}
+              ariaLabel={t('settings.openchamber.opencodeCli.field.autoUpdateAria')}
             />
           )}
 

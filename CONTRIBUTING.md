@@ -7,8 +7,8 @@ OpenDeputy 1.19.0 ships as a Windows desktop application. The web and shared UI 
 From PowerShell:
 
 ```powershell
-git clone https://github.com/sinabrm/open-deputy.git
-Set-Location open-deputy
+git clone https://github.com/sinabrm/opendeputy.git
+Set-Location opendeputy
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/setup-windows.ps1 -InstallMissing
 ```
 
@@ -46,4 +46,4 @@ Use the pull-request template. Include intent, affected surfaces, exact validati
 - Keep Electron privileged operations in the main process and approval-gated.
 - Never commit secrets or user data.
 
-Open an issue at [sinabrm/open-deputy](https://github.com/sinabrm/open-deputy/issues) for bugs or proposals.
+Open an issue at [sinabrm/opendeputy](https://github.com/sinabrm/opendeputy/issues) for bugs or proposals.

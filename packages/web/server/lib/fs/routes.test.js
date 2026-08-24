@@ -675,7 +675,7 @@ describe('fs exec git-read cache', () => {
 
   it('bounds the cache by evicting the least-recently-used entry past the count cap', async () => {
     const command = 'git rev-parse --absolute-git-dir';
-    const { spawn, calls } = createSpawn(); // exit 0, empty stdout — still cacheable
+    const { spawn, calls } = createSpawn(); // exit 0, empty stdout \u2014 still cacheable
     const handler = registerExec({ spawn });
 
     // Fill to the 500-entry ceiling with distinct working directories.
@@ -705,14 +705,14 @@ describe('fs raw download Content-Disposition', () => {
     const handler = registerRaw(fsPromises);
 
     const res = await callRaw(handler, {
-      path: '/repo/文件.txt',
+      path: '/repo/\u6587\u4EF6.txt',
       download: 'true',
     });
 
     expect(res.statusCode).toBe(200);
     const cd = res.getHeader('content-disposition');
     expect(cd).toContain("filename*=UTF-8''");
-    expect(cd).toContain(encodeURIComponent('文件.txt'));
+    expect(cd).toContain(encodeURIComponent('\u6587\u4EF6.txt'));
     // ASCII fallback strips non-ASCII chars, leaving extension
     expect(cd).toContain('filename=".txt"');
   });

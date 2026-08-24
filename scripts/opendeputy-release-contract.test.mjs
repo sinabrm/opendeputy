@@ -23,12 +23,12 @@ test('release scope contains desktop web and UI workspaces only', () => {
 
 test('Windows package is branded and self-contained', () => {
   const electronPackage = json('packages/electron/package.json');
-  assert.equal(electronPackage.name, 'open-deputy');
+  assert.equal(electronPackage.name, 'opendeputy');
   assert.equal(electronPackage.build.appId, 'com.ghostblinkcode.opendeputy');
   assert.equal(electronPackage.build.productName, 'OpenDeputy');
   assert.deepEqual(Object.keys(electronPackage.build).filter((key) => ['mac', 'linux'].includes(key)), []);
   assert.equal(electronPackage.build.publish.owner, 'sinabrm');
-  assert.equal(electronPackage.build.publish.repo, 'open-deputy');
+  assert.equal(electronPackage.build.publish.repo, 'opendeputy');
 
   const resources = electronPackage.build.extraResources.map((entry) => entry.to);
   for (const expected of [
@@ -236,7 +236,7 @@ test('fork license preserves upstream and OpenDeputy contributor notices', () =>
 });
 
 test('Persian and Unicode text round-trip without conversion', () => {
-  const message = 'سلام، OpenDeputy می‌تواند متن فارسی را بدون تغییر نگه دارد.';
+  const message = '\u0633\u0644\u0627\u0645\u060C OpenDeputy \u0645\u06CC\u200C\u062A\u0648\u0627\u0646\u062F \u0645\u062A\u0646 \u0641\u0627\u0631\u0633\u06CC \u0631\u0627 \u0628\u062F\u0648\u0646 \u062A\u063A\u06CC\u06CC\u0631 \u0646\u06AF\u0647 \u062F\u0627\u0631\u062F.';
   const roundTrip = JSON.parse(JSON.stringify({ message }));
   assert.equal(roundTrip.message, message);
   assert.equal(Buffer.from(message, 'utf8').toString('utf8'), message);

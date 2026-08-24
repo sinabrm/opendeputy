@@ -3,7 +3,7 @@ import { describe, test, expect } from 'bun:test';
 import {
     resolveOpenCodeUpdateVersion,
     resolveOpenCodeUpgradeStatusVersion,
-    shouldShowOpenCodeUpdateToast,
+    resolveOpenCodeUpdateAction,
     shouldShowPwaInstallToast,
 } from '../openCodeUpdateDedup';
 
@@ -69,75 +69,104 @@ describe('shouldShowPwaInstallToast', () => {
     });
 });
 
-describe('shouldShowOpenCodeUpdateToast', () => {
-    test('returns true for a fresh version with no dismissal and an empty seen set', () => {
+describe('resolveOpenCodeUpdateAction', () => {
+    test('prompts for a fresh version when automatic updates are off', () => {
         expect(
-            shouldShowOpenCodeUpdateToast({
+            resolveOpenCodeUpdateAction({
                 version: '1.16.0',
+                autoUpdate: false,
                 dismissedVersion: null,
                 seenVersions: new Set(),
             }),
-        ).toBe(true);
+        ).toBe('prompt');
     });
 
-    test('returns false for an empty version string', () => {
+    test('upgrades without prompting when automatic updates are on', () => {
         expect(
-            shouldShowOpenCodeUpdateToast({
+            resolveOpenCodeUpdateAction({
+                version: '1.16.0',
+                autoUpdate: true,
+                dismissedVersion: null,
+                seenVersions: new Set(),
+            }),
+        ).toBe('upgrade');
+    });
+
+    test('automatic updates ignore a prior dismissal of the same version', () => {
+        expect(
+            resolveOpenCodeUpdateAction({
+                version: '1.16.0',
+                autoUpdate: true,
+                dismissedVersion: '1.16.0',
+                seenVersions: new Set(),
+            }),
+        ).toBe('upgrade');
+    });
+
+    test('does nothing for an empty version string', () => {
+        expect(
+            resolveOpenCodeUpdateAction({
                 version: '',
+                autoUpdate: true,
                 dismissedVersion: null,
                 seenVersions: new Set(),
             }),
-        ).toBe(false);
+        ).toBe('none');
     });
 
-    test('returns false when the version was already surfaced in this session', () => {
+    test('does nothing when the version was already handled in this session', () => {
         expect(
-            shouldShowOpenCodeUpdateToast({
+            resolveOpenCodeUpdateAction({
                 version: '1.16.0',
+                autoUpdate: true,
                 dismissedVersion: null,
                 seenVersions: new Set(['1.16.0']),
             }),
-        ).toBe(false);
+        ).toBe('none');
     });
 
-    test('returns false when the dismissed version matches the incoming version', () => {
+    test('does nothing when a manual update prompt was dismissed for this version', () => {
         expect(
-            shouldShowOpenCodeUpdateToast({
+            resolveOpenCodeUpdateAction({
                 version: '1.16.0',
+                autoUpdate: false,
                 dismissedVersion: '1.16.0',
                 seenVersions: new Set(),
             }),
-        ).toBe(false);
+        ).toBe('none');
     });
 
-    test('returns true when a different version was previously dismissed', () => {
+    test('prompts when a different version was previously dismissed', () => {
         expect(
-            shouldShowOpenCodeUpdateToast({
+            resolveOpenCodeUpdateAction({
                 version: '1.17.0',
+                autoUpdate: false,
                 dismissedVersion: '1.16.0',
                 seenVersions: new Set(),
             }),
-        ).toBe(true);
+        ).toBe('prompt');
     });
 
     test('treats null dismissedVersion as no prior dismissal', () => {
         expect(
-            shouldShowOpenCodeUpdateToast({
+            resolveOpenCodeUpdateAction({
                 version: '1.16.0',
+                autoUpdate: false,
                 dismissedVersion: null,
                 seenVersions: new Set(['1.15.0']),
             }),
-        ).toBe(true);
+        ).toBe('prompt');
     });
 
     test('seen set blocks even when dismissed version differs', () => {
         expect(
-            shouldShowOpenCodeUpdateToast({
+            resolveOpenCodeUpdateAction({
                 version: '1.16.0',
+                autoUpdate: false,
                 dismissedVersion: '1.15.0',
                 seenVersions: new Set(['1.16.0']),
             }),
-        ).toBe(false);
+        ).toBe('none');
     });
 });
 

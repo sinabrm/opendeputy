@@ -1,4 +1,5 @@
 import fs from 'node:fs/promises';
+import fsSync from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
@@ -12,7 +13,7 @@ afterEach(async () => {
 });
 
 const createService = async () => {
-  const dataDir = await fs.mkdtemp(path.join(os.tmpdir(), 'open-deputy-workspace-'));
+  const dataDir = await fs.mkdtemp(path.join(os.tmpdir(), 'opendeputy-workspace-'));
   temporaryDirectories.push(dataDir);
   return createWorkspaceToolsService({
     dataDir,
@@ -22,6 +23,42 @@ const createService = async () => {
 };
 
 describe('OpenDeputy workspace tools', () => {
+  it('moves a legacy hyphenated data directory to the current OpenDeputy directory', async () => {
+    const homeDirectory = await fs.mkdtemp(path.join(os.tmpdir(), 'opendeputy-home-'));
+    temporaryDirectories.push(homeDirectory);
+    const legacyDirectory = path.join(homeDirectory, ['.open', 'deputy'].join('-'));
+    await fs.mkdir(legacyDirectory);
+    await fs.writeFile(path.join(legacyDirectory, 'keep.txt'), 'existing data');
+
+    const service = createWorkspaceToolsService({
+      os: { ...os, homedir: () => homeDirectory },
+      env: {},
+      fetch: async () => { throw new Error('offline'); },
+    });
+
+    expect(service.dataRoot).toBe(path.join(homeDirectory, '.opendeputy', 'workspace-tools'));
+    expect(await fs.readFile(path.join(homeDirectory, '.opendeputy', 'keep.txt'), 'utf8')).toBe('existing data');
+    service.close();
+  });
+
+  it('keeps using legacy data when its directory cannot be moved safely', async () => {
+    const homeDirectory = await fs.mkdtemp(path.join(os.tmpdir(), 'opendeputy-home-'));
+    temporaryDirectories.push(homeDirectory);
+    const legacyDirectory = path.join(homeDirectory, ['.open', 'deputy'].join('-'));
+    await fs.mkdir(legacyDirectory);
+    const blockedFs = { ...fsSync, renameSync: () => { throw new Error('blocked'); } };
+
+    const service = createWorkspaceToolsService({
+      fs: blockedFs,
+      os: { ...os, homedir: () => homeDirectory },
+      env: {},
+      fetch: async () => { throw new Error('offline'); },
+    });
+
+    expect(service.dataRoot).toBe(path.join(legacyDirectory, 'workspace-tools'));
+    service.close();
+  });
+
   it('stores, searches, and deletes local memory', async () => {
     const service = await createService();
     const added = await service.execute('memory.add', {

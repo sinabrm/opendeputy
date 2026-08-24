@@ -17,7 +17,7 @@ test('production updater feed is immutable GitHub configuration', () => {
   assert.deepEqual(PRODUCTION_UPDATER_FEED, {
     provider: 'github',
     owner: 'sinabrm',
-    repo: 'open-deputy',
+    repo: 'opendeputy',
   });
 });
 

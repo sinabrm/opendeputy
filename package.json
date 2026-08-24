@@ -1,5 +1,5 @@
 {
-  "name": "open-deputy-monorepo",
+  "name": "opendeputy-monorepo",
   "version": "1.19.0",
   "description": "OpenDeputy open-source AI coworker for browser, desktop, files, terminal, and long-running agent work",
   "private": true,
@@ -15,18 +15,18 @@
     "opencode",
     "ai",
     "coding",
-    "open-deputy",
+    "opendeputy",
     "cli"
   ],
   "author": "OpenDeputy contributors",
   "license": "MIT",
-  "homepage": "https://github.com/sinabrm/open-deputy#readme",
+  "homepage": "https://github.com/sinabrm/opendeputy#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sinabrm/open-deputy.git"
+    "url": "git+https://github.com/sinabrm/opendeputy.git"
   },
   "bugs": {
-    "url": "https://github.com/sinabrm/open-deputy/issues"
+    "url": "https://github.com/sinabrm/opendeputy/issues"
   },
   "scripts": {
     "dev": "node ./scripts/dev-web-hmr.mjs",

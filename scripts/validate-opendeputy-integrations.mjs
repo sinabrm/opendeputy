@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url';
 import { createWorkspaceToolsService } from '../packages/web/server/lib/workspace-tools/service.js';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const temporaryRoot = await fsp.mkdtemp(path.join(os.tmpdir(), 'open-deputy-integration-'));
+const temporaryRoot = await fsp.mkdtemp(path.join(os.tmpdir(), 'opendeputy-integration-'));
 const report = { ok: true, checks: {} };
 const service = createWorkspaceToolsService({ dataDir: temporaryRoot, env: process.env });
 
@@ -77,7 +77,7 @@ try {
   service.close();
   const resolvedTemp = path.resolve(temporaryRoot);
   const safePrefix = `${path.resolve(os.tmpdir())}${path.sep}`;
-  if (resolvedTemp.startsWith(safePrefix) && path.basename(resolvedTemp).startsWith('open-deputy-integration-')) {
+  if (resolvedTemp.startsWith(safePrefix) && path.basename(resolvedTemp).startsWith('opendeputy-integration-')) {
     await fsp.rm(resolvedTemp, { recursive: true, force: true });
   }
 }

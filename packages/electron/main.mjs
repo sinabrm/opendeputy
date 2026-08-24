@@ -82,7 +82,7 @@ const shouldStartInBackground = (loginItemSettings = readLoginItemSettings()) =>
 // Set the product name before electron-log resolves its Windows log directory.
 app.setName('OpenDeputy');
 if (process.platform === 'linux') {
-  app.setDesktopName('open-deputy.desktop');
+  app.setDesktopName('opendeputy.desktop');
 }
 if (isDev) {
   app.setPath('userData', path.join(app.getPath('appData'), 'OpenDeputy Dev'));
@@ -198,13 +198,13 @@ const readAppMetadata = () => {
     try {
       const raw = fs.readFileSync(candidate, 'utf8');
       const parsed = JSON.parse(raw);
-      if (parsed?.name === 'open-deputy' && typeof parsed.version === 'string') {
+      if (parsed?.name === 'opendeputy' && typeof parsed.version === 'string') {
         return { name: parsed.name, version: parsed.version };
       }
     } catch {
     }
   }
-  return { name: 'open-deputy', version: app.getVersion() };
+  return { name: 'opendeputy', version: app.getVersion() };
 };
 
 const APP_METADATA = readAppMetadata();
@@ -230,9 +230,9 @@ const LOCAL_DESKTOP_CLIENT_DEDUPE_KEY = 'desktop-local';
 // connecting to someone else's server).
 const REMOTE_DESKTOP_CLIENT_KIND = 'desktop';
 const ENV_OVERRIDE_HOST_ID = '__env';
-const CHANGELOG_URL = 'https://raw.githubusercontent.com/sinabrm/open-deputy/main/CHANGELOG.md';
-const GITHUB_BUG_REPORT_URL = 'https://github.com/sinabrm/open-deputy/issues/new';
-const GITHUB_FEATURE_REQUEST_URL = 'https://github.com/sinabrm/open-deputy/issues/new';
+const CHANGELOG_URL = 'https://raw.githubusercontent.com/sinabrm/opendeputy/main/CHANGELOG.md';
+const GITHUB_BUG_REPORT_URL = 'https://github.com/sinabrm/opendeputy/issues/new';
+const GITHUB_FEATURE_REQUEST_URL = 'https://github.com/sinabrm/opendeputy/issues/new';
 const DISCORD_INVITE_URL = 'https://discord.gg/ZYRSdnwwKA';
 const INSTALLED_APPS_CACHE_TTL_SECS = 60 * 60 * 24;
 const INSTALLED_APPS_CACHE_FILE = 'discovered-apps.json';
@@ -1832,6 +1832,7 @@ const buildStartupSplashHtml = () => {
         --splash-face-fill: rgba(0, 0, 0, 0.15);
         --splash-cell-fill: rgba(0, 0, 0, 0.4);
         --splash-logo-fill: var(--splash-stroke);
+        --splash-logo-edge: #444140;
       }
       body {
         margin: 0;
@@ -1848,6 +1849,7 @@ const buildStartupSplashHtml = () => {
           --splash-stroke: ${splashFgDark};
           --splash-face-fill: rgba(255, 255, 255, 0.15);
           --splash-cell-fill: rgba(255, 255, 255, 0.35);
+          --splash-logo-edge: #cecdcb;
         }
       }
       @supports (color: color-mix(in srgb, white 50%, transparent)) {
@@ -1864,10 +1866,22 @@ const buildStartupSplashHtml = () => {
   </head>
   <body>
     <div class="stack">
-      <svg width="120" height="120" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="OpenDeputy loading icon">
-            <path d="M20.9 17.4H79.1V59.6L64.1 45.1V31.8H40.8V69.7H51.8V82.6H20.9Z" fill="var(--splash-stroke)"/>
-            <path d="M55.1 47.7L80.1 72.5H66.2L55.1 83.6Z" fill="#b9b9bf"/>
-          </svg>
+      <svg width="120" height="120" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="OpenDeputy loading icon">
+        <path fill="var(--splash-stroke)" stroke="var(--splash-stroke)" stroke-width="1" opacity="0.996078431372549" d="M 119.5 83 L 392.5 83 L 394 84.5 L 393.5 337 L 326 271.5 L 326 153.5 L 324.5 152 L 187.5 152 L 186 153.5 L 186 271.5 L 187 272.5 L 187 360 L 242 360 L 242 428 L 118 428 L 118 84.5 L 119.5 83 Z" />
+        <path fill="#bcbbbc" stroke="#bcbbbc" stroke-width="1" opacity="0.9098039215686274" d="M 187.5 153 L 188 274.5 L 187 274.5 L 187.5 153 Z" />
+        <path fill="#bcbbbc" stroke="#bcbbbc" stroke-width="1" opacity="0.9098039215686274" d="M 324.5 153 L 325 271.5 L 330 276.5 L 324 271.5 L 324.5 153 Z" />
+        <path fill="#bcbbbc" stroke="#bcbbbc" stroke-width="1" opacity="0.9098039215686274" d="M 269.5 252 L 274 255.5 Q 273.3 257.8 275.5 257 L 310 290.5 L 308 291.5 L 310.5 293 L 311.5 292 L 335.5 316 L 344 323.5 L 345.5 326 L 381 359.5 L 380 361.5 L 383.5 362 L 395 373.5 L 395 375.5 L 394.5 379 L 320.5 379 L 320.5 380 L 395 380.5 L 320.5 381 L 270.5 431 L 268 428.5 L 268 254 L 271 253.5 L 269.5 252 Z" />
+        <path fill="#bcbbbc" stroke="#bcbbbc" stroke-width="1" opacity="0.9098039215686274" d="M 350.5 296 L 361.5 308 L 350.5 296 Z" />
+        <path fill="#bcbbbc" stroke="#bcbbbc" stroke-width="1" opacity="0.9098039215686274" d="M 365.5 313 L 367.5 316 L 365.5 313 Z" />
+        <path fill="#bcbbbc" stroke="#bcbbbc" stroke-width="1" opacity="0.9098039215686274" d="M 378.5 323 L 379.5 325 L 378.5 323 Z" />
+        <path fill="#bcbbbc" stroke="#bcbbbc" stroke-width="1" opacity="0.9098039215686274" d="M 381.5 326 L 385.5 331 L 381.5 326 Z" />
+        <path fill="#bcbbbc" stroke="#bcbbbc" stroke-width="1" opacity="0.9098039215686274" d="M 396.5 376 L 397 378.5 L 396 378.5 L 396.5 376 Z" />
+        <path fill="#bcbbbc" stroke="#bcbbbc" stroke-width="1" opacity="0.9098039215686274" d="M 117.5 429 L 243 429.5 L 117.5 430 L 117.5 429 Z" />
+        <path fill="var(--splash-logo-edge)" stroke="var(--splash-logo-edge)" stroke-width="1" opacity="0.8" d="M 117 83 L 119 83.5 L 118 84.5 L 118 428 L 242 428 L 242 360 L 187 360 L 187 275.5 L 188 275.5 L 188 359 L 243 359 L 243 429 L 117 429 L 117 83 Z" />
+        <path fill="var(--splash-logo-edge)" stroke="var(--splash-logo-edge)" stroke-width="1" opacity="0.8" d="M 393.5 83 L 395 83.5 L 395 338 L 380 326 L 378.5 323 L 376.5 324 L 377 322.5 L 350.5 296 L 325 271.5 L 325 153 L 187 153 L 186.5 272 L 186 153.5 L 187.5 152 L 324.5 152 L 326 153.5 L 326 271.5 L 345.5 291 L 393.5 337 L 394 84.5 L 393.5 83 Z" />
+        <path fill="var(--splash-logo-edge)" stroke="var(--splash-logo-edge)" stroke-width="1" opacity="0.8" d="M 115.5 84 L 116 427.5 L 115 427.5 L 115.5 84 Z" />
+        <path fill="var(--splash-logo-edge)" stroke="var(--splash-logo-edge)" stroke-width="1" opacity="0.8" d="M 396.5 84 L 397 337.5 L 396 337.5 L 396.5 84 Z" />
+      </svg>
     </div>
   </body>
   </html>`;

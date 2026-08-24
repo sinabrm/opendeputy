@@ -45,6 +45,20 @@ const safeFilename = (value) => String(value || '')
 
 const firstExisting = (fsModule, candidates) => candidates.find((candidate) => candidate && fsModule.existsSync(candidate)) || null;
 
+const resolveDefaultDataDirectory = (fsModule, osModule, pathModule) => {
+  const homeDirectory = osModule.homedir();
+  const currentDirectory = pathModule.join(homeDirectory, '.opendeputy');
+  const legacyDirectory = pathModule.join(homeDirectory, ['.open', 'deputy'].join('-'));
+  if (fsModule.existsSync(currentDirectory) || !fsModule.existsSync(legacyDirectory)) return currentDirectory;
+
+  try {
+    fsModule.renameSync(legacyDirectory, currentDirectory);
+    return currentDirectory;
+  } catch {
+    return legacyDirectory;
+  }
+};
+
 const resolveInputPath = (pathModule, value, contextDirectory) => {
   const requested = asString(value);
   if (!requested) throw new WorkspaceToolError('inputPath is required');
@@ -64,7 +78,8 @@ export const createWorkspaceToolsService = (dependencies = {}) => {
   const Database = dependencies.DatabaseSync || DatabaseSync;
   const fetchImpl = dependencies.fetch || globalThis.fetch;
   const env = dependencies.env || process.env;
-  const dataRoot = pathModule.join(dependencies.dataDir || pathModule.join(osModule.homedir(), '.open-deputy'), 'workspace-tools');
+  const dataDirectory = dependencies.dataDir || resolveDefaultDataDirectory(fsModule, osModule, pathModule);
+  const dataRoot = pathModule.join(dataDirectory, 'workspace-tools');
   const memoryDir = pathModule.join(dataRoot, 'memory');
   const previewDir = pathModule.join(dataRoot, 'previews');
   const speechDir = pathModule.join(dataRoot, 'speech');

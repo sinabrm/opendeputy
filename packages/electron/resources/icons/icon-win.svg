@@ -1,6 +1,18 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title">
+<svg viewBox="0 0 512 512" version="1.1" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title"><rect x="4" y="4" width="504" height="504" rx="60" fill="#000000"/><g transform="translate(256 261) scale(0.96) translate(-256 -257)">
   <title id="title">OpenDeputy</title>
-  <path d="M184 130H616V528.5L508 424.5V238.5H292V562H379V670H184Z" fill="#211f1f"/>
-  <path d="M419.5 397.5L616 590H501.5L419.5 670Z" fill="#b9b9bf"/>
-</svg>
+  <path fill="#ffffff" stroke="#ffffff" stroke-width="1" opacity="0.996078431372549" d="M 119.5 83 L 392.5 83 L 394 84.5 L 393.5 337 L 326 271.5 L 326 153.5 L 324.5 152 L 187.5 152 L 186 153.5 L 186 271.5 L 187 272.5 L 187 360 L 242 360 L 242 428 L 118 428 L 118 84.5 L 119.5 83 Z" />
+  <path fill="rgb(0,0,0)" stroke="rgb(0,0,0)" stroke-width="1" opacity="0" d="M 0 0 L 512 0 L 512 512 L 0 512 L 0 0 Z M 117 83 L 117 430 L 243 430 L 243 359 L 191 359 L 189 359 L 188 154 L 190 154 L 191 153 L 322 153 L 324 153 L 324 272 L 393 338 Q 392 340 395 339 L 395 83 L 117 83 Z M 116 84 L 115 428 L 116 428 L 116 84 Z M 397 84 L 396 338 L 397 338 L 397 84 Z M 268 254 L 268 429 L 270 430 L 321 379 L 395 379 L 395 376 L 383 364 L 384 363 L 381 362 L 347 329 L 348 328 L 346 326 L 344 324 L 336 316 L 343 325 L 309 292 L 276 260 L 277 259 L 275 257 Q 273 260 271 256 Q 272 253 268 254 Z M 273 254 L 272 256 L 274 257 L 273 254 Z M 302 283 L 309 291 L 310 291 L 302 283 Z M 371 350 L 381 361 L 381 360 L 371 350 Z M 397 376 L 396 379 L 397 379 L 397 376 Z M 321 380 L 321 381 L 395 381 L 321 380 Z" />
+  <path fill="rgb(188,187,188)" stroke="rgb(188,187,188)" stroke-width="1" opacity="0.9098039215686274" d="M 187.5 153 L 188 274.5 L 187 274.5 L 187.5 153 Z" />
+  <path fill="rgb(188,187,188)" stroke="rgb(188,187,188)" stroke-width="1" opacity="0.9098039215686274" d="M 324.5 153 L 325 271.5 L 330 276.5 L 324 271.5 L 324.5 153 Z" />
+  <path fill="rgb(188,187,188)" stroke="rgb(188,187,188)" stroke-width="1" opacity="0.9098039215686274" d="M 269.5 252 L 274 255.5 Q 273.3 257.8 275.5 257 L 310 290.5 L 308 291.5 L 310.5 293 L 311.5 292 L 335.5 316 L 344 323.5 L 345.5 326 L 381 359.5 L 380 361.5 L 383.5 362 L 395 373.5 L 395 375.5 L 394.5 379 L 320.5 379 L 320.5 380 L 395 380.5 L 320.5 381 L 270.5 431 L 268 428.5 L 268 254 L 271 253.5 L 269.5 252 Z" />
+  <path fill="rgb(188,187,188)" stroke="rgb(188,187,188)" stroke-width="1" opacity="0.9098039215686274" d="M 350.5 296 L 361.5 308 L 350.5 296 Z" />
+  <path fill="rgb(188,187,188)" stroke="rgb(188,187,188)" stroke-width="1" opacity="0.9098039215686274" d="M 365.5 313 L 367.5 316 L 365.5 313 Z" />
+  <path fill="rgb(188,187,188)" stroke="rgb(188,187,188)" stroke-width="1" opacity="0.9098039215686274" d="M 378.5 323 L 379.5 325 L 378.5 323 Z" />
+  <path fill="rgb(188,187,188)" stroke="rgb(188,187,188)" stroke-width="1" opacity="0.9098039215686274" d="M 381.5 326 L 385.5 331 L 381.5 326 Z" />
+  <path fill="rgb(188,187,188)" stroke="rgb(188,187,188)" stroke-width="1" opacity="0.9098039215686274" d="M 396.5 376 L 397 378.5 L 396 378.5 L 396.5 376 Z" />
+  <path fill="rgb(188,187,188)" stroke="rgb(188,187,188)" stroke-width="1" opacity="0.9098039215686274" d="M 117.5 429 L 243 429.5 L 117.5 430 L 117.5 429 Z" />
+  <path fill="#ffffff" stroke="#ffffff" stroke-width="1" opacity="0.8" d="M 117 83 L 119 83.5 L 118 84.5 L 118 428 L 242 428 L 242 360 L 187 360 L 187 275.5 L 188 275.5 L 188 359 L 243 359 L 243 429 L 117 429 L 117 83 Z" />
+  <path fill="#ffffff" stroke="#ffffff" stroke-width="1" opacity="0.8" d="M 393.5 83 L 395 83.5 L 395 338 L 380 326 L 378.5 323 L 376.5 324 L 377 322.5 L 350.5 296 L 325 271.5 L 325 153 L 187 153 L 186.5 272 L 186 153.5 L 187.5 152 L 324.5 152 L 326 153.5 L 326 271.5 L 345.5 291 L 393.5 337 L 394 84.5 L 393.5 83 Z" />
+  <path fill="#ffffff" stroke="#ffffff" stroke-width="1" opacity="0.8" d="M 115.5 84 L 116 427.5 L 115 427.5 L 115.5 84 Z" />
+  <path fill="#ffffff" stroke="#ffffff" stroke-width="1" opacity="0.8" d="M 396.5 84 L 397 337.5 L 396 337.5 L 396.5 84 Z" />
+</g></svg>

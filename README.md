@@ -1,6 +1,6 @@
 # OpenDeputy
 
-![OpenDeputy logo](docs/brand/open-deputy-logo.svg)
+![OpenDeputy logo](docs/brand/opendeputy-logo.svg)
 
 OpenDeputy is an open-source AI coworker for Windows. It combines OpenCode agents with a visual workspace for projects, files, terminals, websites, and desktop applications.
 

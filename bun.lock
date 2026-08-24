@@ -94,7 +94,7 @@
       },
     },
     "packages/electron": {
-      "name": "open-deputy",
+      "name": "opendeputy",
       "version": "1.19.0",
       "dependencies": {
         "@openchamber/web": "workspace:*",
@@ -218,7 +218,7 @@
       "name": "@openchamber/web",
       "version": "1.19.0",
       "bin": {
-        "open-deputy": "./bin/cli.js",
+        "opendeputy": "./bin/cli.js",
         "openchamber": "./bin/cli.js",
       },
       "dependencies": {
@@ -2381,9 +2381,9 @@
 
     "open-computer-use": ["open-computer-use@0.3.1", "", { "bin": { "open-computer-use": "bin/open-computer-use", "ocu": "bin/ocu", "open-computer-use-mcp": "bin/open-computer-use-mcp", "open-codex-computer-use-mcp": "bin/open-codex-computer-use-mcp" } }, "sha512-q8gsh6Pqme7qiiLiDXWdsr6xs8TTO0zRaW1e8nEIigEg8uwBurPFp8CWbq8mPuLWxk+5lQqk2Tdq9iICj82WZQ=="],
 
-    "open-deputy": ["open-deputy@workspace:packages/electron"],
-
     "openai": ["openai@4.104.0", "", { "dependencies": { "@types/node": "^18.11.18", "@types/node-fetch": "^2.6.4", "abort-controller": "^3.0.0", "agentkeepalive": "^4.2.1", "form-data-encoder": "1.7.2", "formdata-node": "^4.3.2", "node-fetch": "^2.6.7" }, "peerDependencies": { "ws": "^8.18.0", "zod": "^3.23.8" }, "optionalPeers": ["ws", "zod"], "bin": { "openai": "bin/cli" } }, "sha512-p99EFNsA/yX6UhVO93f5kJsDRLAg+CTA2RBqdHK4RtK8u5IJw32Hyb2dTGKbnnFmnuoBv5r7Z2CURI9sGZpSuA=="],
+
+    "opendeputy": ["opendeputy@workspace:packages/electron"],
 
     "optionator": ["optionator@0.9.4", "", { "dependencies": { "deep-is": "^0.1.3", "fast-levenshtein": "^2.0.6", "levn": "^0.4.1", "prelude-ls": "^1.2.1", "type-check": "^0.4.0", "word-wrap": "^1.2.5" } }, "sha512-6IpQ7mKUxRcZNLIObR0hz7lxsapSSIYNZJwXPGeF0mTVqGKFIXj1DQcMoT22S3ROcLyY/rz0PWaWZ9ayWmad9g=="],
 

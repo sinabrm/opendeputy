@@ -109,7 +109,7 @@ $checksumPath = Join-Path $distRoot 'SHA256SUMS.txt'
 
 $startupResult = 'not requested'
 if ($LaunchSmoke) {
-  $smokeRoot = Join-Path ([System.IO.Path]::GetTempPath()) ('open-deputy-smoke-' + [guid]::NewGuid().ToString('N'))
+  $smokeRoot = Join-Path ([System.IO.Path]::GetTempPath()) ('opendeputy-smoke-' + [guid]::NewGuid().ToString('N'))
   $smokeAppData = Join-Path $smokeRoot 'AppData'
   $smokeLocalAppData = Join-Path $smokeRoot 'LocalAppData'
   New-Item -ItemType Directory -Path $smokeAppData, $smokeLocalAppData -Force | Out-Null
@@ -154,7 +154,7 @@ if ($LaunchSmoke) {
     $resolvedSmokeRoot = [System.IO.Path]::GetFullPath($smokeRoot)
     $safeTemporaryPrefix = [System.IO.Path]::GetFullPath([System.IO.Path]::GetTempPath())
     if (-not $resolvedSmokeRoot.StartsWith($safeTemporaryPrefix, [System.StringComparison]::OrdinalIgnoreCase) -or
-        -not [System.IO.Path]::GetFileName($resolvedSmokeRoot).StartsWith('open-deputy-smoke-')) {
+        -not [System.IO.Path]::GetFileName($resolvedSmokeRoot).StartsWith('opendeputy-smoke-')) {
       throw "Unsafe smoke-test cleanup target: $resolvedSmokeRoot"
     }
     Remove-Item -LiteralPath $resolvedSmokeRoot -Recurse -Force -ErrorAction SilentlyContinue

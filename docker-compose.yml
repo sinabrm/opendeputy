@@ -1,9 +1,9 @@
 services:
-  open-deputy:
+  opendeputy:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: open-deputy
+    container_name: opendeputy
     ports:
       - "3000:3000"
     extra_hosts:

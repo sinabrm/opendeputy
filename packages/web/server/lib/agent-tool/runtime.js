@@ -58,7 +58,7 @@ const ALL_PARAMETER_PROPERTIES = {
   taskId: { type: 'string' },
   title: { type: 'string' },
   prompt: { type: 'string' },
-  model: { type: 'string', description: 'Model in provider/model format. When the user names no model: for session.create pick a suitable one from models.list favorites or recents (omit if there are none); for send and fork omit it — the session reuses its previous model' },
+  model: { type: 'string', description: 'Model in provider/model format. When the user names no model: for session.create pick a suitable one from models.list favorites or recents (omit if there are none); for send and fork omit it \u2014 the session reuses its previous model' },
   agent: { type: 'string', description: 'OpenCode agent name; new sessions default to the build agent and existing sessions keep their previous one. Set only when the user explicitly requests a different agent' },
   variant: { type: 'string', description: 'Model variant; use only when the user explicitly requests it' },
   worktree: { type: 'string', description: 'New worktree name for session.create. Omit by default; use only when the user explicitly asks for an isolated worktree. Uncommitted changes do not carry over into a new worktree' },
@@ -133,7 +133,7 @@ const WORKSPACE_PARAMETER_PROPERTIES = {
   limit: { type: 'integer', minimum: 1, description: 'Maximum memory or history records to return' },
 };
 
-const CONTROL_TOOL_DESCRIPTION = "Control OpenDeputy projects, sessions, and scheduled tasks on the user's behalf. Sessions and scheduled tasks you create are for the user to follow and interact with; never use this tool to delegate parts of your own current task. Use one action per call. Scope with projectId or directory; omit both to use the current session directory. Session dispatches return immediately by default and you receive no notification when a dispatched session finishes, so never promise to report back on it; the user follows it in OpenDeputy; a dispatched session needs no follow-up from you. If the user later asks how it went, use session.messages (add wait to block until it is idle, lastAssistant for just the final answer) — session.send always sends a NEW prompt and never just waits. Set wait only when the user asks or the next step requires the completed result. Session and worktree deletion are unavailable.";
+const CONTROL_TOOL_DESCRIPTION = "Control OpenDeputy projects, sessions, and scheduled tasks on the user's behalf. Sessions and scheduled tasks you create are for the user to follow and interact with; never use this tool to delegate parts of your own current task. Use one action per call. Scope with projectId or directory; omit both to use the current session directory. Session dispatches return immediately by default and you receive no notification when a dispatched session finishes, so never promise to report back on it; the user follows it in OpenDeputy; a dispatched session needs no follow-up from you. If the user later asks how it went, use session.messages (add wait to block until it is idle, lastAssistant for just the final answer) \u2014 session.send always sends a NEW prompt and never just waits. Set wait only when the user asks or the next step requires the completed result. Session and worktree deletion are unavailable.";
 
 const PANEL_TOOL_DESCRIPTION = "Default tool, in every language, for OpenDeputy's built-in right-panel surfaces: Context, Git, PR/Pull Request, Changes/Diff, Walkthrough, Files/Editor, Terminal, Project Notes, Plan, Browser, and Chat. Use panel.open to show or focus one; use panel.list first when exact tabs matter, then panel.activate or panel.closeTab with a returned tabId. Use panel.newBrowserTab, panel.close, or panel.setExpanded for those exact intents. These actions change only OpenDeputy app state and cannot close its window. Do the underlying work with native file/edit, shell/Git/GitHub, plan, or session tools, then show the matching internal surface. Never operate an OpenDeputy surface through desktop mouse or keyboard control.";
 
@@ -145,40 +145,40 @@ const IN_APP_ROUTING_GUIDANCE = "OpenDeputy routing is internal-first in every l
 
 const INTERNAL_BROWSER_MARKERS = [
   'in-app browser', 'internal browser', 'inside the app', 'right panel',
-  'مرورگر داخل برنامه', 'مرورگر داخلی', 'پنل راست', 'پنل سمت راست',
-  'المتصفح داخل التطبيق', 'المتصفح الداخلي', 'اللوحة اليمنى',
+  '\u0645\u0631\u0648\u0631\u06AF\u0631 \u062F\u0627\u062E\u0644 \u0628\u0631\u0646\u0627\u0645\u0647', '\u0645\u0631\u0648\u0631\u06AF\u0631 \u062F\u0627\u062E\u0644\u06CC', '\u067E\u0646\u0644 \u0631\u0627\u0633\u062A', '\u067E\u0646\u0644 \u0633\u0645\u062A \u0631\u0627\u0633\u062A',
+  '\u0627\u0644\u0645\u062A\u0635\u0641\u062D \u062F\u0627\u062E\u0644 \u0627\u0644\u062A\u0637\u0628\u064A\u0642', '\u0627\u0644\u0645\u062A\u0635\u0641\u062D \u0627\u0644\u062F\u0627\u062E\u0644\u064A', '\u0627\u0644\u0644\u0648\u062D\u0629 \u0627\u0644\u064A\u0645\u0646\u0649',
   'browser in der app', 'interner browser', 'rechtes panel',
-  'アプリ内ブラウザ', '内部ブラウザ', '右パネル',
-  '应用内浏览器', '内置浏览器', '内部浏览器', '右侧面板',
-  '앱 내 브라우저', '내부 브라우저', '오른쪽 패널',
+  '\u30A2\u30D7\u30EA\u5185\u30D6\u30E9\u30A6\u30B6', '\u5185\u90E8\u30D6\u30E9\u30A6\u30B6', '\u53F3\u30D1\u30CD\u30EB',
+  '\u5E94\u7528\u5185\u6D4F\u89C8\u5668', '\u5185\u7F6E\u6D4F\u89C8\u5668', '\u5185\u90E8\u6D4F\u89C8\u5668', '\u53F3\u4FA7\u9762\u677F',
+  '\uC571 \uB0B4 \uBE0C\uB77C\uC6B0\uC800', '\uB0B4\uBD80 \uBE0C\uB77C\uC6B0\uC800', '\uC624\uB978\uCABD \uD328\uB110',
 ];
 const EXTERNAL_BROWSER_MARKERS = [
   'chrome', 'firefox', 'microsoft edge', 'safari', 'brave', 'opera', 'open browser use', 'playwright', 'cdp',
   'external browser', 'system browser', 'desktop browser', 'real browser', 'computer browser',
   'browser profile', 'browser extension', 'existing user tab',
-  'کروم', 'فایرفاکس', 'فایر فاکس', 'مایکروسافت اج', 'سافاری', 'مرورگر خارجی', 'مرورگر سیستم', 'مرورگر کامپیوتر', 'افزونه مرورگر', 'پروفایل مرورگر',
-  'كروم', 'فايرفوكس', 'مايكروسوفت إيدج', 'سفاري', 'المتصفح الخارجي', 'متصفح النظام', 'متصفح الكمبيوتر', 'ملحق المتصفح', 'ملف تعريف المتصفح',
+  '\u06A9\u0631\u0648\u0645', '\u0641\u0627\u06CC\u0631\u0641\u0627\u06A9\u0633', '\u0641\u0627\u06CC\u0631 \u0641\u0627\u06A9\u0633', '\u0645\u0627\u06CC\u06A9\u0631\u0648\u0633\u0627\u0641\u062A \u0627\u062C', '\u0633\u0627\u0641\u0627\u0631\u06CC', '\u0645\u0631\u0648\u0631\u06AF\u0631 \u062E\u0627\u0631\u062C\u06CC', '\u0645\u0631\u0648\u0631\u06AF\u0631 \u0633\u06CC\u0633\u062A\u0645', '\u0645\u0631\u0648\u0631\u06AF\u0631 \u06A9\u0627\u0645\u067E\u06CC\u0648\u062A\u0631', '\u0627\u0641\u0632\u0648\u0646\u0647 \u0645\u0631\u0648\u0631\u06AF\u0631', '\u067E\u0631\u0648\u0641\u0627\u06CC\u0644 \u0645\u0631\u0648\u0631\u06AF\u0631',
+  '\u0643\u0631\u0648\u0645', '\u0641\u0627\u064A\u0631\u0641\u0648\u0643\u0633', '\u0645\u0627\u064A\u0643\u0631\u0648\u0633\u0648\u0641\u062A \u0625\u064A\u062F\u062C', '\u0633\u0641\u0627\u0631\u064A', '\u0627\u0644\u0645\u062A\u0635\u0641\u062D \u0627\u0644\u062E\u0627\u0631\u062C\u064A', '\u0645\u062A\u0635\u0641\u062D \u0627\u0644\u0646\u0638\u0627\u0645', '\u0645\u062A\u0635\u0641\u062D \u0627\u0644\u0643\u0645\u0628\u064A\u0648\u062A\u0631', '\u0645\u0644\u062D\u0642 \u0627\u0644\u0645\u062A\u0635\u0641\u062D', '\u0645\u0644\u0641 \u062A\u0639\u0631\u064A\u0641 \u0627\u0644\u0645\u062A\u0635\u0641\u062D',
   'externer browser', 'systembrowser', 'desktop-browser', 'browserprofil', 'browser-erweiterung',
-  'クローム', 'ファイアフォックス', 'マイクロソフトエッジ', 'サファリ', '外部ブラウザ', 'システムブラウザ', 'パソコンのブラウザ', 'ブラウザ拡張', 'ブラウザプロファイル',
-  '谷歌浏览器', '火狐', '微软边缘', '苹果浏览器', '外部浏览器', '系统浏览器', '电脑浏览器', '浏览器扩展', '浏览器配置文件',
-  '크롬', '파이어폭스', '마이크로소프트 엣지', '사파리', '외부 브라우저', '시스템 브라우저', '컴퓨터 브라우저', '브라우저 확장 프로그램', '브라우저 프로필',
-  'внешний браузер', 'системный браузер', 'браузер компьютера', 'расширение браузера', 'профиль браузера',
+  '\u30AF\u30ED\u30FC\u30E0', '\u30D5\u30A1\u30A4\u30A2\u30D5\u30A9\u30C3\u30AF\u30B9', '\u30DE\u30A4\u30AF\u30ED\u30BD\u30D5\u30C8\u30A8\u30C3\u30B8', '\u30B5\u30D5\u30A1\u30EA', '\u5916\u90E8\u30D6\u30E9\u30A6\u30B6', '\u30B7\u30B9\u30C6\u30E0\u30D6\u30E9\u30A6\u30B6', '\u30D1\u30BD\u30B3\u30F3\u306E\u30D6\u30E9\u30A6\u30B6', '\u30D6\u30E9\u30A6\u30B6\u62E1\u5F35', '\u30D6\u30E9\u30A6\u30B6\u30D7\u30ED\u30D5\u30A1\u30A4\u30EB',
+  '\u8C37\u6B4C\u6D4F\u89C8\u5668', '\u706B\u72D0', '\u5FAE\u8F6F\u8FB9\u7F18', '\u82F9\u679C\u6D4F\u89C8\u5668', '\u5916\u90E8\u6D4F\u89C8\u5668', '\u7CFB\u7EDF\u6D4F\u89C8\u5668', '\u7535\u8111\u6D4F\u89C8\u5668', '\u6D4F\u89C8\u5668\u6269\u5C55', '\u6D4F\u89C8\u5668\u914D\u7F6E\u6587\u4EF6',
+  '\uD06C\uB86C', '\uD30C\uC774\uC5B4\uD3ED\uC2A4', '\uB9C8\uC774\uD06C\uB85C\uC18C\uD504\uD2B8 \uC5E3\uC9C0', '\uC0AC\uD30C\uB9AC', '\uC678\uBD80 \uBE0C\uB77C\uC6B0\uC800', '\uC2DC\uC2A4\uD15C \uBE0C\uB77C\uC6B0\uC800', '\uCEF4\uD4E8\uD130 \uBE0C\uB77C\uC6B0\uC800', '\uBE0C\uB77C\uC6B0\uC800 \uD655\uC7A5 \uD504\uB85C\uADF8\uB7A8', '\uBE0C\uB77C\uC6B0\uC800 \uD504\uB85C\uD544',
+  '\u0432\u043D\u0435\u0448\u043D\u0438\u0439 \u0431\u0440\u0430\u0443\u0437\u0435\u0440', '\u0441\u0438\u0441\u0442\u0435\u043C\u043D\u044B\u0439 \u0431\u0440\u0430\u0443\u0437\u0435\u0440', '\u0431\u0440\u0430\u0443\u0437\u0435\u0440 \u043A\u043E\u043C\u043F\u044C\u044E\u0442\u0435\u0440\u0430', '\u0440\u0430\u0441\u0448\u0438\u0440\u0435\u043D\u0438\u0435 \u0431\u0440\u0430\u0443\u0437\u0435\u0440\u0430', '\u043F\u0440\u043E\u0444\u0438\u043B\u044C \u0431\u0440\u0430\u0443\u0437\u0435\u0440\u0430',
 ];
 const GENERIC_BROWSER_MARKERS = [
   'browser', 'tab', 'website', 'web page', 'url',
-  'مرورگر', 'تب', 'وب‌سایت', 'وب سایت', 'صفحه وب',
-  'متصفح', 'علامة تبويب', 'تبويب', 'موقع', 'صفحة ويب',
+  '\u0645\u0631\u0648\u0631\u06AF\u0631', '\u062A\u0628', '\u0648\u0628\u200C\u0633\u0627\u06CC\u062A', '\u0648\u0628 \u0633\u0627\u06CC\u062A', '\u0635\u0641\u062D\u0647 \u0648\u0628',
+  '\u0645\u062A\u0635\u0641\u062D', '\u0639\u0644\u0627\u0645\u0629 \u062A\u0628\u0648\u064A\u0628', '\u062A\u0628\u0648\u064A\u0628', '\u0645\u0648\u0642\u0639', '\u0635\u0641\u062D\u0629 \u0648\u064A\u0628',
   'webseite',
-  'ブラウザ', 'タブ', 'ウェブサイト', 'ウェブページ',
-  '浏览器', '标签页', '网页', '网站',
-  '브라우저', '탭', '웹사이트', '웹 페이지',
-  'браузер', 'вкладк', 'веб-сайт', 'веб-страниц',
+  '\u30D6\u30E9\u30A6\u30B6', '\u30BF\u30D6', '\u30A6\u30A7\u30D6\u30B5\u30A4\u30C8', '\u30A6\u30A7\u30D6\u30DA\u30FC\u30B8',
+  '\u6D4F\u89C8\u5668', '\u6807\u7B7E\u9875', '\u7F51\u9875', '\u7F51\u7AD9',
+  '\uBE0C\uB77C\uC6B0\uC800', '\uD0ED', '\uC6F9\uC0AC\uC774\uD2B8', '\uC6F9 \uD398\uC774\uC9C0',
+  '\u0431\u0440\u0430\u0443\u0437\u0435\u0440', '\u0432\u043A\u043B\u0430\u0434\u043A', '\u0432\u0435\u0431-\u0441\u0430\u0439\u0442', '\u0432\u0435\u0431-\u0441\u0442\u0440\u0430\u043D\u0438\u0446',
 ];
 const EXTERNAL_BROWSER_TOOL_NAMESPACES = ['open_browser_use', 'playwright'];
 const DESKTOP_TOOL_NAMESPACES = ['open_computer_use', 'computer_use', 'touchpoint'];
 const BROWSER_APP_MARKERS = [
   'browser', 'chrome', 'firefox', 'edge', 'safari', 'brave', 'opera',
-  'مرورگر', 'متصفح', 'ブラウザ', '浏览器', '브라우저', 'браузер',
+  '\u0645\u0631\u0648\u0631\u06AF\u0631', '\u0645\u062A\u0635\u0641\u062D', '\u30D6\u30E9\u30A6\u30B6', '\u6D4F\u89C8\u5668', '\uBE0C\uB77C\uC6B0\uC800', '\u0431\u0440\u0430\u0443\u0437\u0435\u0440',
 ];
 const PANEL_SURFACE_PATTERNS = [
   '\\bcontext(?: panel| tab| view)?\\b', '\\bgit(?: panel| tab| view)?\\b', '\\bpull requests?\\b', '\\bpr(?: panel| tab| view)?\\b',
@@ -186,35 +186,35 @@ const PANEL_SURFACE_PATTERNS = [
   '\\bfiles?(?: panel| tab| view| editor)?\\b', '\\beditors?(?: panel| tab| view)?\\b', '\\bterminals?(?: panel| tab| view)?\\b',
   '\\bproject notes?\\b', '\\bnotes (?:panel|tab|view)\\b', '\\bplans? (?:panel|tab|view)\\b',
   '\\bbrowser(?: panel| tab| view)?\\b', '\\bchat (?:panel|tab|view)\\b', '\\bright (?:context )?panel\\b',
-  'پنل راست', 'پنل سمت راست', 'کانتکست', 'گیت', 'پول ریکوئست', 'درخواست ادغام', 'تغییرات', 'تفاوت', 'مرور تغییرات', 'فایل', 'ویرایشگر', 'ترمینال', 'یادداشت پروژه', 'یادداشت‌ها', 'یادداشت ها', 'برنامه کار', 'مرورگر', 'چت',
-  'اللوحة اليمنى', 'السياق', 'جيت', 'طلب السحب', 'التغييرات', 'الاختلافات', 'الملفات', 'المحرر', 'الطرفية', 'ملاحظات المشروع', 'الخطة', 'المتصفح', 'الدردشة',
-  'rechtes panel', 'kontextansicht', 'git-ansicht', 'pull-request', 'änderungen', 'diff-ansicht', 'dateiansicht', 'terminalansicht', 'projektnotizen', 'planansicht', 'browseransicht', 'chatansicht',
-  '右パネル', 'コンテキスト', 'gitパネル', 'プルリクエスト', '変更パネル', '差分', 'ウォークスルー', 'ファイルパネル', 'エディター', 'ターミナル', 'プロジェクトノート', 'プランパネル', 'ブラウザ', 'チャットパネル',
-  '右侧面板', '上下文面板', 'git面板', '拉取请求', '更改面板', '差异', '演练', '文件面板', '编辑器', '终端', '项目笔记', '计划面板', '浏览器', '聊天面板',
+  '\u067E\u0646\u0644 \u0631\u0627\u0633\u062A', '\u067E\u0646\u0644 \u0633\u0645\u062A \u0631\u0627\u0633\u062A', '\u06A9\u0627\u0646\u062A\u06A9\u0633\u062A', '\u06AF\u06CC\u062A', '\u067E\u0648\u0644 \u0631\u06CC\u06A9\u0648\u0626\u0633\u062A', '\u062F\u0631\u062E\u0648\u0627\u0633\u062A \u0627\u062F\u063A\u0627\u0645', '\u062A\u063A\u06CC\u06CC\u0631\u0627\u062A', '\u062A\u0641\u0627\u0648\u062A', '\u0645\u0631\u0648\u0631 \u062A\u063A\u06CC\u06CC\u0631\u0627\u062A', '\u0641\u0627\u06CC\u0644', '\u0648\u06CC\u0631\u0627\u06CC\u0634\u06AF\u0631', '\u062A\u0631\u0645\u06CC\u0646\u0627\u0644', '\u06CC\u0627\u062F\u062F\u0627\u0634\u062A \u067E\u0631\u0648\u0698\u0647', '\u06CC\u0627\u062F\u062F\u0627\u0634\u062A\u200C\u0647\u0627', '\u06CC\u0627\u062F\u062F\u0627\u0634\u062A \u0647\u0627', '\u0628\u0631\u0646\u0627\u0645\u0647 \u06A9\u0627\u0631', '\u0645\u0631\u0648\u0631\u06AF\u0631', '\u0686\u062A',
+  '\u0627\u0644\u0644\u0648\u062D\u0629 \u0627\u0644\u064A\u0645\u0646\u0649', '\u0627\u0644\u0633\u064A\u0627\u0642', '\u062C\u064A\u062A', '\u0637\u0644\u0628 \u0627\u0644\u0633\u062D\u0628', '\u0627\u0644\u062A\u063A\u064A\u064A\u0631\u0627\u062A', '\u0627\u0644\u0627\u062E\u062A\u0644\u0627\u0641\u0627\u062A', '\u0627\u0644\u0645\u0644\u0641\u0627\u062A', '\u0627\u0644\u0645\u062D\u0631\u0631', '\u0627\u0644\u0637\u0631\u0641\u064A\u0629', '\u0645\u0644\u0627\u062D\u0638\u0627\u062A \u0627\u0644\u0645\u0634\u0631\u0648\u0639', '\u0627\u0644\u062E\u0637\u0629', '\u0627\u0644\u0645\u062A\u0635\u0641\u062D', '\u0627\u0644\u062F\u0631\u062F\u0634\u0629',
+  'rechtes panel', 'kontextansicht', 'git-ansicht', 'pull-request', '\u00E4nderungen', 'diff-ansicht', 'dateiansicht', 'terminalansicht', 'projektnotizen', 'planansicht', 'browseransicht', 'chatansicht',
+  '\u53F3\u30D1\u30CD\u30EB', '\u30B3\u30F3\u30C6\u30AD\u30B9\u30C8', 'git\u30D1\u30CD\u30EB', '\u30D7\u30EB\u30EA\u30AF\u30A8\u30B9\u30C8', '\u5909\u66F4\u30D1\u30CD\u30EB', '\u5DEE\u5206', '\u30A6\u30A9\u30FC\u30AF\u30B9\u30EB\u30FC', '\u30D5\u30A1\u30A4\u30EB\u30D1\u30CD\u30EB', '\u30A8\u30C7\u30A3\u30BF\u30FC', '\u30BF\u30FC\u30DF\u30CA\u30EB', '\u30D7\u30ED\u30B8\u30A7\u30AF\u30C8\u30CE\u30FC\u30C8', '\u30D7\u30E9\u30F3\u30D1\u30CD\u30EB', '\u30D6\u30E9\u30A6\u30B6', '\u30C1\u30E3\u30C3\u30C8\u30D1\u30CD\u30EB',
+  '\u53F3\u4FA7\u9762\u677F', '\u4E0A\u4E0B\u6587\u9762\u677F', 'git\u9762\u677F', '\u62C9\u53D6\u8BF7\u6C42', '\u66F4\u6539\u9762\u677F', '\u5DEE\u5F02', '\u6F14\u7EC3', '\u6587\u4EF6\u9762\u677F', '\u7F16\u8F91\u5668', '\u7EC8\u7AEF', '\u9879\u76EE\u7B14\u8BB0', '\u8BA1\u5212\u9762\u677F', '\u6D4F\u89C8\u5668', '\u804A\u5929\u9762\u677F',
 ];
 const PANEL_INTENT_MARKERS = [
   'open', 'show', 'view', 'check', 'inspect', 'use', 'switch', 'focus', 'close', 'read', 'write', 'edit', 'add', 'remove', 'run', 'execute', 'work',
-  'باز', 'نشان', 'ببین', 'بررسی', 'چک', 'استفاده', 'برو', 'بسته', 'بخوان', 'بنویس', 'ویرایش', 'اضافه', 'حذف', 'اجرا', 'کار',
-  'öffne', 'anzeigen', 'prüfe', 'verwende', 'wechsel', 'schließe', 'lies', 'schreib', 'bearbeit',
-  '開', '表示', '確認', '使って', '切り替', '閉じ', '読', '書', '編集', '実行',
-  '打开', '显示', '查看', '检查', '使用', '切换', '关闭', '读取', '写入', '编辑', '运行',
-  'افتح', 'اعرض', 'تحقق', 'استخدم', 'انتقل', 'أغلق', 'اقرأ', 'اكتب', 'حرر', 'شغل',
+  '\u0628\u0627\u0632', '\u0646\u0634\u0627\u0646', '\u0628\u0628\u06CC\u0646', '\u0628\u0631\u0631\u0633\u06CC', '\u0686\u06A9', '\u0627\u0633\u062A\u0641\u0627\u062F\u0647', '\u0628\u0631\u0648', '\u0628\u0633\u062A\u0647', '\u0628\u062E\u0648\u0627\u0646', '\u0628\u0646\u0648\u06CC\u0633', '\u0648\u06CC\u0631\u0627\u06CC\u0634', '\u0627\u0636\u0627\u0641\u0647', '\u062D\u0630\u0641', '\u0627\u062C\u0631\u0627', '\u06A9\u0627\u0631',
+  '\u00F6ffne', 'anzeigen', 'pr\u00FCfe', 'verwende', 'wechsel', 'schlie\u00DFe', 'lies', 'schreib', 'bearbeit',
+  '\u958B', '\u8868\u793A', '\u78BA\u8A8D', '\u4F7F\u3063\u3066', '\u5207\u308A\u66FF', '\u9589\u3058', '\u8AAD', '\u66F8', '\u7DE8\u96C6', '\u5B9F\u884C',
+  '\u6253\u5F00', '\u663E\u793A', '\u67E5\u770B', '\u68C0\u67E5', '\u4F7F\u7528', '\u5207\u6362', '\u5173\u95ED', '\u8BFB\u53D6', '\u5199\u5165', '\u7F16\u8F91', '\u8FD0\u884C',
+  '\u0627\u0641\u062A\u062D', '\u0627\u0639\u0631\u0636', '\u062A\u062D\u0642\u0642', '\u0627\u0633\u062A\u062E\u062F\u0645', '\u0627\u0646\u062A\u0642\u0644', '\u0623\u063A\u0644\u0642', '\u0627\u0642\u0631\u0623', '\u0627\u0643\u062A\u0628', '\u062D\u0631\u0631', '\u0634\u063A\u0644',
 ];
 const STRONG_PANEL_MARKERS = [
   'right panel', 'context panel', 'project notes', 'pull request', 'pr panel', 'git panel', 'changes panel', 'diff panel',
   'walkthrough', 'files panel', 'file panel', 'editor panel', 'terminal panel', 'notes panel', 'plan panel', 'browser panel', 'chat panel',
-  'پنل راست', 'پنل سمت راست', 'یادداشت پروژه', 'پول ریکوئست', 'درخواست ادغام', 'اللوحة اليمنى', 'ملاحظات المشروع',
-  'rechtes panel', 'projektnotizen', '右パネル', 'プロジェクトノート', '右侧面板', '项目笔记',
+  '\u067E\u0646\u0644 \u0631\u0627\u0633\u062A', '\u067E\u0646\u0644 \u0633\u0645\u062A \u0631\u0627\u0633\u062A', '\u06CC\u0627\u062F\u062F\u0627\u0634\u062A \u067E\u0631\u0648\u0698\u0647', '\u067E\u0648\u0644 \u0631\u06CC\u06A9\u0648\u0626\u0633\u062A', '\u062F\u0631\u062E\u0648\u0627\u0633\u062A \u0627\u062F\u063A\u0627\u0645', '\u0627\u0644\u0644\u0648\u062D\u0629 \u0627\u0644\u064A\u0645\u0646\u0649', '\u0645\u0644\u0627\u062D\u0638\u0627\u062A \u0627\u0644\u0645\u0634\u0631\u0648\u0639',
+  'rechtes panel', 'projektnotizen', '\u53F3\u30D1\u30CD\u30EB', '\u30D7\u30ED\u30B8\u30A7\u30AF\u30C8\u30CE\u30FC\u30C8', '\u53F3\u4FA7\u9762\u677F', '\u9879\u76EE\u7B14\u8BB0',
 ];
 const EXTERNAL_APP_MARKERS = [
   'external app', 'system app', 'desktop app', 'outside the app', 'outside opendeputy', 'separate app', 'standalone app',
   'windows terminal', 'powershell', 'command prompt', 'cmd.exe', 'file explorer', 'windows explorer',
   'visual studio code', 'vs code', 'vscode', 'notepad', 'github desktop', 'gitkraken', 'sourcetree', 'tortoisegit',
-  'برنامه خارجی', 'برنامه سیستم', 'برنامه دسکتاپ', 'خارج از برنامه', 'بیرون برنامه', 'ترمینال ویندوز', 'پاورشل', 'فایل اکسپلورر',
-  'تطبيق خارجي', 'تطبيق النظام', 'تطبيق سطح المكتب', 'خارج التطبيق', 'طرفية ويندوز', 'مستكشف الملفات',
-  'externe app', 'system-app', 'desktop-app', 'außerhalb der app', 'windows-terminal', 'datei-explorer',
-  '外部アプリ', 'システムアプリ', 'デスクトップアプリ', 'アプリの外', 'windowsターミナル', 'ファイルエクスプローラー',
-  '外部应用', '系统应用', '桌面应用', '应用外部', 'windows终端', '文件资源管理器',
+  '\u0628\u0631\u0646\u0627\u0645\u0647 \u062E\u0627\u0631\u062C\u06CC', '\u0628\u0631\u0646\u0627\u0645\u0647 \u0633\u06CC\u0633\u062A\u0645', '\u0628\u0631\u0646\u0627\u0645\u0647 \u062F\u0633\u06A9\u062A\u0627\u067E', '\u062E\u0627\u0631\u062C \u0627\u0632 \u0628\u0631\u0646\u0627\u0645\u0647', '\u0628\u06CC\u0631\u0648\u0646 \u0628\u0631\u0646\u0627\u0645\u0647', '\u062A\u0631\u0645\u06CC\u0646\u0627\u0644 \u0648\u06CC\u0646\u062F\u0648\u0632', '\u067E\u0627\u0648\u0631\u0634\u0644', '\u0641\u0627\u06CC\u0644 \u0627\u06A9\u0633\u067E\u0644\u0648\u0631\u0631',
+  '\u062A\u0637\u0628\u064A\u0642 \u062E\u0627\u0631\u062C\u064A', '\u062A\u0637\u0628\u064A\u0642 \u0627\u0644\u0646\u0638\u0627\u0645', '\u062A\u0637\u0628\u064A\u0642 \u0633\u0637\u062D \u0627\u0644\u0645\u0643\u062A\u0628', '\u062E\u0627\u0631\u062C \u0627\u0644\u062A\u0637\u0628\u064A\u0642', '\u0637\u0631\u0641\u064A\u0629 \u0648\u064A\u0646\u062F\u0648\u0632', '\u0645\u0633\u062A\u0643\u0634\u0641 \u0627\u0644\u0645\u0644\u0641\u0627\u062A',
+  'externe app', 'system-app', 'desktop-app', 'au\u00DFerhalb der app', 'windows-terminal', 'datei-explorer',
+  '\u5916\u90E8\u30A2\u30D7\u30EA', '\u30B7\u30B9\u30C6\u30E0\u30A2\u30D7\u30EA', '\u30C7\u30B9\u30AF\u30C8\u30C3\u30D7\u30A2\u30D7\u30EA', '\u30A2\u30D7\u30EA\u306E\u5916', 'windows\u30BF\u30FC\u30DF\u30CA\u30EB', '\u30D5\u30A1\u30A4\u30EB\u30A8\u30AF\u30B9\u30D7\u30ED\u30FC\u30E9\u30FC',
+  '\u5916\u90E8\u5E94\u7528', '\u7CFB\u7EDF\u5E94\u7528', '\u684C\u9762\u5E94\u7528', '\u5E94\u7528\u5916\u90E8', 'windows\u7EC8\u7AEF', '\u6587\u4EF6\u8D44\u6E90\u7BA1\u7406\u5668',
 ];
 
 const asNonEmptyString = (value) => {

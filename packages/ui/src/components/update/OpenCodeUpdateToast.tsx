@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Icon } from '@/components/icon/Icon';
+import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from '@/components/ui/toast';
 import { reloadOpenCodeConfiguration } from '@/stores/useAgentsStore';
 import { useUIStore } from '@/stores/useUIStore';
@@ -7,11 +8,12 @@ import { useI18n } from '@/lib/i18n';
 import { runtimeFetch } from '@/lib/runtime-fetch';
 import { getRuntimeKey, subscribeRuntimeEndpointChanged } from '@/lib/runtime-switch';
 import { updateDesktopSettings } from '@/lib/persistence';
+import { isWindowsArm64 } from '@/lib/platform';
 import { getDeferredSafeStorage } from '@/stores/utils/safeStorage';
 import {
+  resolveOpenCodeUpdateAction,
   resolveOpenCodeUpdateVersion,
   resolveOpenCodeUpgradeStatusVersion,
-  shouldShowOpenCodeUpdateToast,
   type OpenCodeUpgradeStatusLike,
 } from './openCodeUpdateDedup';
 
@@ -21,17 +23,55 @@ const INITIAL_CHECK_DELAY_MS = 5_000;
 const CHECK_RETRY_DELAYS_MS = [10_000, 60_000];
 const UPDATE_TOAST_DISMISSED_VERSION_KEY = 'opencode-update-toast-dismissed-version';
 
+interface UpdatePromptDescriptionProps {
+  version: string;
+  onAutoUpdateChange: (checked: boolean) => void;
+}
+
+const UpdatePromptDescription: React.FC<UpdatePromptDescriptionProps> = ({
+  version,
+  onAutoUpdateChange,
+}) => {
+  const { t } = useI18n();
+  const [checked, setChecked] = React.useState(false);
+  const setAutoUpdate = React.useCallback((next: boolean) => {
+    setChecked(next);
+    onAutoUpdateChange(next);
+  }, [onAutoUpdateChange]);
+
+  return (
+    <div className="flex flex-col gap-2">
+      <span>{t('opencodeUpdate.toast.available.description', { version })}</span>
+      <div className="flex items-center gap-2 text-foreground">
+        <Checkbox
+          checked={checked}
+          onChange={setAutoUpdate}
+          ariaLabel={t('settings.openchamber.opencodeCli.field.autoUpdateAria')}
+        />
+        <button
+          type="button"
+          className="text-left typography-meta"
+          onClick={() => setAutoUpdate(!checked)}
+        >
+          {t('settings.openchamber.opencodeCli.field.autoUpdate')}
+        </button>
+      </div>
+    </div>
+  );
+};
+
 export const OpenCodeUpdateToast: React.FC = () => {
   const { t } = useI18n();
-  const showOpenCodeUpdateNotifications = useUIStore((state) => state.showOpenCodeUpdateNotifications);
+  const autoUpdateOpenCode = useUIStore((state) => state.autoUpdateOpenCode);
   const seenVersionsRef = React.useRef(new Set<string>());
   const upgradingRef = React.useRef(false);
 
   React.useEffect(() => {
-    if (!showOpenCodeUpdateNotifications) {
+    seenVersionsRef.current.clear();
+    if (autoUpdateOpenCode) {
       toast.dismiss(UPDATE_TOAST_ID);
     }
-  }, [showOpenCodeUpdateNotifications]);
+  }, [autoUpdateOpenCode]);
 
   const reloadOpenCode = React.useCallback(() => {
     toast.dismiss(UPGRADE_TOAST_ID);
@@ -92,30 +132,43 @@ export const OpenCodeUpdateToast: React.FC = () => {
 
   React.useEffect(() => {
     const showUpdateAvailableToast = (version: string) => {
-      // Upstream setting wins over our dedup logic: if user disabled
-      // OpenCode update notifications, dismiss any active toast and bail
-      // before consulting dedup state.
-      if (!useUIStore.getState().showOpenCodeUpdateNotifications) {
-        toast.dismiss(UPDATE_TOAST_ID);
-        return;
-      }
-      const decision = shouldShowOpenCodeUpdateToast({
+      const decision = resolveOpenCodeUpdateAction({
         version,
+        autoUpdate: useUIStore.getState().autoUpdateOpenCode,
         dismissedVersion: getDeferredSafeStorage().getItem(UPDATE_TOAST_DISMISSED_VERSION_KEY),
         seenVersions: seenVersionsRef.current,
       });
-      if (!decision) {
+      if (decision === 'none') {
         return;
       }
       seenVersionsRef.current.add(version);
 
+      if (decision === 'upgrade') {
+        void runUpgrade();
+        return;
+      }
+
+      const autoUpdateOnConfirm = { current: false };
       toast.info(t('opencodeUpdate.toast.available.title'), {
         id: UPDATE_TOAST_ID,
-        description: t('opencodeUpdate.toast.available.description', { version }),
+        description: (
+          <UpdatePromptDescription
+            version={version}
+            onAutoUpdateChange={(checked) => {
+              autoUpdateOnConfirm.current = checked;
+            }}
+          />
+        ),
         duration: Infinity,
         action: {
           label: t('opencodeUpdate.toast.actions.update'),
-          onClick: runUpgrade,
+          onClick: () => {
+            if (autoUpdateOnConfirm.current) {
+              useUIStore.getState().setAutoUpdateOpenCode(true);
+              void updateDesktopSettings({ autoUpdateOpenCode: true });
+            }
+            void runUpgrade();
+          },
         },
         cancel: {
           label: t('opencodeUpdate.toast.actions.dismiss'),
@@ -155,14 +208,14 @@ export const OpenCodeUpdateToast: React.FC = () => {
       }
     };
 
-    if (showOpenCodeUpdateNotifications) {
+    if (!isWindowsArm64()) {
       timeoutIds.push(setTimeout(() => { void checkForUpdate(0); }, INITIAL_CHECK_DELAY_MS));
     }
 
     const unsubscribeRuntime = subscribeRuntimeEndpointChanged(({ runtimeKey }) => {
       seenVersionsRef.current.clear();
       toast.dismiss(UPDATE_TOAST_ID);
-      if (useUIStore.getState().showOpenCodeUpdateNotifications) {
+      if (!isWindowsArm64()) {
         void checkForUpdate(0, runtimeKey);
       }
     });
@@ -174,7 +227,7 @@ export const OpenCodeUpdateToast: React.FC = () => {
       unsubscribeRuntime();
       window.removeEventListener('openchamber:opencode-update-available', onUpdateAvailable);
     };
-  }, [runUpgrade, showOpenCodeUpdateNotifications, t]);
+  }, [autoUpdateOpenCode, runUpgrade, t]);
 
   return null;
 };

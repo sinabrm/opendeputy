@@ -15,6 +15,7 @@ This module provides local, user-controlled workspace capabilities to the manage
 ## Safety invariants
 
 - Memory is local to the OpenDeputy data directory. The tool description forbids secrets and requires explicit approval before durable writes or deletion.
+- The default data directory is `.opendeputy`. On first use, a prior hyphenated directory is moved automatically; if Windows blocks the move, OpenDeputy continues using the existing directory without deleting data.
 - Document conversion writes a separate output and refuses to replace an existing file unless `overwrite` is explicitly true.
 - ActivityWatch remains optional and off until the user asks to start it. Reading history and stopping collection also require an explicit user request.
 - Piper creates a WAV file but never plays or uploads it.

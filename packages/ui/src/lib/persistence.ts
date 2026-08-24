@@ -551,7 +551,7 @@ const materializeAuthoritativeUiSettings = (settings: DesktopSettings): DesktopS
     summaryLength: defaults.summaryLength,
     maxLastMessageLength: defaults.maxLastMessageLength,
     inputSpellcheckEnabled: defaults.inputSpellcheckEnabled,
-    showOpenCodeUpdateNotifications: defaults.showOpenCodeUpdateNotifications,
+    autoUpdateOpenCode: defaults.autoUpdateOpenCode,
     agentControlToolEnabled: defaults.agentControlToolEnabled,
     agentWebToolEnabled: defaults.agentWebToolEnabled,
     showToolFileIcons: defaults.showToolFileIcons,
@@ -719,10 +719,10 @@ const applyDesktopUiPreferences = (settings: DesktopSettings) => {
     store.setInputSpellcheckEnabled(settings.inputSpellcheckEnabled);
   }
   if (
-    typeof settings.showOpenCodeUpdateNotifications === 'boolean'
-    && settings.showOpenCodeUpdateNotifications !== store.showOpenCodeUpdateNotifications
+    typeof settings.autoUpdateOpenCode === 'boolean'
+    && settings.autoUpdateOpenCode !== store.autoUpdateOpenCode
   ) {
-    store.setShowOpenCodeUpdateNotifications(settings.showOpenCodeUpdateNotifications);
+    store.setAutoUpdateOpenCode(settings.autoUpdateOpenCode);
   }
   if (
     typeof settings.agentControlToolEnabled === 'boolean'
@@ -1376,8 +1376,8 @@ const sanitizeWebSettings = (payload: unknown): DesktopSettings | null => {
   if (typeof candidate.inputSpellcheckEnabled === 'boolean') {
     result.inputSpellcheckEnabled = candidate.inputSpellcheckEnabled;
   }
-  if (typeof candidate.showOpenCodeUpdateNotifications === 'boolean') {
-    result.showOpenCodeUpdateNotifications = candidate.showOpenCodeUpdateNotifications;
+  if (typeof candidate.autoUpdateOpenCode === 'boolean') {
+    result.autoUpdateOpenCode = candidate.autoUpdateOpenCode;
   }
   if (typeof candidate.agentControlToolEnabled === 'boolean') {
     result.agentControlToolEnabled = candidate.agentControlToolEnabled;

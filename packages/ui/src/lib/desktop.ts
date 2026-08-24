@@ -152,7 +152,7 @@ export type DesktopSettings = {
   desktopWindowControlsPosition?: DesktopWindowControlsPosition;
   desktopWindowControlsStyle?: DesktopWindowControlsStyle;
   inputSpellcheckEnabled?: boolean;
-  showOpenCodeUpdateNotifications?: boolean;
+  autoUpdateOpenCode?: boolean;
   agentControlToolEnabled?: boolean;
   agentWebToolEnabled?: boolean;
   optimizeSystemPrompt?: boolean;

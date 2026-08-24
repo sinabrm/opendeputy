@@ -56,7 +56,7 @@ if ($Piper) {
   if (-not $pythonCommand) { $pythonCommand = Get-Command py -ErrorAction SilentlyContinue }
   if (-not $pythonCommand) { throw 'Python 3 is required for Piper. Install Python, then run with -Piper again.' }
 
-  $toolRoot = Join-Path $env:USERPROFILE '.open-deputy\workspace-tools'
+  $toolRoot = Join-Path $env:USERPROFILE '.opendeputy\workspace-tools'
   $venvRoot = Join-Path $toolRoot '.venv'
   New-Item -ItemType Directory -Path $toolRoot -Force | Out-Null
 

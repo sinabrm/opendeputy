@@ -129,7 +129,7 @@ describe('project directory runtime', () => {
     });
 
     it('decodes marked x-opencode-directory header values', async () => {
-      const pathWithUnicode = '/home/user/测试项目';
+      const pathWithUnicode = '/home/user/\u6D4B\u8BD5\u9879\u76EE';
       let validatedPath = null;
       const runtime = createTestRuntime({
         fsPromises: {

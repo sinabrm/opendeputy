@@ -16,13 +16,13 @@ From a source checkout, run `bun run tools:windows` for an interactive installer
 
 ## Piper
 
-[Piper](https://github.com/OHF-Voice/piper1-gpl) adds local WAV speech synthesis. The script creates `.open-deputy\workspace-tools\.venv` in the current Windows user profile and installs [`piper-tts==1.7.0`](https://pypi.org/project/piper-tts/1.7.0/), licensed under GPL-3.0-or-later. OpenDeputy does not redistribute Piper.
+[Piper](https://github.com/OHF-Voice/piper1-gpl) adds local WAV speech synthesis. The script creates `.opendeputy\workspace-tools\.venv` in the current Windows user profile and installs [`piper-tts==1.7.0`](https://pypi.org/project/piper-tts/1.7.0/), licensed under GPL-3.0-or-later. OpenDeputy does not redistribute Piper.
 
 The pinned Piper release provides a Windows `win_amd64` wheel, so OpenDeputy's supported optional-tools installation path is Windows x64. The script rejects other Windows architectures before installation because it does not provide an ARM64 Piper build. Users with another architecture may instead supply a compatible external executable through `OPENDEPUTY_PIPER_BINARY`.
 
 This optional workspace tool is separate from OpenDeputy's built-in sherpa-onnx speech runtime and its on-demand Kokoro model.
 
-A compatible `.onnx` voice and its `.json` file must be placed in `.open-deputy\workspace-tools\voices` separately. Voice models have their own model cards and licenses. Do not assume that Piper's software license also licenses a selected voice; check the voice's `MODEL_CARD` before downloading, using, or sharing it.
+A compatible `.onnx` voice and its `.json` file must be placed in `.opendeputy\workspace-tools\voices` separately. Voice models have their own model cards and licenses. Do not assume that Piper's software license also licenses a selected voice; check the voice's `MODEL_CARD` before downloading, using, or sharing it.
 
 Piper runs locally and OpenDeputy writes a WAV file; OpenDeputy does not automatically play or upload that file.
 

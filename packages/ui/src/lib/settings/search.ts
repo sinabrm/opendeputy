@@ -467,10 +467,11 @@ const SETTINGS_SEARCH_ITEMS: readonly SettingsSearchItem[] = [
     isAvailable: (ctx) => !ctx.isVSCode,
   },
   {
-    id: 'sessions.opencode-update-notifications',
+    id: 'sessions.opencode-auto-update',
     page: 'general',
-    titleKey: 'settings.openchamber.opencodeCli.field.showUpdateNotifications',
-    keywords: ['opencode', 'cli', 'updates'],
+    titleKey: 'settings.openchamber.opencodeCli.field.autoUpdate',
+    descriptionKey: 'settings.openchamber.opencodeCli.field.autoUpdateDescription',
+    keywords: ['opencode', 'cli', 'updates', 'automatic'],
     isAvailable: (ctx) => !ctx.isVSCode && !ctx.isWindowsArm64,
   },
   {

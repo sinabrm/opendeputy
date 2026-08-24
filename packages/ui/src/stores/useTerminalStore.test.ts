@@ -51,7 +51,7 @@ describe('terminal state reconciliation', () => {
 
   test('caps multibyte scrollback by UTF-8 bytes', () => {
     const tabId = setup();
-    useTerminalStore.getState().appendToBuffer('/repo', tabId, '界'.repeat(200_000), 1);
+    useTerminalStore.getState().appendToBuffer('/repo', tabId, '\u754C'.repeat(200_000), 1);
     expect(buffer(tabId).byteLength <= 512 * 1024).toBe(true);
     expect(new TextEncoder().encode(buffer(tabId).chunks[0].data).byteLength).toBe(buffer(tabId).byteLength);
   });

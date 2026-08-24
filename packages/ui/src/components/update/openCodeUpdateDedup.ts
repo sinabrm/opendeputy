@@ -35,30 +35,34 @@ export const shouldShowPwaInstallToast = (input: PwaInstallToastDecisionInput): 
   return true;
 };
 
-export interface OpenCodeUpdateToastDecisionInput {
+export interface OpenCodeUpdateDecisionInput {
   /** Version string reported by the server (already trimmed by the caller). */
   readonly version: string;
+  /** Whether this update should install without showing the availability prompt. */
+  readonly autoUpdate: boolean;
   /** Most recent version the user explicitly dismissed, or `null` if none. */
   readonly dismissedVersion: string | null;
   /** Set of versions already surfaced in this tab session. */
   readonly seenVersions: ReadonlySet<string>;
 }
 
+export type OpenCodeUpdateAction = 'none' | 'prompt' | 'upgrade';
+
 /**
- * Returns `true` if the OpenCode update toast should be shown for `version`.
+ * Resolves how the UI should handle an available OpenCode update.
  *
- * Empty/whitespace-only versions short-circuit to `false`. A non-null
- * `dismissedVersion` matching the incoming version also short-circuits; a
- * different `dismissedVersion` means a newer release has appeared since the
- * last dismissal and the toast surfaces again.
+ * Automatic updates bypass the availability prompt and prior dismissals.
+ * Manual updates respect the dismissed version and show the prompt once per
+ * tab session.
  */
-export const shouldShowOpenCodeUpdateToast = (
-  input: OpenCodeUpdateToastDecisionInput,
-): boolean => {
-  if (!input.version) return false;
-  if (input.seenVersions.has(input.version)) return false;
-  if (input.dismissedVersion !== null && input.dismissedVersion === input.version) return false;
-  return true;
+export const resolveOpenCodeUpdateAction = (
+  input: OpenCodeUpdateDecisionInput,
+): OpenCodeUpdateAction => {
+  if (!input.version) return 'none';
+  if (input.seenVersions.has(input.version)) return 'none';
+  if (input.autoUpdate) return 'upgrade';
+  if (input.dismissedVersion !== null && input.dismissedVersion === input.version) return 'none';
+  return 'prompt';
 };
 
 /**

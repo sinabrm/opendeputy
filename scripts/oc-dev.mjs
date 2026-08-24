@@ -539,7 +539,7 @@ function startElectronApp() {
 }
 
 function prepareOpenCodeCli() {
-  step('Preparing bundled OpenCode CLI', () => run('bun', ['--filter', 'open-deputy', 'prepare:opencode-cli']));
+  step('Preparing bundled OpenCode CLI', () => run('bun', ['--filter', 'opendeputy', 'prepare:opencode-cli']));
 }
 
 function buildElectronApp() {
