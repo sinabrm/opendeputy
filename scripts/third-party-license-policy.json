@@ -61,22 +61,12 @@
       "reason": "The published subpackage omits a root license file; its declared Apache-2.0 expression was reviewed."
     },
     {
-      "key": "@radix-ui/number@1.1.1",
-      "license": "MIT",
-      "reason": "The published Radix subpackage omits a root text; the same repository's MIT notice is retained by sibling Radix packages in the generated inventory."
-    },
-    {
       "key": "@radix-ui/react-compose-refs@1.1.2",
       "license": "MIT",
       "reason": "The published Radix subpackage omits a root text; the same repository's MIT notice is retained by sibling Radix packages in the generated inventory."
     },
     {
       "key": "@radix-ui/react-context@1.1.2",
-      "license": "MIT",
-      "reason": "The published Radix subpackage omits a root text; the same repository's MIT notice is retained by sibling Radix packages in the generated inventory."
-    },
-    {
-      "key": "@radix-ui/react-direction@1.1.1",
       "license": "MIT",
       "reason": "The published Radix subpackage omits a root text; the same repository's MIT notice is retained by sibling Radix packages in the generated inventory."
     },
@@ -101,26 +91,6 @@
       "reason": "The published Radix subpackage omits a root text; the same repository's MIT notice is retained by sibling Radix packages in the generated inventory."
     },
     {
-      "key": "@radix-ui/react-use-previous@1.1.1",
-      "license": "MIT",
-      "reason": "The published Radix subpackage omits a root text; the same repository's MIT notice is retained by sibling Radix packages in the generated inventory."
-    },
-    {
-      "key": "@radix-ui/react-use-rect@1.1.1",
-      "license": "MIT",
-      "reason": "The published Radix subpackage omits a root text; the same repository's MIT notice is retained by sibling Radix packages in the generated inventory."
-    },
-    {
-      "key": "@radix-ui/react-use-size@1.1.1",
-      "license": "MIT",
-      "reason": "The published Radix subpackage omits a root text; the same repository's MIT notice is retained by sibling Radix packages in the generated inventory."
-    },
-    {
-      "key": "@radix-ui/rect@1.1.1",
-      "license": "MIT",
-      "reason": "The published Radix subpackage omits a root text; the same repository's MIT notice is retained by sibling Radix packages in the generated inventory."
-    },
-    {
       "key": "@remixicon/react@4.9.0",
       "license": "Remix Icon License 1.0",
       "manualLicenseFile": "legal/third-party/Remix-Icon-4.9.0-LICENSE.txt",
@@ -137,9 +107,9 @@
       "reason": "The published git-js subpackage declares MIT but omits a root license file; package metadata and upstream repository were reviewed."
     },
     {
-      "key": "guid-typescript@1.0.9",
-      "license": "ISC",
-      "reason": "The published package declares ISC but omits a root license file; package metadata and upstream repository were reviewed."
+      "key": "client-only@0.0.1",
+      "license": "MIT",
+      "reason": "The published React marker package declares MIT but contains no root license file; package metadata and upstream ownership were reviewed."
     },
     {
       "key": "http_ece@1.2.0",
@@ -156,21 +126,6 @@
       "key": "lru_map@0.4.1",
       "license": "MIT",
       "reason": "The published package declares MIT but omits a root license file; package metadata and upstream repository were reviewed."
-    },
-    {
-      "key": "onnxruntime-common@1.14.0",
-      "license": "MIT",
-      "reason": "The published ONNX Runtime package declares MIT but omits a root license file; package metadata and upstream repository were reviewed."
-    },
-    {
-      "key": "onnxruntime-node@1.14.0",
-      "license": "MIT",
-      "reason": "The published ONNX Runtime package declares MIT but omits a root license file; package metadata and upstream repository were reviewed."
-    },
-    {
-      "key": "onnxruntime-web@1.14.0",
-      "license": "MIT",
-      "reason": "The published ONNX Runtime package declares MIT but omits a root license file; package metadata and upstream repository were reviewed."
     },
     {
       "key": "open-browser-use@0.1.41",
