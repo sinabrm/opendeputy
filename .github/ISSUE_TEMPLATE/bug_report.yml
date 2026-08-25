@@ -1,45 +1,102 @@
 name: Bug report
-description: Report something broken
+description: Report a reproducible problem in OpenDeputy
 title: "[Bug] "
-labels: [bug]
+labels:
+  - bug
+projects:
+  - sinabrm/9
 body:
-  - type: textarea
-    id: what
+  - type: markdown
     attributes:
-      label: What's wrong? Maybe some steps to reproduce.
-      description: What happened and what you expected.
-      placeholder: "Expected … but got …"
-    validations:
-      required: true
+      value: |
+        Thanks for helping improve OpenDeputy. Remove API keys, tokens, personal paths, private code, and other sensitive data before submitting.
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched open and closed issues for the same problem.
+          required: true
+        - label: I removed secrets, personal data, and private project content from this report.
+          required: true
 
   - type: dropdown
-    id: runtime
+    id: area
     attributes:
-      label: Where does it happen?
+      label: Affected area
       options:
         - Windows desktop app
-        - Packaged browser workspace
+        - Agent or OpenCode runtime
+        - Browser tools
+        - Desktop control tools
         - Terminal or file tools
-        - Provider setup
+        - Provider or model setup
+        - Installer or updater
+        - Optional local tools
         - Not sure
     validations:
       required: true
 
   - type: input
-    id: version
+    id: opendeputy-version
     attributes:
-      label: Version (if known)
-      placeholder: "e.g. 1.2.3"
+      label: OpenDeputy version or commit
+      description: Use the app version or the first eight characters of the commit hash.
+      placeholder: "1.19.0 or 9bcb3b7f"
+    validations:
+      required: true
+
+  - type: input
+    id: windows-version
+    attributes:
+      label: Windows version
+      placeholder: "Windows 11 24H2"
+    validations:
+      required: true
+
+  - type: input
+    id: opencode-version
+    attributes:
+      label: OpenCode version
+      description: Include this when the problem involves agents, providers, or models.
+      placeholder: "1.18.18"
 
   - type: textarea
-    id: screenshots
+    id: steps
     attributes:
-      label: Screenshots / recordings (optional)
-      description: "Anything visual that helps."
+      label: Steps to reproduce
+      description: Provide the smallest reliable sequence that causes the problem.
+      placeholder: |
+        1. Open ...
+        2. Select ...
+        3. Observe ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
 
   - type: textarea
     id: logs
     attributes:
-      label: Logs (optional)
-      description: "Paste relevant logs."
+      label: Relevant logs
+      description: Paste only the smallest relevant excerpt. Redact secrets, personal paths, and private project content.
       render: shell
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Screenshots or additional context
+      description: Drag files here after checking that they contain no private information.

@@ -19,24 +19,24 @@
   "dependencies": {
     "@openchamber/web": "workspace:*",
     "electron-context-menu": "^4.1.2",
-    "electron-log": "^5.4.3",
-    "electron-updater": "^6.8.3",
+    "electron-log": "^5.4.4",
+    "electron-updater": "^6.8.9",
     "open-computer-use": "0.3.1"
   },
   "devDependencies": {
     "@electron/rebuild": "^4.2.0",
-    "electron": "^43.3.0",
-    "electron-builder": "^26.0.0",
+    "electron": "^43.4.1",
+    "electron-builder": "^26.15.3",
     "node-abi": "^4.33.0"
   },
   "trustedDependencies": [
     "electron"
   ],
   "desktopPrerequisites": [
-      "Electron runtime dependencies installed via bun install",
-      "Bun available for sidecar compilation",
-      "Python 3.12 x64 available while packaging the bundled TouchPoint runtime",
-      "Windows 10 or newer",
+    "Electron runtime dependencies installed via bun install",
+    "Bun available for sidecar compilation",
+    "Python 3.12 x64 available while packaging the bundled TouchPoint runtime",
+    "Windows 10 or newer",
     "NSIS support downloaded by electron-builder"
   ],
   "scripts": {

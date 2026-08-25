@@ -63,19 +63,25 @@ test('repository ownership and release automation are OpenDeputy-only', () => {
   assert.match(releaseWorkflow, /THIRD_PARTY_LICENSES\.txt/);
   assert.match(releaseWorkflow, /OPEN_SOURCE_COMPONENTS\.md/);
   assert.match(releaseWorkflow, /legal\/third-party/);
+  assert.doesNotMatch(releaseWorkflow, /uses:\s+[^\s]+@(v\d+|main|master)\b/);
 });
 
-test('green main pushes create short-lived private Windows artifacts', () => {
+test('green main pushes create short-lived Windows CI artifacts', () => {
   const ciWorkflow = read('.github/workflows/ci.yml');
   const packagingScript = read('packages/electron/scripts/package.mjs');
   const packageVerifier = read('scripts/test-windows-package.ps1');
   assert.match(ciWorkflow, /contents: read/);
+  assert.match(ciWorkflow, /pull-requests: read/);
   assert.match(ciWorkflow, /cancel-in-progress: true/);
   assert.match(ciWorkflow, /if: github\.event_name == 'push' && github\.ref == 'refs\/heads\/main'/);
-  assert.match(ciWorkflow, /needs: \[validate, validate-docker\]/);
+  assert.match(ciWorkflow, /needs: \[secret-scan, validate, validate-docker\]/);
+  assert.match(ciWorkflow, /fetch-depth: 0/);
+  assert.match(ciWorkflow, /gitleaks\/gitleaks-action@[0-9a-f]{40} # v2/);
   assert.match(ciWorkflow, /bun run electron:build/);
   assert.match(ciWorkflow, /bun run test:windows-package/);
-  assert.match(ciWorkflow, /actions\/upload-artifact@v4/);
+  assert.match(ciWorkflow, /bun run audit:dependencies/);
+  assert.match(ciWorkflow, /actions\/upload-artifact@[0-9a-f]{40} # v4/);
+  assert.doesNotMatch(ciWorkflow, /uses:\s+[^\s]+@(v\d+|main|master)\b/);
   assert.match(ciWorkflow, /retention-days: 7/);
   assert.match(ciWorkflow, /compression-level: 0/);
   assert.match(ciWorkflow, /THIRD_PARTY_LICENSES\.txt/);
@@ -164,7 +170,12 @@ test('required Windows release documentation exists', () => {
     'docs/WINDOWS_INSTALL.md',
     'docs/OPTIONAL_TOOLS.md',
     'docs/SAFETY_AND_PRIVACY.md',
+    'docs/PUBLICATION_CHECKLIST.md',
+    'CODE_OF_CONDUCT.md',
     'CONTRIBUTING.md',
+    'SECURITY.md',
+    'SUPPORT.md',
+    'ROADMAP.md',
     'LICENSE',
     'THIRD_PARTY_NOTICES.md',
     'THIRD_PARTY_LICENSES.txt',
@@ -225,6 +236,15 @@ test('generated third-party license inventory is current and release-scoped', ()
   assert.doesNotMatch(report, /^electron-builder@/m);
   assert.doesNotMatch(report, /License: \(not declared\)/);
   assert.match(report, /Reviewed exception:/);
+});
+
+test('dependency audit blocks high-severity advisories in CI and release preparation', () => {
+  const rootPackage = json('package.json');
+  const ciWorkflow = read('.github/workflows/ci.yml');
+
+  assert.equal(rootPackage.scripts['audit:dependencies'], 'bun audit --audit-level=high');
+  assert.match(rootPackage.scripts['release:prepare'], /^bun run audit:dependencies &&/);
+  assert.match(ciWorkflow, /bun run audit:dependencies/);
 });
 
 test('fork license preserves upstream and OpenDeputy contributor notices', () => {
