@@ -47,6 +47,8 @@ Compatibility identifiers such as `@openchamber/*`, `OPENCHAMBER_*`, and existin
 
 Requirements: Windows x64 and PowerShell. The setup script can install missing Git and Bun only when `-InstallMissing` is supplied.
 
+Keep the checkout path short (for example, `C:\src\opendeputy`); deeply nested Windows paths can exceed dependency-tool path limits.
+
 ```powershell
 git clone https://github.com/sinabrm/opendeputy.git
 Set-Location opendeputy
