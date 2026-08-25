@@ -1,22 +1,75 @@
 name: Feature request
-description: Suggest an improvement
-title: "[Feature Request] "
-labels: [enhancement]
+description: Propose a useful, well-scoped improvement
+title: "[Feature] "
+labels:
+  - enhancement
+projects:
+  - sinabrm/9
 body:
-  - type: textarea
-    id: request
+  - type: markdown
     attributes:
-      label: What should we add/change?
-      description: What you're trying to do + what you'd like to happen.
-      placeholder: |
-        I'm trying to …
+      value: |
+        Explain the user problem first. Clear scope and real examples make proposals easier to discuss and implement.
 
-        It would be great if OpenDeputy ...
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues for this proposal.
+          required: true
+        - label: This request describes one coherent improvement.
+          required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What are you trying to do, and why is the current behavior insufficient?
     validations:
       required: true
 
   - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: Describe the behavior and user experience you want, without requiring a specific implementation.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Main area
+      options:
+        - Windows desktop experience
+        - Agent or OpenCode integration
+        - Browser tools
+        - Desktop control tools
+        - Terminal or file tools
+        - Provider or model setup
+        - Installer or updater
+        - Optional local tools
+        - Documentation or contributor experience
+        - Not sure
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: What workarounds or other approaches have you tried?
+
+  - type: textarea
     id: context
     attributes:
-      label: Extra context (optional)
-      description: Links, screenshots, mockups, constraints, etc.
+      label: Additional context
+      description: Add links, mockups, constraints, or examples. Remove private information first.
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribution
+      options:
+        - label: I may be able to help implement or test this change.
