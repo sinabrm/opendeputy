@@ -71,6 +71,7 @@ test('green main pushes create short-lived Windows CI artifacts', () => {
   const packagingScript = read('packages/electron/scripts/package.mjs');
   const packageVerifier = read('scripts/test-windows-package.ps1');
   assert.match(ciWorkflow, /contents: read/);
+  assert.match(ciWorkflow, /pull-requests: read/);
   assert.match(ciWorkflow, /cancel-in-progress: true/);
   assert.match(ciWorkflow, /if: github\.event_name == 'push' && github\.ref == 'refs\/heads\/main'/);
   assert.match(ciWorkflow, /needs: \[secret-scan, validate, validate-docker\]/);
