@@ -32,6 +32,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   bash \
   ca-certificates \
   chromium \
+  chromium-sandbox \
   fonts-liberation \
   fonts-noto-color-emoji \
   git \
