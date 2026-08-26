@@ -12,7 +12,7 @@ included only when installed for the declared target platform.
 Packages with omitted root license files require an exact reviewed exception
 in scripts/third-party-license-policy.json.
 
-Packages: 681
+Packages: 682
 Unique retained license/notice texts: 299
 
 DEPENDENCY INVENTORY
@@ -4349,6 +4349,15 @@ Repository: https://github.com/crouchcd/pkce-challenge
 Included by: managed desktop agent kit
 Retained files:
   - LICENSE (SHA-256 64c4e54df59cc6516ddffd512abb053e7cee2e064d2af53ce5ada164be4a67fa)
+
+--------------------------------------------------------------------------------
+playwright-core@1.62.1
+License: Apache-2.0
+Repository: https://github.com/microsoft/playwright
+Included by: web server and browser application
+Retained files:
+  - LICENSE (SHA-256 bb06f5791c0314bf5527083cc3b1a6e5ed1054eaf406f7006b9e6d6c24023e6f)
+  - NOTICE (SHA-256 7b1444e03705067d36e59fc8cd3260daf245b8d06006cad06d462578fb92eab5)
 
 --------------------------------------------------------------------------------
 playwright-core@1.63.0-alpha-2026-08-05
@@ -10226,6 +10235,7 @@ OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHE
 --------------------------------------------------------------------------------
 SHA-256: 7b1444e03705067d36e59fc8cd3260daf245b8d06006cad06d462578fb92eab5
 Used by:
+  - playwright-core@1.62.1/NOTICE
   - playwright-core@1.63.0-alpha-2026-08-05/NOTICE
   - playwright@1.63.0-alpha-2026-08-05/NOTICE
 
@@ -13426,6 +13436,7 @@ THIS SOFTWARE.
 --------------------------------------------------------------------------------
 SHA-256: bb06f5791c0314bf5527083cc3b1a6e5ed1054eaf406f7006b9e6d6c24023e6f
 Used by:
+  - playwright-core@1.62.1/LICENSE
   - playwright-core@1.63.0-alpha-2026-08-05/LICENSE
   - playwright@1.63.0-alpha-2026-08-05/LICENSE
 

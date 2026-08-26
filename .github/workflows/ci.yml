@@ -67,6 +67,41 @@ jobs:
             grep -q "docker-linux-x64" "$legal/THIRD_PARTY_LICENSES.docker-linux-x64.txt"
             ! grep -q "^electron@" "$legal/THIRD_PARTY_LICENSES.docker-linux-x64.txt"
           '
+      - name: Verify Docker server and browser runtime
+        run: |
+          set -eu
+          cleanup() {
+            docker logs opendeputy-ci-runtime || true
+            docker rm --force opendeputy-ci-runtime || true
+          }
+          trap cleanup EXIT
+          docker run --detach --name opendeputy-ci-runtime \
+            --env OPENCHAMBER_UI_PASSWORD=ci-runtime-only \
+            --security-opt seccomp=scripts/chromium-seccomp-profile.json \
+            opendeputy:ci
+          status=starting
+          for attempt in $(seq 1 45); do
+            status=$(docker inspect --format '{{.State.Health.Status}}' opendeputy-ci-runtime)
+            if [ "$status" = healthy ]; then
+              break
+            fi
+            if [ "$status" = unhealthy ]; then
+              exit 1
+            fi
+            sleep 2
+          done
+          test "$status" = healthy
+          docker exec opendeputy-ci-runtime node --input-type=module -e '
+            import { createHeadlessBrowserRuntime } from "./packages/web/server/lib/browser-control/headless-runtime.js";
+            const runtime = createHeadlessBrowserRuntime({ env: process.env, dataDir: "/tmp/opendeputy-ci-browser" });
+            try {
+              const opened = await runtime.request("browser.open", { url: "http://127.0.0.1:3000/health" });
+              const snapshot = await runtime.request("browser.snapshot");
+              if (opened.opened !== true || !snapshot.text.includes("status")) process.exitCode = 1;
+            } finally {
+              await runtime.stop();
+            }
+          '
 
   package-windows:
     name: Package Windows CI artifact

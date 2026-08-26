@@ -15,6 +15,12 @@ bun run lint:web
 
 Start a development server with `bun run start:web`. Defaults bind to loopback. Protect any LAN or internet exposure with authentication, TLS, and firewall rules.
 
+The supported persistent Docker deployment is documented in
+[`docs/SELF_HOSTING.md`](../../docs/SELF_HOSTING.md). Docker enables the
+server-owned Chromium runtime. Non-Docker servers must run the web server on
+Node.js 22 or newer, then can opt in with
+`OPENDEPUTY_HEADLESS_BROWSER=true` and an `OPENDEPUTY_BROWSER_EXECUTABLE` path.
+
 ## Compatibility
 
 The package remains `@openchamber/web`, the CLI alias remains `openchamber`, and existing `OPENCHAMBER_*` environment variables remain supported. These identifiers are runtime contracts; visible desktop branding and release artifacts use OpenDeputy.

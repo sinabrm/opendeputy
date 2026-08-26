@@ -1,10 +1,10 @@
 /**
- * Request/response broker between the agent tool and the in-app browser.
+ * Request/response broker for agent browser and right-panel actions.
  *
- * The browser lives in the renderer, not the server, so the server cannot act
- * on a page directly. It publishes a request over the existing OpenChamber
- * event stream and waits for the client that owns the browser view to post the
- * result back.
+ * Desktop mode publishes requests over the existing OpenChamber event stream
+ * and waits for the client that owns the browser view to post the result back.
+ * Self-hosted mode can instead inject a server-owned browser controller for
+ * browser.* actions. Panel state always remains renderer-owned.
  *
  * The request goes to every client that could serve it, because the server
  * cannot know which one is showing a page. Exactly one must act on it, so a
@@ -34,6 +34,7 @@ export class BrowserControlError extends Error {
 
 export const createBrowserControlBroker = ({
   emitRequest,
+  serverController = null,
   createId,
   setTimer = setTimeout,
   clearTimer = clearTimeout,
@@ -60,12 +61,29 @@ export const createBrowserControlBroker = ({
     },
 
     /**
-     * Publishes one browser action and resolves with the client's result.
+     * Routes one action and resolves with its result.
      * Rejects with a BrowserControlError the agent can act on.
      */
     request(action, parameters = {}, { timeoutMs = DEFAULT_TIMEOUT_MS, signal } = {}) {
       const requestId = typeof createId === 'function' ? createId() : `browser-${Date.now()}-${pending.size}`;
       const boundedTimeout = Math.min(Math.max(1_000, Number(timeoutMs) || DEFAULT_TIMEOUT_MS), MAX_TIMEOUT_MS);
+
+      // Self-hosted deployments can opt into a server-owned Chromium runtime.
+      // Keep panel actions client-owned, but route every page action to that
+      // persistent browser so work does not depend on a renderer staying open.
+      if (typeof action === 'string' && action.startsWith('browser.') && typeof serverController?.request === 'function') {
+        if (signal?.aborted) {
+          return Promise.reject(new BrowserControlError('OpenDeputy server browser action was cancelled', 499));
+        }
+        return Promise.resolve(serverController.request(action, parameters, { timeoutMs: boundedTimeout, signal }))
+          .catch((error) => {
+            if (error instanceof BrowserControlError) throw error;
+            throw new BrowserControlError(
+              error instanceof Error ? error.message : String(error),
+              Number.isInteger(error?.status) ? error.status : 500,
+            );
+          });
+      }
 
       const listenerCount = emitRequest({ requestId, action, parameters });
       if (!listenerCount) {
