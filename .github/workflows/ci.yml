@@ -77,6 +77,7 @@ jobs:
           trap cleanup EXIT
           docker run --detach --name opendeputy-ci-runtime \
             --env OPENCHAMBER_UI_PASSWORD=ci-runtime-only \
+            --security-opt seccomp=scripts/chromium-seccomp-profile.json \
             opendeputy:ci
           status=starting
           for attempt in $(seq 1 45); do

@@ -68,7 +68,10 @@ or web client is open. Its cookies and browser state persist under the
 OpenDeputy data volume and are shared by every agent using this one deployment.
 
 The server browser blocks common cloud metadata endpoints. Chromium keeps its
-normal sandbox by default. Do not set
+normal sandbox by default. Compose applies the reviewed Playwright seccomp
+profile in `scripts/chromium-seccomp-profile.json`, which extends Docker's
+default syscall policy only with the namespace operations that Chromium's
+non-root sandbox needs. Do not set
 `OPENDEPUTY_HEADLESS_BROWSER_NO_SANDBOX=true` unless the host cannot run
 Chromium otherwise and you understand the reduced isolation.
 

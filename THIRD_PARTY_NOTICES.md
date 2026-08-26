@@ -52,7 +52,7 @@ The Docker image includes [cloudflared](https://github.com/cloudflare/cloudflare
 
 ### Playwright Core and Chromium in Docker
 
-The web/server dependency graph includes [Playwright Core](https://github.com/microsoft/playwright) `1.62.1` under the Apache License 2.0. Self-hosted Docker images install Chromium from Debian to provide the optional server-owned browser. Chromium is licensed under the BSD 3-Clause license and includes components under additional licenses; the Debian package retains the applicable copyright and license material in the image.
+The web/server dependency graph includes [Playwright Core](https://github.com/microsoft/playwright) `1.62.1` under the Apache License 2.0. The Compose deployment also uses Playwright's Apache-2.0 Docker seccomp profile for Chromium sandbox support. Self-hosted Docker images install Chromium from Debian to provide the optional server-owned browser. Chromium is licensed under the BSD 3-Clause license and includes components under additional licenses; the Debian package retains the applicable copyright and license material in the image.
 
 ## Major interface foundations
 

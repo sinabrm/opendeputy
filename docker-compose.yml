@@ -4,6 +4,10 @@ services:
       context: .
       dockerfile: Dockerfile
     init: true
+    security_opt:
+      # Playwright's reviewed Docker profile extends the default policy only
+      # with the namespace syscalls Chromium needs for its non-root sandbox.
+      - "seccomp=./scripts/chromium-seccomp-profile.json"
     ports:
       - "${OPENDEPUTY_BIND_ADDRESS:-127.0.0.1}:${OPENDEPUTY_PORT:-3000}:3000"
     extra_hosts:

@@ -139,6 +139,7 @@ test('component documentation follows the exact shipped dependency pins', () => 
   const openBrowserUse = agentKitPackage.dependencies['open-browser-use'];
   const computerUseMcp = agentKitPackage.dependencies['@zavora-ai/computer-use-mcp'];
   const touchpointRequirements = read('packages/electron/touchpoint-requirements.txt');
+  const playwrightCore = webPackage.dependencies['playwright-core'];
   const sherpa = webPackage.dependencies['sherpa-onnx-node'];
   for (const [name, version] of [
     ['OpenCode', openCode],
@@ -147,6 +148,7 @@ test('component documentation follows the exact shipped dependency pins', () => 
     ['Open Browser Use', openBrowserUse],
     ['computer-use-mcp', computerUseMcp],
     ['TouchPoint', '0.3.0'],
+    ['Playwright Core', playwrightCore],
     ['sherpa-onnx', sherpa],
   ]) {
     assert.ok(componentMap.includes(version), `${name} ${version} is missing from the component map`);
@@ -158,11 +160,16 @@ test('component documentation follows the exact shipped dependency pins', () => 
 
 test('CI builds the Linux x64 image and checks its artifact-specific legal bundle', () => {
   const ciWorkflow = read('.github/workflows/ci.yml');
+  const compose = read('docker-compose.yml');
 
   assert.match(ciWorkflow, /docker build --platform linux\/amd64 --tag opendeputy:ci/);
   assert.match(ciWorkflow, /THIRD_PARTY_LICENSES\.docker-linux-x64\.txt/);
   assert.match(ciWorkflow, /third-party\/OpenCode-1\.18\.18-LICENSE\.txt/);
   assert.match(ciWorkflow, /! grep -q "\^electron@"/);
+  assert.match(ciWorkflow, /Verify Docker server and browser runtime/);
+  assert.match(ciWorkflow, /security-opt seccomp=scripts\/chromium-seccomp-profile\.json/);
+  assert.match(compose, /seccomp=\.\/scripts\/chromium-seccomp-profile\.json/);
+  assert.equal(fs.existsSync(path.join(root, 'scripts/chromium-seccomp-profile.json')), true);
 });
 
 test('required Windows release documentation exists', () => {
@@ -180,6 +187,7 @@ test('required Windows release documentation exists', () => {
     'THIRD_PARTY_NOTICES.md',
     'THIRD_PARTY_LICENSES.txt',
     'docs/OPEN_SOURCE_COMPONENTS.md',
+    'docs/SELF_HOSTING.md',
     'legal/third-party/README.md',
     'legal/third-party/OpenCode-1.18.18-LICENSE.txt',
     'legal/third-party/Apache-2.0-LICENSE.txt',
