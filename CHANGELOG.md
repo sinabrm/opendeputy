@@ -5,6 +5,7 @@
 - **Self-hosting:** Docker deployments can now keep projects, schedules, OpenCode sessions, and a persistent server browser running without an open desktop client.
 - **Built-in agent tools:** Windows installations now include eight managed MCP entries and five skills by default, with their commands resolved from the installed OpenDeputy package instead of user-specific paths.
 - **Open-source transparency and release integrity:** Distribution boundaries, exact runtime pins, downloadable model provenance and checksums, generated dependency licenses, and packaged legal notices are now documented and enforced by release checks.
+- **Windows packaging:** Installer builds now keep file-matching dependencies API-compatible instead of failing while assembling the application files.
 
 ## [1.19.0] - 2026-08-15
 
