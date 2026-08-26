@@ -15,7 +15,7 @@
 OpenDeputy combines [OpenCode](https://github.com/anomalyco/opencode) agents with a visual workspace and a managed set of browser, terminal, file, and approval-gated desktop tools. It is a modified distribution of the MIT-licensed [OpenChamber](https://github.com/openchamber/openchamber) project, not an official OpenChamber or OpenCode release.
 
 > [!IMPORTANT]
-> OpenDeputy is currently pre-release software. The source is ready for contributors, but no public installer has been published yet. Until the first release is available, build and run it from source. The first Windows installer will be unsigned.
+> OpenDeputy is currently pre-release software. The first unsigned Windows preview is available on the [Releases page](https://github.com/sinabrm/opendeputy/releases/tag/v1.19.0), or you can build and run it from source.
 
 ## What it can do
 
