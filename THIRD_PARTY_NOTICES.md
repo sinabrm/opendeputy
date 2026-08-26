@@ -50,6 +50,10 @@ Speech model archives are not inside the installer. They are downloaded from she
 
 The Docker image includes [cloudflared](https://github.com/cloudflare/cloudflared) version 2026.3.0, pinned by container digest, under the Apache License 2.0. It is not included in the Windows installer. Use of the Cloudflare service is governed separately by Cloudflare's service terms and account configuration.
 
+### Playwright Core and Chromium in Docker
+
+The web/server dependency graph includes [Playwright Core](https://github.com/microsoft/playwright) `1.62.1` under the Apache License 2.0. Self-hosted Docker images install Chromium from Debian to provide the optional server-owned browser. Chromium is licensed under the BSD 3-Clause license and includes components under additional licenses; the Debian package retains the applicable copyright and license material in the image.
+
 ## Major interface foundations
 
 OpenDeputy's compiled interface includes many packages recorded in [`THIRD_PARTY_LICENSES.txt`](THIRD_PARTY_LICENSES.txt). Major user-visible foundations include:

@@ -20,6 +20,36 @@ const createBroker = (options = {}) => {
 };
 
 describe('browser control broker', () => {
+  test('routes page actions directly to an enabled server browser', async () => {
+    const calls = [];
+    const { broker, emitted } = createBroker({
+      listeners: 0,
+      overrides: {
+        serverController: {
+          request: async (action, parameters) => {
+            calls.push([action, parameters]);
+            return { url: parameters.url, opened: true };
+          },
+        },
+      },
+    });
+
+    await expect(broker.request('browser.open', { url: 'https://example.com/' })).resolves.toEqual({
+      url: 'https://example.com/',
+      opened: true,
+    });
+    expect(calls).toEqual([['browser.open', { url: 'https://example.com/' }]]);
+    expect(emitted).toEqual([]);
+  });
+
+  test('keeps right-panel actions client-owned when a server browser exists', async () => {
+    const { broker } = createBroker({
+      listeners: 0,
+      overrides: { serverController: { request: async () => ({}) } },
+    });
+    await expect(broker.request('panel.list', { directory: '/repo' })).rejects.toThrow('right panel');
+  });
+
   test('resolves with the data the client posted back', async () => {
     const { broker, emitted } = createBroker();
     const inflight = broker.request('browser.snapshot', {});

@@ -3,9 +3,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: opendeputy
+    init: true
     ports:
-      - "3000:3000"
+      - "${OPENDEPUTY_BIND_ADDRESS:-127.0.0.1}:${OPENDEPUTY_PORT:-3000}:3000"
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
@@ -21,6 +21,9 @@ services:
       # Set this before starting, for example:
       #   OPENCHAMBER_UI_PASSWORD="$(openssl rand -base64 24)" docker compose up -d
       OPENCHAMBER_UI_PASSWORD: ${OPENCHAMBER_UI_PASSWORD:?Set OPENCHAMBER_UI_PASSWORD before exposing OpenDeputy through Docker}
+      OPENDEPUTY_HEADLESS_BROWSER: ${OPENDEPUTY_HEADLESS_BROWSER:-true}
+      OPENDEPUTY_BROWSER_EXECUTABLE: ${OPENDEPUTY_BROWSER_EXECUTABLE:-/usr/bin/chromium}
+      OPENDEPUTY_WORKSPACE_ROOT: /home/openchamber/workspaces
     # OPENCHAMBER_HOST: 0.0.0.0  # Bind address (default in Docker entrypoint: 0.0.0.0)
     # OPENCHAMBER_TUNNEL_PROVIDER: cloudflare
     # OPENCHAMBER_TUNNEL_MODE: quick  # quick | managed-remote | managed-local
@@ -32,3 +35,5 @@ services:
     # OPENCODE_SKIP_START: true # skip start opencode
     # OPENCHAMBER_OPENCODE_HOSTNAME: 0.0.0.0 # Bind OpenCode to all interfaces
     restart: unless-stopped
+    shm_size: "1gb"
+    stop_grace_period: 30s

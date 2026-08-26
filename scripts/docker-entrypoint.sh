@@ -1,12 +1,12 @@
 #!/usr/bin/env sh
 set -eu
 
-HOME="/home/openchamber"
+OPENDEPUTY_HOME="${HOME:-/home/openchamber}"
 
-OPENCODE_CONFIG_DIR="${OPENCODE_CONFIG_DIR:-${HOME}/.config/opencode}"
+OPENCODE_CONFIG_DIR="${OPENCODE_CONFIG_DIR:-${OPENDEPUTY_HOME}/.config/opencode}"
 export OPENCODE_CONFIG_DIR
 
-SSH_DIR="${HOME}/.ssh"
+SSH_DIR="${OPENDEPUTY_HOME}/.ssh"
 SSH_PRIVATE_KEY_PATH="${SSH_DIR}/id_ed25519"
 SSH_PUBLIC_KEY_PATH="${SSH_PRIVATE_KEY_PATH}.pub"
 
@@ -68,16 +68,24 @@ fi
 OPENCHAMBER_HOST="${OPENCHAMBER_HOST:-0.0.0.0}"
 export OPENCHAMBER_HOST
 
+OPENDEPUTY_WORKSPACE_ROOT="${OPENDEPUTY_WORKSPACE_ROOT:-${OPENDEPUTY_HOME}/workspaces}"
+export OPENDEPUTY_WORKSPACE_ROOT
+mkdir -p "${OPENDEPUTY_WORKSPACE_ROOT}"
+
+if [ "${OPENDEPUTY_HEADLESS_BROWSER:-false}" = "true" ]; then
+  echo "[entrypoint] persistent server browser enabled"
+fi
+
 echo "[entrypoint] starting..."
+
+cd "${OPENDEPUTY_HOME}"
 
 if [ "$#" -gt 0 ]; then
   exec "$@"
 fi
 
-set -- bun packages/web/bin/cli.js
+set -- node packages/web/bin/cli.js serve --foreground
 if [ -n "${OPENCHAMBER_UI_PASSWORD:-}" ]; then
   set -- "$@" --ui-password "$OPENCHAMBER_UI_PASSWORD"
 fi
-"$@"
-
-exec bun packages/web/bin/cli.js logs
+exec "$@"

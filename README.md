@@ -68,6 +68,11 @@ To create a local unsigned installer:
 bun run electron:build
 ```
 
+To run OpenDeputy continuously on a private Linux server or VPS, use the
+included Docker deployment. It persists projects, sessions, scheduled tasks,
+and a server-owned Chromium profile so browser work does not require a desktop
+window to remain open. See [Self-host OpenDeputy](docs/SELF_HOSTING.md).
+
 When public binaries are available, they will appear on the [Releases page](https://github.com/sinabrm/opendeputy/releases) with a `SHA256SUMS.txt` file. See [Windows installation](docs/WINDOWS_INSTALL.md), [optional tools](docs/OPTIONAL_TOOLS.md), and [safety and privacy](docs/SAFETY_AND_PRIVACY.md).
 
 ## Contribute

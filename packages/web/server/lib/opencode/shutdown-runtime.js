@@ -13,6 +13,7 @@ export const createGracefulShutdownRuntime = (dependencies) => {
     sessionGoalRuntime,
     contextObligatoryRuntime,
     scheduledTasksRuntime,
+    headlessBrowserRuntime,
     getHealthCheckInterval,
     clearHealthCheckInterval,
     getTerminalRuntime,
@@ -50,6 +51,11 @@ export const createGracefulShutdownRuntime = (dependencies) => {
     sessionGoalRuntime?.stop?.();
     contextObligatoryRuntime?.stop?.();
     scheduledTasksRuntime?.stop?.();
+    try {
+      await headlessBrowserRuntime?.stop?.();
+    } catch (error) {
+      console.warn('Error closing server browser:', error);
+    }
 
     const healthCheckInterval = getHealthCheckInterval();
     if (healthCheckInterval) {

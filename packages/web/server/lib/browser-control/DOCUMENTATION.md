@@ -1,17 +1,22 @@
-# Renderer Control Broker
+# Browser and Renderer Control
 
 ## Purpose
 
-This module carries agent browser and right-panel actions from the server to the
-client that owns the relevant renderer state, and the result back. Both the
-browser view and panel store live in a renderer, not the server process, so the
-server can only ask their current owner and wait.
+This module routes agent browser and right-panel actions. Desktop browser and
+panel state live in a renderer, so those actions use the connected client. A
+self-hosted deployment can opt into a persistent, server-owned Chromium
+runtime for `browser.*` actions while `panel.*` remains client-owned.
 
 ## Boundaries
 
 - `broker.js` owns request lifetime: it publishes one action through the
   injected `emitRequest`, holds the pending request, and settles it on a client
-  result, a timeout, or an abort signal. It knows nothing about transports.
+  result, a timeout, or an abort signal. When a server controller is injected,
+  it routes `browser.*` directly and keeps `panel.*` on the client path.
+- `headless-runtime.js` lazily launches one Playwright-controlled persistent
+  Chromium context for self-hosted browser actions. It owns action
+  serialization, timeouts, shutdown, the browser profile, and metadata-endpoint
+  blocking.
 - `routes.js` is the result callback (`POST /api/browser-control/result`). It
   validates the envelope and hands the outcome to the broker.
 - `../../index.js` supplies `emitRequest`, which writes the request to the
@@ -30,6 +35,17 @@ server can only ask their current owner and wait.
 
 ## Invariants
 
+- Server browser control is explicit opt-in through
+  `OPENDEPUTY_HEADLESS_BROWSER=true`. Desktop builds keep their visible
+  renderer browser by default.
+- The server browser accepts `browser.*` only. Right-panel state is still tied
+  to an open client and never moves into the server runtime.
+- One deployment owns one persistent browser profile. It is appropriate for
+  one person or a trusted team, not as an isolation boundary between unrelated
+  tenants.
+- Chromium uses its normal sandbox unless
+  `OPENDEPUTY_HEADLESS_BROWSER_NO_SANDBOX=true` is set explicitly. Common cloud
+  instance-metadata endpoints are blocked at navigation and request time.
 - Capability belongs to the connection, not to configuration. A client declares
   it can drive a page by opening its event stream with `browser=1`, which only
   a Chromium host does; the flag lives and dies with that connection, so there

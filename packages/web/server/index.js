@@ -98,6 +98,7 @@ import { createRelayService } from './lib/relay/service.js';
 import { createRelayHostLock } from './lib/relay/host-lock.js';
 import { createAgentToolRuntime } from './lib/agent-tool/runtime.js';
 import { createBrowserControlBroker } from './lib/browser-control/broker.js';
+import { createHeadlessBrowserRuntime } from './lib/browser-control/headless-runtime.js';
 import { createDevServerScanner } from './lib/dev-servers/routes.js';
 import { createDevTunnelRuntime } from './lib/dev-tunnel/runtime.js';
 import { registerBrowserControlRoutes } from './lib/browser-control/routes.js';
@@ -1202,11 +1203,16 @@ const openChamberSessionService = createOpenChamberSessionService({
   waitForOpenCodeReady,
   emitSessionCreatedEvent,
 });
-// Browser actions are published to whichever OpenChamber clients are connected;
-// the one owning the browser panel answers. `emitRequest` returns the number of
-// clients reached so the broker can fail fast when nobody is listening.
+const headlessBrowserRuntime = createHeadlessBrowserRuntime({
+  env: process.env,
+  dataDir: OPENCHAMBER_DATA_DIR,
+});
+// Self-hosted browser actions stay on the server when the headless runtime is
+// enabled. Desktop browser and panel actions are published to connected clients;
+// `emitRequest` returns how many were reached so the broker can fail fast.
 const browserControlBroker = createBrowserControlBroker({
   createId: () => `browser-${crypto.randomUUID()}`,
+  serverController: headlessBrowserRuntime.enabled ? headlessBrowserRuntime : null,
   emitRequest: (request) => {
     // Opening a page only needs a panel to open it in; everything else needs a
     // client that can actually drive one. Counting the right clients is what
@@ -1326,6 +1332,7 @@ const gracefulShutdownRuntime = createGracefulShutdownRuntime({
   },
   tunnelAuthController,
   scheduledTasksRuntime,
+  headlessBrowserRuntime,
 });
 
 const gracefulShutdown = (...args) => gracefulShutdownRuntime.gracefulShutdown(...args);

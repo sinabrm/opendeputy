@@ -67,11 +67,14 @@ The standalone web/server build shares the OpenDeputy UI and backend dependencie
 | Project or layer | Role | Version or pin | Distribution | License |
 | --- | --- | --- | --- | --- |
 | [Bun](https://github.com/oven-sh/bun) | Package manager/build tool and Docker base runtime | `1.3.14` | Docker image and development environment; not bundled in the Windows installer | MIT for Bun; the base image contains separately licensed components |
+| [Node.js](https://github.com/nodejs/node) | Runs the self-hosted web server and Playwright transport | `22` | Docker image and supported source runtime | MIT; Node.js includes separately licensed components |
 | [OpenCode](https://github.com/anomalyco/opencode) | Managed agent runtime | `opencode-ai@1.18.18` | Installed in the Docker image; a non-Docker server may use a separately installed or externally managed OpenCode | MIT |
+| [Playwright Core](https://github.com/microsoft/playwright) | Controls the persistent server-owned browser | `1.62.1` | Bundled in the web/server dependency graph | Apache-2.0 |
+| [Chromium](https://www.chromium.org/) | Headless browser for self-hosted agent web actions | Debian package resolved during image build | Docker image only | BSD-3-Clause and other component licenses retained by the Debian package |
 | [cloudflared](https://github.com/cloudflare/cloudflared) | Cloudflare Tunnel client | `2026.3.0`, pinned by container digest | Docker image only | Apache-2.0 |
-| Debian system packages | Shell, certificates, Git, SSH, Node.js, npm, Python, and basic command-line utilities | Resolved by the pinned Bun base image and Debian repositories at image build time | Docker image only | Each package keeps its own license |
+| Debian system packages | Shell, certificates, fonts, Git, SSH, Python, and basic command-line utilities | Resolved by the pinned Bun base image and Debian repositories at image build time | Docker image only | Each package keeps its own license |
 
-The Docker image does not include an AI account, model entitlement, Cloudflare account, domain, or provider subscription. Cloudflare service terms are separate from the Apache-2.0 license of the `cloudflared` client.
+The Docker image does not include an AI account, model entitlement, Cloudflare account, domain, or provider subscription. Cloudflare service terms are separate from the Apache-2.0 license of the `cloudflared` client. Chromium's browser profile is user data stored in the mounted OpenDeputy configuration volume.
 
 The reviewed container release target is Linux x64. Its build generates a separate `THIRD_PARTY_LICENSES.docker-linux-x64.txt` from the dependencies actually installed in the Linux image and places it under `/usr/share/licenses/opendeputy`; it does not reuse the Windows inventory. Builds for another architecture fail the inventory guard until that target and its native dependencies receive a separate review.
 
