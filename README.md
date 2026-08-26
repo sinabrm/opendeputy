@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/brand/opendeputy-logo.svg" width="112" height="112" alt="OpenDeputy logo">
+  <img src="docs/brand/opendeputy-wordmark-ornate-dark-with-logo.svg" height="42" alt="OpenDeputy logo">
 </p>
 
 <h1 align="center">OpenDeputy</h1>

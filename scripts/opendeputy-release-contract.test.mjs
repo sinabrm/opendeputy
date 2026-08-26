@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
+import { createRequire } from 'node:module';
 import path from 'node:path';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
@@ -253,6 +254,19 @@ test('dependency audit blocks high-severity advisories in CI and release prepara
   assert.equal(rootPackage.scripts['audit:dependencies'], 'bun audit --audit-level=high');
   assert.match(rootPackage.scripts['release:prepare'], /^bun run audit:dependencies &&/);
   assert.match(ciWorkflow, /bun run audit:dependencies/);
+});
+
+test('Electron packaging keeps minimatch and brace expansion API-compatible', () => {
+  const electronRequire = createRequire(path.join(root, 'packages/electron/package.json'));
+  const electronBuilderRequire = createRequire(electronRequire.resolve('electron-builder'));
+  const appBuilderRequire = createRequire(electronBuilderRequire.resolve('app-builder-lib'));
+  const minimatchEntry = appBuilderRequire.resolve('minimatch');
+  const minimatchRequire = createRequire(minimatchEntry);
+  const { Minimatch } = minimatchRequire('minimatch');
+  const braceExpansion = minimatchRequire('brace-expansion');
+
+  assert.equal(typeof braceExpansion.expand, 'function');
+  assert.equal(new Minimatch('{main,preload}.mjs').match('main.mjs'), true);
 });
 
 test('fork license preserves upstream and OpenDeputy contributor notices', () => {
