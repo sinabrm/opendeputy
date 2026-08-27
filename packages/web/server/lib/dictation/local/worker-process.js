@@ -1,13 +1,13 @@
 /**
  * Dictation local-speech worker process.
  *
- * Hosts the sherpa-onnx native inference (Parakeet STT) in a separate process
+ * Hosts the sherpa-onnx native inference (Whisper/Parakeet STT) in a separate process
  * so ONNX decoding never blocks the main OpenChamber server. Communicates
  * with the parent over child_process IPC (advanced serialization, so Buffers
  * survive the trip as Uint8Array).
  *
  * Request/response protocol (parent -> worker):
- *   { type: 'session.create', requestId, sessionId, modelsDir, modelId }
+ *   { type: 'session.create', requestId, sessionId, modelsDir, modelId, language? }
  *   { type: 'session.append', requestId, sessionId, audio }
  *   { type: 'session.commit' | 'session.clear' | 'session.close', requestId, sessionId }
  * Worker -> parent:
@@ -16,6 +16,7 @@
  */
 
 import {
+  normalizeWhisperLanguage,
   SherpaOfflineRecognizerEngine,
   SherpaRealtimeTranscriptionSession,
 } from './sherpa-recognizer.js';
@@ -50,20 +51,22 @@ function sendOk(requestId, result) {
   sendToParent({ type: 'response', requestId, ok: true, ...(result !== undefined ? { result } : {}) });
 }
 
-function getEngine(modelsDir, modelId) {
-  const key = `${modelsDir}:${modelId}`;
+function getEngine(modelsDir, modelId, language) {
+  const spec = getLocalSttModelSpec(modelId);
+  const whisperLanguage = spec.type === 'whisper' ? normalizeWhisperLanguage(language) : '';
+  const key = `${modelsDir}:${modelId}:${whisperLanguage}`;
   const existing = engines.get(key);
   if (existing) {
     return existing;
   }
   const modelDir = getLocalSttModelDir(modelsDir, modelId);
-  const spec = getLocalSttModelSpec(modelId);
   const created = new SherpaOfflineRecognizerEngine({
     type: spec.type,
     encoder: path.join(modelDir, spec.files.encoder),
     decoder: path.join(modelDir, spec.files.decoder),
     ...(spec.files.joiner ? { joiner: path.join(modelDir, spec.files.joiner) } : {}),
     tokens: path.join(modelDir, spec.files.tokens),
+    language: whisperLanguage,
     numThreads: 2,
   });
   engines.set(key, created);
@@ -125,7 +128,7 @@ async function handleRequest(message) {
     }
     case 'session.create': {
       cleanupSession(message.sessionId);
-      const engine = getEngine(message.modelsDir, message.modelId);
+      const engine = getEngine(message.modelsDir, message.modelId, message.language);
       const session = new SherpaRealtimeTranscriptionSession({ engine });
       session.on('committed', (payload) => {
         sendToParent({ type: 'session.committed', sessionId: message.sessionId, payload });

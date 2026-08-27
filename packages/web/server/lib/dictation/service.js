@@ -128,7 +128,11 @@ export function createDictationService({ modelsDir }) {
       };
     }
 
-    const session = new WorkerBackedTranscriptionSession(workerClient, { modelsDir, modelId });
+    const session = new WorkerBackedTranscriptionSession(workerClient, {
+      modelsDir,
+      modelId,
+      language: options.language,
+    });
     try {
       await session.connect();
     } catch (error) {

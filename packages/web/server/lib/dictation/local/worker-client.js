@@ -65,11 +65,11 @@ export class DictationWorkerClient {
 
   /**
    * Create a streaming STT session in the worker.
-   * @param {{ modelsDir: string, modelId: string }} params
+   * @param {{ modelsDir: string, modelId: string, language?: string }} params
    * @param {EventEmitter} emitter receives 'committed' | 'transcript' | 'error'
    * @returns {Promise<{ sessionId: string, requiredSampleRate: number }>}
    */
-  async createSession({ modelsDir, modelId }, emitter) {
+  async createSession({ modelsDir, modelId, language }, emitter) {
     const sessionId = randomUUID();
     this.sessionEmitters.set(sessionId, emitter);
     try {
@@ -78,6 +78,7 @@ export class DictationWorkerClient {
         sessionId,
         modelsDir,
         modelId,
+        language,
       });
       return { sessionId, requiredSampleRate: result?.requiredSampleRate ?? DEFAULT_LOCAL_SAMPLE_RATE };
     } catch (err) {
@@ -291,7 +292,7 @@ export class DictationWorkerClient {
 export class WorkerBackedTranscriptionSession extends EventEmitter {
   /**
    * @param {DictationWorkerClient} client
-   * @param {{ modelsDir: string, modelId: string }} modelConfig
+   * @param {{ modelsDir: string, modelId: string, language?: string }} modelConfig
    */
   constructor(client, modelConfig) {
     super();

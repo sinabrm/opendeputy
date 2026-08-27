@@ -1,5 +1,5 @@
 /**
- * Sherpa-onnx offline recognizer engine (NeMo transducer / Parakeet) plus a
+ * Sherpa-onnx offline recognizer engine (Whisper or NeMo/Parakeet) plus a
  * realtime streaming transcription session that re-decodes the accumulated
  * segment audio on a throttle to produce live partial transcripts.
  *
@@ -20,11 +20,34 @@ function assertFileExists(filePath, label) {
   }
 }
 
+/**
+ * Convert a BCP-47 language tag to the ISO 639 code expected by Whisper.
+ * Empty or invalid input keeps Whisper's automatic language detection.
+ * @param {unknown} language
+ * @returns {string}
+ */
+export function normalizeWhisperLanguage(language) {
+  if (typeof language !== 'string') {
+    return '';
+  }
+  const requested = language.trim();
+  if (!requested || requested.toLowerCase() === 'auto') {
+    return '';
+  }
+  try {
+    const [canonical] = Intl.getCanonicalLocales(requested.replaceAll('_', '-'));
+    const primary = canonical?.split('-')[0]?.toLowerCase() ?? '';
+    return /^[a-z]{2,3}$/.test(primary) ? primary : '';
+  } catch {
+    return '';
+  }
+}
+
 export class SherpaOfflineRecognizerEngine {
   /**
    * @param {{ type: 'nemo_transducer' | 'whisper',
    *           encoder: string, decoder: string, joiner?: string, tokens: string,
-   *           numThreads?: number }} config
+   *           language?: string, numThreads?: number }} config
    */
   constructor(config) {
     assertFileExists(config.encoder, 'offline encoder');
@@ -43,7 +66,7 @@ export class SherpaOfflineRecognizerEngine {
               encoder: config.encoder,
               decoder: config.decoder,
               // Empty language auto-detects for multilingual Whisper exports.
-              language: '',
+              language: normalizeWhisperLanguage(config.language),
               task: 'transcribe',
               tailPaddings: -1,
             },

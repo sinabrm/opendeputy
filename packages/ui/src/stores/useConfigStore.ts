@@ -1331,7 +1331,7 @@ export const useConfigStore = create<ConfigStore>()(
                         const saved = localStorage.getItem('sttLocalModel');
                         if (saved) return saved;
                     }
-                    return 'parakeet-tdt-0.6b-v2-int8';
+                    return 'whisper-base-int8';
                 })(),
                 sttLanguage: (() => {
                     if (typeof window !== 'undefined') {

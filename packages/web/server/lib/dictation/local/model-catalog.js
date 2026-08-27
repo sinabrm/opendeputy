@@ -165,7 +165,7 @@ export const LOCAL_TTS_MODEL_CATALOG = {
   },
 };
 
-export const DEFAULT_LOCAL_STT_MODEL = 'parakeet-tdt-0.6b-v2-int8';
+export const DEFAULT_LOCAL_STT_MODEL = 'whisper-base-int8';
 export const DEFAULT_LOCAL_TTS_MODEL = 'kokoro-en-v0_19';
 
 export const LOCAL_STT_MODEL_IDS = Object.keys(LOCAL_STT_MODEL_CATALOG);

@@ -602,7 +602,7 @@ const materializeAuthoritativeUiSettings = (settings: DesktopSettings): DesktopS
     sttProvider: 'local',
     sttServerUrl: 'http://localhost:8001/v1',
     sttModel: 'deepdml/faster-whisper-large-v3-turbo-ct2',
-    sttLocalModel: 'parakeet-tdt-0.6b-v2-int8',
+    sttLocalModel: 'whisper-base-int8',
     sttLanguage: '',
     ...settings,
   };
