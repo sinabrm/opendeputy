@@ -1108,6 +1108,7 @@ export const VoiceSettings: React.FC = () => {
                             title={t('settings.voice.page.field.provider')}
                             info={(
                                 <ul className="space-y-1">
+                                    <li><strong>Muse</strong> {t('settings.voice.page.tooltip.sttMuse')}</li>
                                     <li><strong>{t('settings.voice.page.provider.local')}</strong> {t('settings.voice.page.tooltip.sttLocal')}</li>
                                     <li><strong>{t('settings.voice.page.provider.server')}</strong> {t('settings.voice.page.tooltip.sttServer')}</li>
                                 </ul>
@@ -1119,6 +1120,7 @@ export const VoiceSettings: React.FC = () => {
                                 aria-label={t('settings.voice.page.field.provider')}
                                 className="w-full gap-1.5 sm:gap-2"
                                 options={[
+                                    { value: 'muse', label: 'Muse' },
                                     { value: 'local', label: t('settings.voice.page.provider.local') },
                                     { value: 'openai-compatible', label: t('settings.voice.page.provider.server') },
                                 ]}

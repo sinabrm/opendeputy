@@ -39,6 +39,22 @@ const createRuntime = async () => {
 };
 
 describe('settings runtime', () => {
+  it('migrates the previous local dictation default to Muse only once', async () => {
+    const { runtime, settingsFilePath, cleanup } = await createRuntime();
+    try {
+      await fsPromises.writeFile(settingsFilePath, JSON.stringify({ sttProvider: 'local' }), 'utf8');
+      const migrated = await runtime.readSettingsFromDiskMigrated();
+      expect(migrated.sttProvider).toBe('muse');
+      expect(migrated.sttMuseDefaultMigrated).toBe(true);
+
+      await runtime.writeSettingsToDisk({ ...migrated, sttProvider: 'local' });
+      const selectedLocal = await runtime.readSettingsFromDiskMigrated();
+      expect(selectedLocal.sttProvider).toBe('local');
+    } finally {
+      await cleanup();
+    }
+  });
+
   it.skipIf(process.platform === 'win32')('writes settings with restrictive directory and file permissions', async () => {
     const { runtime, settingsFilePath, tempRoot, cleanup } = await createRuntime();
     try {

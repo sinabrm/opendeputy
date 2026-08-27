@@ -61,4 +61,3 @@ describe('Muse dictation', () => {
     expect(session.supportsAutoCommit).toBe(false);
   });
 });
-

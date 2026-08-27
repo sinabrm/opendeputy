@@ -1757,6 +1757,7 @@ export const settingsDict = {
   "settings.voice.page.provider.server": "Сервер",
   "settings.voice.page.provider.local": "Локальний",
   "settings.voice.page.tooltip.sttLocal": "Локальна розшифровка на сервері OpenDeputy. Моделі завантажуються автоматично; ключ API не потрібен.",
+  "settings.voice.page.tooltip.sttMuse": "Хмарне розпізнавання через Muse після завершення запису. Без завантаження локальної моделі та без ключа API.",
   "settings.voice.page.tooltip.localTts": "Локальний синтез на сервері OpenDeputy (Kokoro, англійська). Модель завантажується автоматично; ключ API не потрібен.",
   "settings.voice.page.stt.model.parakeetV2": "Parakeet v2 (англійська)",
   "settings.voice.page.stt.model.parakeetV3": "Parakeet v3 (25 європейських мов)",

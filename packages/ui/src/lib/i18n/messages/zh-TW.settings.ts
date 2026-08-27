@@ -1664,6 +1664,7 @@ export const settingsDict = {
   'settings.voice.page.provider.server': '伺服器',
   'settings.voice.page.provider.local': '本機',
   'settings.voice.page.tooltip.sttLocal': '在 OpenDeputy 伺服器上本機轉寫。模型會自動下載，無需 API 金鑰。',
+  'settings.voice.page.tooltip.sttMuse': '錄音結束後使用 Muse 進行雲端轉寫。無需下載本機模型，也無需 API 金鑰。',
   'settings.voice.page.tooltip.localTts': '在 OpenDeputy 伺服器上本機合成語音（Kokoro，英文）。模型會自動下載，無需 API 金鑰。',
   'settings.voice.page.stt.model.parakeetV2': 'Parakeet v2（英文）',
   'settings.voice.page.stt.model.parakeetV3': 'Parakeet v3（25 種歐洲語言）',

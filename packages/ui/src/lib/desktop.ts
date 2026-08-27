@@ -212,7 +212,7 @@ export type DesktopSettings = {
   responseStylePreset?: 'concise' | 'detailed' | 'mentor' | 'pushback' | 'noFiller' | 'matchEnergy' | 'warmPeer' | 'custom';
   responseStyleCustomInstructions?: string;
   dictationEnabled?: boolean;
-  sttProvider?: 'local' | 'openai-compatible';
+  sttProvider?: 'muse' | 'local' | 'openai-compatible';
   sttServerUrl?: string;
   sttModel?: string;
   sttLocalModel?: string;

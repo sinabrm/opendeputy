@@ -2083,6 +2083,7 @@ export const settingsDict = {
   'settings.voice.page.provider.server': 'Serwer',
   'settings.voice.page.provider.local': 'Lokalny',
   'settings.voice.page.tooltip.sttLocal': 'Transkrypcja lokalna na serwerze OpenDeputy. Modele pobierają się automatycznie; klucz API nie jest potrzebny.',
+  'settings.voice.page.tooltip.sttMuse': 'Transkrypcja w chmurze przez Muse po zakończeniu nagrywania. Bez pobierania lokalnego modelu i bez klucza API.',
   'settings.voice.page.tooltip.localTts': 'Lokalna synteza na serwerze OpenDeputy (Kokoro, angielski). Model pobiera się automatycznie; klucz API nie jest potrzebny.',
   'settings.voice.page.stt.model.parakeetV2': 'Parakeet v2 (angielski)',
   'settings.voice.page.stt.model.parakeetV3': 'Parakeet v3 (25 języków europejskich)',

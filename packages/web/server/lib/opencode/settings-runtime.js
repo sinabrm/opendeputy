@@ -729,6 +729,26 @@ export const createSettingsRuntime = (deps) => {
     return { settings: changed ? next : settings, changed };
   };
 
+  // Muse became the default dictation path when final-recording audio input
+  // was added. Move the previous local default once, then preserve every
+  // provider choice the user makes after this migration.
+  const migrateSettingsMuseDictationDefault = (current) => {
+    const settings = current && typeof current === 'object' ? current : {};
+    if (settings.sttMuseDefaultMigrated === true) {
+      return { settings, changed: false };
+    }
+    return {
+      settings: {
+        ...settings,
+        ...(settings.sttProvider === undefined || settings.sttProvider === 'local'
+          ? { sttProvider: 'muse' }
+          : {}),
+        sttMuseDefaultMigrated: true,
+      },
+      changed: true,
+    };
+  };
+
   const migrateSettingsFromLegacyNamedTunnelKeys = async (current) => {
     const settings = current && typeof current === 'object' ? current : {};
     const next = { ...settings };
@@ -809,14 +829,15 @@ export const createSettingsRuntime = (deps) => {
     const migration2 = await migrateSettingsFromLegacyThemePreferences(migration1.settings);
     const migration3 = await migrateSettingsFromLegacyCollapsedProjects(migration2.settings);
     const migration4 = await migrateSettingsNotificationDefaults(migration3.settings);
-    const migration5 = await migrateSettingsFromLegacyNamedTunnelKeys(migration4.settings);
-    const migration6 = normalizeSettingsPaths(migration5.settings);
-    const migration7 = await migrateSettingsToDeterministicProjectIds(migration6.settings);
-    const migration8 = migrateSettingsRemoveApprovedDirectories(migration7.settings);
-    if (migration1.changed || migration2.changed || migration3.changed || migration4.changed || migration5.changed || migration6.changed || migration7.changed || migration8.changed) {
-      await writeSettingsToDisk(migration8.settings);
+    const migration5 = migrateSettingsMuseDictationDefault(migration4.settings);
+    const migration6 = await migrateSettingsFromLegacyNamedTunnelKeys(migration5.settings);
+    const migration7 = normalizeSettingsPaths(migration6.settings);
+    const migration8 = await migrateSettingsToDeterministicProjectIds(migration7.settings);
+    const migration9 = migrateSettingsRemoveApprovedDirectories(migration8.settings);
+    if (migration1.changed || migration2.changed || migration3.changed || migration4.changed || migration5.changed || migration6.changed || migration7.changed || migration8.changed || migration9.changed) {
+      await writeSettingsToDisk(migration9.settings);
     }
-    return migration8.settings;
+    return migration9.settings;
   };
 
   const persistSettings = async (changes) => {

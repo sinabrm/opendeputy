@@ -179,4 +179,3 @@ export class MuseTranscriptionSession extends EventEmitter {
     this.clear();
   }
 }
-

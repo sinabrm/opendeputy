@@ -58,6 +58,12 @@ const createTestHelpersWithRealSanitizers = () => {
 };
 
 describe('settings helpers', () => {
+  it('accepts Muse as a dictation provider', () => {
+    const helpers = createTestHelpers();
+    expect(helpers.sanitizeSettingsUpdate({ sttProvider: 'muse' })).toEqual({ sttProvider: 'muse' });
+    expect(helpers.sanitizeSettingsUpdate({ sttProvider: 'unknown' })).toEqual({});
+  });
+
   it('accepts only booleans for draft starter visibility', () => {
     const helpers = createTestHelpers();
 
