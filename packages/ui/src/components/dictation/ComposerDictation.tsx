@@ -165,7 +165,6 @@ export const ComposerDictation: React.FC<ComposerDictationProps> = ({
         volume,
         duration,
         error,
-        errorReason,
         startDictation,
         confirmDictation,
         cancelDictation,
@@ -174,7 +173,7 @@ export const ComposerDictation: React.FC<ComposerDictationProps> = ({
         discardFailedDictation,
     } = dictation;
 
-    const isModelDownloading = status === 'recording' && errorReason === 'model_download_in_progress';
+    const isModelDownloading = status === 'preparing';
     const downloadPercent = useModelDownloadProgress(isModelDownloading);
 
     const statusRef = React.useRef(status);
@@ -208,14 +207,21 @@ export const ComposerDictation: React.FC<ComposerDictationProps> = ({
     // While recording: Enter confirms (insert), Escape cancels. Capture-phase
     // so the composer's own Enter-to-send never fires underneath the overlay.
     React.useEffect(() => {
-        if (status !== 'recording') {
+        if (status !== 'preparing' && status !== 'recording' && status !== 'uploading') {
             return;
         }
         const onKeyDown = (event: KeyboardEvent) => {
             if (event.isComposing) {
                 return;
             }
-            if (event.key === 'Enter' && !event.shiftKey && !event.metaKey && !event.ctrlKey && !event.altKey) {
+            if (
+                status === 'recording'
+                && event.key === 'Enter'
+                && !event.shiftKey
+                && !event.metaKey
+                && !event.ctrlKey
+                && !event.altKey
+            ) {
                 event.preventDefault();
                 event.stopPropagation();
                 pendingActionRef.current = 'insert';
@@ -441,7 +447,7 @@ export const ComposerDictation: React.FC<ComposerDictationProps> = ({
                                     {formatDuration(duration)}
                                 </span>
                             </>
-                        ) : status === 'uploading' ? (
+                        ) : status === 'preparing' || status === 'uploading' ? (
                             <Icon name="loader-4" className="ml-1 h-4 w-4 animate-spin" style={{ color: currentTheme.colors.surface.mutedForeground }} />
                         ) : null}
                         {/* Same inter-control gap as the composer's right cluster:
@@ -482,7 +488,7 @@ export const ComposerDictation: React.FC<ComposerDictationProps> = ({
                                         <Icon name="send-plane-2" className={sendIconSizeClass} />
                                     </button>
                                 </>
-                            ) : status === 'uploading' ? (
+                            ) : status === 'preparing' || status === 'uploading' ? (
                                 <button
                                     type="button"
                                     {...keepKeyboardFocusProps}

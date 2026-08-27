@@ -14,10 +14,39 @@
 import type { DictationClient, DictationStartOptions } from './dictation-client';
 
 const MAX_CHUNKS_PER_FLUSH_TURN = 128;
+const MODEL_DOWNLOAD_RETRY_DELAY_MS = 2000;
+const MODEL_DOWNLOAD_MAX_WAIT_MS = 30 * 60 * 1000;
 
 const PCM_DICTATION_FORMAT = 'audio/pcm;rate=16000;bits=16';
 
 const waitForNextFlushTurn = (): Promise<void> => new Promise((resolve) => setTimeout(resolve, 0));
+
+const createAbortError = (): Error => {
+    const error = new Error('Dictation cancelled');
+    error.name = 'AbortError';
+    return error;
+};
+
+const waitForModelRetry = (delayMs: number, signal?: AbortSignal): Promise<void> => {
+    if (signal?.aborted) {
+        return Promise.reject(createAbortError());
+    }
+    return new Promise((resolve, reject) => {
+        const timeout = setTimeout(() => {
+            signal?.removeEventListener('abort', onAbort);
+            resolve();
+        }, delayMs);
+        const onAbort = () => {
+            clearTimeout(timeout);
+            signal?.removeEventListener('abort', onAbort);
+            reject(createAbortError());
+        };
+        signal?.addEventListener('abort', onAbort, { once: true });
+    });
+};
+
+const isModelDownloadInProgress = (error: unknown): boolean =>
+    (error as { reasonCode?: unknown } | null)?.reasonCode === 'model_download_in_progress';
 
 const createDictationIdDefault = (): string => {
     const rand = Math.random().toString(36).slice(2, 10);
@@ -27,6 +56,13 @@ const createDictationIdDefault = (): string => {
 export interface DictationFinishResult {
     dictationId: string;
     text: string;
+}
+
+export interface DictationFinishOptions {
+    waitForModelDownload?: boolean;
+    signal?: AbortSignal;
+    retryDelayMs?: number;
+    maxWaitMs?: number;
 }
 
 export class DictationStreamSender {
@@ -169,12 +205,35 @@ export class DictationStreamSender {
         await start;
     }
 
-    async finish(finalSeq: number): Promise<DictationFinishResult> {
-        if (!this.dictationId) {
-            await this.restartStream();
-        }
-        if (this.startPromise) {
-            await this.startPromise;
+    async finish(finalSeq: number, options: DictationFinishOptions = {}): Promise<DictationFinishResult> {
+        const startedWaitingAt = Date.now();
+        while (true) {
+            if (options.signal?.aborted) {
+                throw createAbortError();
+            }
+            try {
+                if (!this.dictationId) {
+                    await this.restartStream();
+                }
+                if (this.startPromise) {
+                    await this.startPromise;
+                }
+                break;
+            } catch (error) {
+                const maxWaitMs = options.maxWaitMs ?? MODEL_DOWNLOAD_MAX_WAIT_MS;
+                if (
+                    !options.waitForModelDownload
+                    || !isModelDownloadInProgress(error)
+                    || Date.now() - startedWaitingAt >= maxWaitMs
+                ) {
+                    throw error;
+                }
+                this.resetStreamForReplay();
+                await waitForModelRetry(
+                    options.retryDelayMs ?? MODEL_DOWNLOAD_RETRY_DELAY_MS,
+                    options.signal,
+                );
+            }
         }
 
         const dictationId = this.dictationId;
