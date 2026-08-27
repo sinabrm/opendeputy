@@ -1,11 +1,16 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  DEFAULT_LOCAL_STT_MODEL,
   LOCAL_STT_MODEL_CATALOG,
   LOCAL_TTS_MODEL_CATALOG,
 } from './model-catalog.js';
 
 describe('local speech model catalog transparency', () => {
+  it('defaults to the balanced multilingual model', () => {
+    expect(DEFAULT_LOCAL_STT_MODEL).toBe('whisper-base-int8');
+  });
+
   it('pins provenance, publisher license metadata, byte size, and SHA-256 for every archive', () => {
     const entries = [
       ...Object.entries(LOCAL_STT_MODEL_CATALOG),

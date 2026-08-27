@@ -1790,6 +1790,7 @@ export const settingsDict = {
   'settings.voice.page.provider.server': 'サーバー',
   'settings.voice.page.provider.local': 'ローカル',
   'settings.voice.page.tooltip.sttLocal': 'OpenDeputy サーバー上でローカルに文字起こしします。モデルは自動でダウンロードされ、API キーは不要です。',
+  'settings.voice.page.tooltip.sttMuse': '録音終了後に Muse でクラウド文字起こしします。ローカルモデルのダウンロードも API キーも不要です。',
   'settings.voice.page.tooltip.localTts': 'OpenDeputy サーバー上でローカルに音声合成します（Kokoro、英語）。モデルは自動でダウンロードされ、API キーは不要です。',
   'settings.voice.page.stt.model.parakeetV2': 'Parakeet v2（英語）',
   'settings.voice.page.stt.model.parakeetV3': 'Parakeet v3（ヨーロッパ25言語）',

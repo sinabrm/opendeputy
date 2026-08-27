@@ -17,6 +17,7 @@ import {
     SettingsSection,
     SettingsCheckboxRow,
     SettingsFieldRow,
+    SettingsStackedField,
     SettingsControlGroup,
     SettingsChipGroup,
     SETTINGS_SELECT_SIZE,
@@ -45,7 +46,7 @@ const LOCAL_STT_MODELS = [
     {
         id: 'parakeet-tdt-0.6b-v3-int8',
         labelKey: 'settings.voice.page.stt.model.parakeetV3',
-        badgeKey: 'settings.voice.page.stt.badge.bestForMultilingual',
+        badgeKey: null,
         accuracy: 5,
         speed: 4,
         size: '465 MB',
@@ -53,7 +54,7 @@ const LOCAL_STT_MODELS = [
     {
         id: 'whisper-base-int8',
         labelKey: 'settings.voice.page.stt.model.whisperBase',
-        badgeKey: null,
+        badgeKey: 'settings.voice.page.stt.badge.bestForMultilingual',
         accuracy: 3,
         speed: 3,
         size: '200 MB',
@@ -1107,6 +1108,7 @@ export const VoiceSettings: React.FC = () => {
                             title={t('settings.voice.page.field.provider')}
                             info={(
                                 <ul className="space-y-1">
+                                    <li><strong>Muse</strong> {t('settings.voice.page.tooltip.sttMuse')}</li>
                                     <li><strong>{t('settings.voice.page.provider.local')}</strong> {t('settings.voice.page.tooltip.sttLocal')}</li>
                                     <li><strong>{t('settings.voice.page.provider.server')}</strong> {t('settings.voice.page.tooltip.sttServer')}</li>
                                 </ul>
@@ -1118,6 +1120,7 @@ export const VoiceSettings: React.FC = () => {
                                 aria-label={t('settings.voice.page.field.provider')}
                                 className="w-full gap-1.5 sm:gap-2"
                                 options={[
+                                    { value: 'muse', label: 'Muse' },
                                     { value: 'local', label: t('settings.voice.page.provider.local') },
                                     { value: 'openai-compatible', label: t('settings.voice.page.provider.server') },
                                 ]}
@@ -1195,23 +1198,23 @@ export const VoiceSettings: React.FC = () => {
                                         />
                                     </div>
                                 </div>
-                                <div className="space-y-1.5">
-                                    <span className="flex items-center gap-1.5">
-                                        <span className={SETTINGS_FIELD_LABEL_CLASS}>{t('settings.voice.page.field.language')}</span>
-                                        <SettingsInfoHint>{t('settings.voice.page.field.sttLanguageHint')}</SettingsInfoHint>
-                                    </span>
-                                    <div className="relative max-w-[8rem]">
-                                        <input
-                                            type="text"
-                                            value={sttLanguage}
-                                            onChange={(e) => setSttLanguage(e.target.value)}
-                                            placeholder="auto"
-                                            className="w-full h-7 rounded-lg border border-input bg-transparent px-2 typography-ui-label text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary/50 focus:border-primary/70"
-                                        />
-                                    </div>
-                                </div>
                             </div>
                         )}
+
+                        <SettingsStackedField
+                            label={t('settings.voice.page.field.language')}
+                            info={t('settings.voice.page.field.sttLanguageHint')}
+                            controlClassName="max-w-[8rem]"
+                        >
+                            <input
+                                type="text"
+                                value={sttLanguage}
+                                onChange={(e) => setSttLanguage(e.target.value)}
+                                placeholder={t('settings.voice.page.field.auto')}
+                                aria-label={t('settings.voice.page.field.language')}
+                                className="h-8 w-full rounded-md border border-input bg-transparent px-3 typography-ui-label text-foreground placeholder:text-muted-foreground focus:border-primary/70 focus:outline-none focus:ring-1 focus:ring-primary/50"
+                            />
+                        </SettingsStackedField>
                     </>
                 )}
             </SettingsSection>

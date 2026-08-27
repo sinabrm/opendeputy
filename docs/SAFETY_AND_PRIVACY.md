@@ -12,7 +12,7 @@ OpenDeputy can change files, run terminal commands, browse websites, and control
 
 ## Data locations
 
-Chats, settings, project state, memory, browser storage, and optional speech files are stored locally in OpenDeputy/OpenChamber-compatible application data directories. Provider prompts and files included in prompts are sent to the selected model provider according to that provider's terms. The managed visual-grounding tool sends task-relevant screenshots, images, audio, video, PDFs, or documents through OpenCode to `opencode/muse-spark-1.2-contributor-free` for text/code analysis.
+Chats, settings, project state, memory, browser storage, and optional speech files are stored locally in OpenDeputy/OpenChamber-compatible application data directories. Provider prompts and files included in prompts are sent to the selected model provider according to that provider's terms. Voice dictation uses Muse by default: after the user stops recording, the complete WAV is sent to OpenCode Zen's `muse-spark-1.2-contributor-free` endpoint for transcription. Users can select Local in Voice settings to keep dictation on the OpenDeputy server instead. The managed visual-grounding tool sends task-relevant screenshots, images, audio, video, PDFs, or documents through OpenCode to `opencode/muse-spark-1.2-contributor-free` for text/code analysis.
 
 OpenDeputy does not bundle a model. Provider credentials are handled by OpenCode and must never be committed to this repository. Local memory instructions prohibit passwords, API keys, tokens, financial details, and other secrets.
 

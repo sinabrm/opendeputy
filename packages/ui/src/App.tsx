@@ -205,7 +205,10 @@ const EmbeddedSessionChatContent: React.FC<{
 
   return (
     <>
-      <SyncAppEffects embeddedBackgroundWorkEnabled={embeddedBackgroundWorkEnabled} />
+      <SyncAppEffects
+        embeddedBackgroundWorkEnabled={embeddedBackgroundWorkEnabled}
+        dictationModelPreloadEnabled={!isVSCodeRuntime}
+      />
       <OpenCodeUpdateToast />
       <ChatView
         active={embeddedBackgroundWorkEnabled}
@@ -937,7 +940,10 @@ function App({ apis }: AppProps) {
           <FireworksProvider>
               <TooltipProvider delayDuration={300} skipDelayDuration={150}>
                 <div className={isDesktopRuntime ? 'h-full text-foreground bg-transparent' : 'h-full text-foreground bg-background'}>
-                  <SyncAppEffects embeddedBackgroundWorkEnabled={embeddedBackgroundWorkEnabled} />
+                  <SyncAppEffects
+                    embeddedBackgroundWorkEnabled={embeddedBackgroundWorkEnabled}
+                    dictationModelPreloadEnabled={!isVSCodeRuntime}
+                  />
                   <OpenCodeUpdateToast />
                   <MainLayout />
                   <Toaster />

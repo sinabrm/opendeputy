@@ -1251,7 +1251,10 @@ export function MobileApp({ apis }: MobileAppProps) {
                   <OpenChamberLogo width={120} height={120} isAnimated />
                 </div>
               ) : null}
-              <SyncAppEffects embeddedBackgroundWorkEnabled={isInitialized} />
+              <SyncAppEffects
+                embeddedBackgroundWorkEnabled={isInitialized}
+                dictationModelPreloadEnabled={true}
+              />
               <OpenCodeUpdateToast />
               <MobileAppUpdateToast />
               <MobileShell onActiveConnectionDeleted={() => {

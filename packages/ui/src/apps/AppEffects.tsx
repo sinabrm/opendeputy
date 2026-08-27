@@ -4,6 +4,8 @@ import { usePwaManifestSync } from '@/hooks/usePwaManifestSync';
 import { useQueuedMessageAutoSend } from '@/hooks/useQueuedMessageAutoSend';
 import { useSessionAutoCleanup } from '@/hooks/useSessionAutoCleanup';
 import { useWindowControlsOverlayLayout } from '@/hooks/useWindowControlsOverlayLayout';
+import { preloadLocalDictationModel } from '@/lib/dictation/dictation-model-readiness';
+import { useConfigStore } from '@/stores/useConfigStore';
 import { setOptimisticRefs } from '@/sync/session-actions';
 import { markSessionViewed } from '@/sync/notification-store';
 import { setExternallyViewedSession } from '@/sync/sync-context';
@@ -62,6 +64,47 @@ const MiniChatPresenceBridge: React.FC = () => {
   return null;
 };
 
+const LocalDictationModelPreloadEffect: React.FC<{ enabled: boolean }> = ({ enabled }) => {
+  const isInitialized = useConfigStore((state) => state.isInitialized);
+  const dictationEnabled = useConfigStore((state) => state.dictationEnabled);
+  const sttProvider = useConfigStore((state) => state.sttProvider);
+  const sttLocalModel = useConfigStore((state) => state.sttLocalModel);
+
+  React.useEffect(() => {
+    if (!enabled || !isInitialized || !dictationEnabled || sttProvider !== 'local') {
+      return;
+    }
+
+    const controller = new AbortController();
+    let requestInFlight = false;
+    const requestPreload = () => {
+      if (requestInFlight || controller.signal.aborted) {
+        return;
+      }
+      requestInFlight = true;
+      void preloadLocalDictationModel({
+        modelId: sttLocalModel,
+        signal: controller.signal,
+      }).catch(() => {
+        // Background preparation is best-effort after its bounded retries.
+        // Recording still performs the authoritative readiness check and
+        // reports any remaining error to the user.
+      }).finally(() => {
+        requestInFlight = false;
+      });
+    };
+
+    requestPreload();
+    window.addEventListener('online', requestPreload);
+    return () => {
+      controller.abort();
+      window.removeEventListener('online', requestPreload);
+    };
+  }, [dictationEnabled, enabled, isInitialized, sttLocalModel, sttProvider]);
+
+  return null;
+};
+
 export function SyncRuntimeEffects({ embeddedBackgroundWorkEnabled }: {
   embeddedBackgroundWorkEnabled: boolean;
 }) {
@@ -71,8 +114,9 @@ export function SyncRuntimeEffects({ embeddedBackgroundWorkEnabled }: {
   return <SyncOptimisticBridge />;
 }
 
-export function SyncAppEffects({ embeddedBackgroundWorkEnabled }: {
+export function SyncAppEffects({ embeddedBackgroundWorkEnabled, dictationModelPreloadEnabled }: {
   embeddedBackgroundWorkEnabled: boolean;
+  dictationModelPreloadEnabled?: boolean;
 }) {
   usePwaManifestSync();
   useWindowControlsOverlayLayout();
@@ -81,6 +125,7 @@ export function SyncAppEffects({ embeddedBackgroundWorkEnabled }: {
   return (
     <>
       <SyncRuntimeEffects embeddedBackgroundWorkEnabled={embeddedBackgroundWorkEnabled} />
+      <LocalDictationModelPreloadEffect enabled={dictationModelPreloadEnabled === true} />
       <MiniChatPresenceBridge />
     </>
   );

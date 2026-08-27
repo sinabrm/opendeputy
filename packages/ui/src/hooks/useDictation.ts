@@ -1,7 +1,7 @@
 /**
  * Streaming dictation state machine.
  *
- * Status flow: idle -> recording -> uploading -> idle | failed.
+ * Status flow: idle -> preparing -> recording -> uploading -> idle | failed.
  * While recording, mic PCM chunks stream to the server, which sends back live
  * partial transcripts. Confirm finalizes and resolves the full text; failed
  * dictations retain their audio segments so retry can replay them.
@@ -10,11 +10,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { dictationClient, type DictationStartOptions } from '@/lib/dictation/dictation-client';
+import { prepareLocalDictationModel } from '@/lib/dictation/dictation-model-readiness';
 import { DictationStreamSender } from '@/lib/dictation/dictation-stream-sender';
 import { useDictationAudioSource } from '@/lib/dictation/use-dictation-audio-source';
 import { useConfigStore } from '@/stores/useConfigStore';
 
-export type DictationStatus = 'idle' | 'recording' | 'uploading' | 'failed';
+export type DictationStatus = 'idle' | 'preparing' | 'recording' | 'uploading' | 'failed';
 
 export interface UseDictationOptions {
     onTranscript?: (text: string) => void;
@@ -47,6 +48,12 @@ const toError = (value: unknown): Error =>
 const getDictationStartOptions = (): DictationStartOptions => {
     const state = useConfigStore.getState();
     const language = state.sttLanguage?.trim();
+    if (state.sttProvider === 'muse') {
+        return {
+            provider: 'muse',
+            ...(language ? { language } : {}),
+        };
+    }
     if (state.sttProvider === 'openai-compatible') {
         return {
             provider: 'openai-compatible',
@@ -82,6 +89,8 @@ export function useDictation(options: UseDictationOptions = {}): UseDictationRes
     const latestPartialRef = useRef('');
     const durationIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
     const actionGateRef = useRef({ starting: false, confirming: false, cancelling: false });
+    const prepareAbortControllerRef = useRef<AbortController | null>(null);
+    const finishAbortControllerRef = useRef<AbortController | null>(null);
 
     const onTranscriptRef = useRef(onTranscript);
     const onErrorRef = useRef(onError);
@@ -216,12 +225,29 @@ export function useDictation(options: UseDictationOptions = {}): UseDictationRes
         clearError();
         setPartialTranscript('');
         setDuration(0);
-        setStatus('recording');
-        statusRef.current = 'recording';
+        setStatus('preparing');
+        statusRef.current = 'preparing';
         clearStreamingState();
+        const prepareAbortController = new AbortController();
+        prepareAbortControllerRef.current = prepareAbortController;
 
         try {
+            const startOptions = getDictationStartOptions();
+            await prepareLocalDictationModel({
+                provider: startOptions.provider,
+                modelId: startOptions.localModel,
+                signal: prepareAbortController.signal,
+            });
+            if (prepareAbortController.signal.aborted || statusRef.current !== 'preparing') {
+                return;
+            }
             await audio.start();
+            if (prepareAbortController.signal.aborted || statusRef.current !== 'preparing') {
+                await audio.stop().catch(() => undefined);
+                return;
+            }
+            setStatus('recording');
+            statusRef.current = 'recording';
             startDurationTracking();
             // Open the stream eagerly so partials start flowing immediately.
             await senderRef.current?.restartStream().catch((err) => {
@@ -235,8 +261,13 @@ export function useDictation(options: UseDictationOptions = {}): UseDictationRes
             stopDurationTracking();
             setStatus('idle');
             statusRef.current = 'idle';
-            reportError(err);
+            if (!prepareAbortController.signal.aborted) {
+                reportError(err);
+            }
         } finally {
+            if (prepareAbortControllerRef.current === prepareAbortController) {
+                prepareAbortControllerRef.current = null;
+            }
             gate.starting = false;
         }
     }, [audio, canStart, clearError, clearStreamingState, reportError, startDurationTracking, stopDurationTracking]);
@@ -246,10 +277,18 @@ export function useDictation(options: UseDictationOptions = {}): UseDictationRes
         if (gate.cancelling) {
             return;
         }
-        if (statusRef.current !== 'recording' && statusRef.current !== 'uploading') {
+        if (
+            statusRef.current !== 'preparing'
+            && statusRef.current !== 'recording'
+            && statusRef.current !== 'uploading'
+        ) {
             return;
         }
         gate.cancelling = true;
+        prepareAbortControllerRef.current?.abort();
+        prepareAbortControllerRef.current = null;
+        finishAbortControllerRef.current?.abort();
+        finishAbortControllerRef.current = null;
         stopDurationTracking();
         setDuration(0);
         clearError();
@@ -285,6 +324,8 @@ export function useDictation(options: UseDictationOptions = {}): UseDictationRes
         }
 
         gate.confirming = true;
+        const finishAbortController = new AbortController();
+        finishAbortControllerRef.current = finishAbortController;
         clearError();
         stopDurationTracking();
 
@@ -298,12 +339,21 @@ export function useDictation(options: UseDictationOptions = {}): UseDictationRes
                 return handleSuccess('');
             }
 
-            const result = await senderRef.current!.finish(finalSeq);
+            const result = await senderRef.current!.finish(finalSeq, {
+                waitForModelDownload: true,
+                signal: finishAbortController.signal,
+            });
             return handleSuccess(result.text);
         } catch (err) {
+            if (finishAbortController.signal.aborted) {
+                return null;
+            }
             handleFailure(err);
             return null;
         } finally {
+            if (finishAbortControllerRef.current === finishAbortController) {
+                finishAbortControllerRef.current = null;
+            }
             gate.confirming = false;
         }
     }, [audio, clearError, handleFailure, handleSuccess, stopDurationTracking]);
@@ -315,15 +365,27 @@ export function useDictation(options: UseDictationOptions = {}): UseDictationRes
         clearError();
         setStatus('uploading');
         statusRef.current = 'uploading';
+        const finishAbortController = new AbortController();
+        finishAbortControllerRef.current = finishAbortController;
 
         try {
             senderRef.current.resetStreamForReplay();
             const finalSeq = senderRef.current.getFinalSeq();
-            const result = await senderRef.current.finish(finalSeq);
+            const result = await senderRef.current.finish(finalSeq, {
+                waitForModelDownload: true,
+                signal: finishAbortController.signal,
+            });
             return handleSuccess(result.text);
         } catch (err) {
+            if (finishAbortController.signal.aborted) {
+                return null;
+            }
             handleFailure(err);
             return null;
+        } finally {
+            if (finishAbortControllerRef.current === finishAbortController) {
+                finishAbortControllerRef.current = null;
+            }
         }
     }, [clearError, handleFailure, handleSuccess]);
 
@@ -382,17 +444,25 @@ export function useDictation(options: UseDictationOptions = {}): UseDictationRes
     }, [status, errorReason, clearError, reportError]);
 
     useEffect(() => {
+        const abortForRuntimeSwitch = () => {
+            prepareAbortControllerRef.current?.abort();
+            finishAbortControllerRef.current?.abort();
+        };
+        window.addEventListener('openchamber:runtime-endpoint-changed', abortForRuntimeSwitch);
         return () => {
+            finishAbortControllerRef.current?.abort();
+            prepareAbortControllerRef.current?.abort();
             stopDurationTracking();
             void audioStopRef.current().catch(() => undefined);
             senderRef.current?.cancel();
+            window.removeEventListener('openchamber:runtime-endpoint-changed', abortForRuntimeSwitch);
         };
     }, [stopDurationTracking]);
 
     return {
         status,
         isRecording: status === 'recording',
-        isProcessing: status === 'uploading',
+        isProcessing: status === 'preparing' || status === 'uploading',
         partialTranscript,
         volume: audio.volume,
         duration,

@@ -35,9 +35,10 @@ const ADD_PROVIDER_SENTINEL = "__add_provider__";
 const GIT_UTILITY_PROVIDER_ID = "zen";
 const GIT_UTILITY_PREFERRED_MODEL_ID = "big-pickle";
 const PROVIDER_CONFIG_REFRESH_CONCURRENCY = 4;
+const STT_MUSE_DEFAULT_MIGRATION_KEY = 'openchamber.sttMuseDefault.v1';
 
-const normalizeSttProvider = (value: unknown): 'local' | 'openai-compatible' | undefined => {
-    if (value === 'local' || value === 'openai-compatible') {
+const normalizeSttProvider = (value: unknown): 'muse' | 'local' | 'openai-compatible' | undefined => {
+    if (value === 'muse' || value === 'local' || value === 'openai-compatible') {
         return value;
     }
     // Legacy providers: 'server' used an OpenAI-compatible endpoint;
@@ -60,7 +61,7 @@ interface OpenChamberDefaults {
     defaultFileViewerPreview?: boolean;
     zenModel?: string;
     messageStreamTransport?: 'auto' | 'ws' | 'sse';
-    sttProvider?: 'local' | 'openai-compatible';
+    sttProvider?: 'muse' | 'local' | 'openai-compatible';
     sttServerUrl?: string;
     sttModel?: string;
     sttLocalModel?: string;
@@ -1050,7 +1051,7 @@ interface ConfigStore {
     openaiCompatibleTtsModel: string;
     // STT (dictation) settings
     dictationEnabled: boolean;
-    sttProvider: 'local' | 'openai-compatible';
+    sttProvider: 'muse' | 'local' | 'openai-compatible';
     sttServerUrl: string;
     sttApiKey: string;
     sttModel: string;
@@ -1076,7 +1077,7 @@ interface ConfigStore {
     setOpenaiCompatibleVoice: (voice: string) => void;
     setOpenaiCompatibleTtsModel: (model: string) => void;
     setDictationEnabled: (enabled: boolean) => void;
-    setSttProvider: (provider: 'local' | 'openai-compatible') => void;
+    setSttProvider: (provider: 'muse' | 'local' | 'openai-compatible') => void;
     setSttServerUrl: (url: string) => void;
     setSttApiKey: (apiKey: string) => void;
     setSttModel: (model: string) => void;
@@ -1294,16 +1295,23 @@ export const useConfigStore = create<ConfigStore>()(
                     }
                     return true;
                 })(),
-                // STT provider: 'local' (server-side sherpa-onnx) or 'openai-compatible'
+                // STT provider: Muse cloud (default), local sherpa-onnx, or OpenAI-compatible.
                 sttProvider: (() => {
                     if (typeof window !== 'undefined') {
                         const saved = localStorage.getItem('sttProvider');
-                        if (saved === 'local' || saved === 'openai-compatible') return saved;
+                        if (localStorage.getItem(STT_MUSE_DEFAULT_MIGRATION_KEY) !== 'done') {
+                            localStorage.setItem(STT_MUSE_DEFAULT_MIGRATION_KEY, 'done');
+                            if (saved === null || saved === 'local') {
+                                localStorage.setItem('sttProvider', 'muse');
+                                return 'muse' as const;
+                            }
+                        }
+                        if (saved === 'muse' || saved === 'local' || saved === 'openai-compatible') return saved;
                         // Migrate legacy providers: 'server' used an OpenAI-compatible
                         // endpoint; 'browser' and 'wasm' map to the local default.
                         if (saved === 'server') return 'openai-compatible' as const;
                     }
-                    return 'local' as const;
+                    return 'muse' as const;
                 })(),
                 sttServerUrl: (() => {
                     if (typeof window !== 'undefined') {
@@ -1331,7 +1339,7 @@ export const useConfigStore = create<ConfigStore>()(
                         const saved = localStorage.getItem('sttLocalModel');
                         if (saved) return saved;
                     }
-                    return 'parakeet-tdt-0.6b-v2-int8';
+                    return 'whisper-base-int8';
                 })(),
                 sttLanguage: (() => {
                     if (typeof window !== 'undefined') {
@@ -2932,7 +2940,7 @@ export const useConfigStore = create<ConfigStore>()(
                     updateDesktopSettings({ dictationEnabled: enabled }).catch(() => {});
                 },
 
-                setSttProvider: (provider: 'local' | 'openai-compatible') => {
+                setSttProvider: (provider: 'muse' | 'local' | 'openai-compatible') => {
                     set({ sttProvider: provider });
                     if (typeof window !== 'undefined') {
                         localStorage.setItem('sttProvider', provider);

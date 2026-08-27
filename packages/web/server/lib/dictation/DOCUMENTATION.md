@@ -3,7 +3,8 @@
 Server-authoritative streaming speech-to-text for the chat composer, plus
 local text-to-speech. The client streams 16 kHz mono PCM16 chunks (base64)
 over a WebSocket; the server runs the transcription and streams live partial
-transcripts back.
+transcripts back when the selected provider supports them. Muse, the default,
+buffers the recording and returns one final transcript after the user stops.
 
 Local TTS (Kokoro via sherpa-onnx OfflineTts) runs in the same worker process
 and is exposed as `POST /api/dictation/tts/speak` (JSON `{text, speakerId?,
@@ -56,10 +57,25 @@ staged so partial model files never appear at the final installed path.
   auto-commit every ~15 s of audio, silence suppression by PCM peak,
   partial-transcript concatenation, adaptive finalization timeout.
 - `service.js` — provider resolution and readiness. Providers:
-  - `local` (default): sherpa-onnx Parakeet TDT in a forked worker process.
-    Models auto-download in the background on first use; while missing, the
+  - `muse` (default): final-only cloud transcription through OpenCode Zen's
+    `muse-spark-1.2-contributor-free` Responses endpoint. The stream manager
+    disables periodic auto-commit for this session, wraps the complete 16 kHz
+    PCM recording as WAV, and sends it only after finish. Muse detects the
+    spoken language automatically unless the optional language setting is set.
+    No local speech model or API key is required; internet access is required.
+  - `local`: sherpa-onnx Whisper base in a forked worker process.
+    Whisper is the multilingual default and accepts the optional BCP-47
+    `language` setting (`fa-IR` becomes `fa`); an empty value auto-detects.
+    Parakeet remains available as an explicit model choice.
+    The selected local model starts downloading in the background after the
+    app initializes when Local is selected, without blocking the rest of the app or requesting
+    microphone permission. The preload is best-effort, retries two transient
+    failures with increasing delays, and can restart on a later browser-online
+    event. Models also auto-download on first use; while missing, the
     stream fails with `reasonCode: 'model_download_in_progress'` and the
-    status route reports per-model install/download state.
+    status route reports per-model install/download state. On first use, the
+    composer downloads and verifies the selected model before requesting
+    microphone access, then starts recording automatically when it is ready.
   - `openai-compatible`: buffered per-segment transcription against any
     OpenAI-compatible `/v1/audio/transcriptions` endpoint
     (`openai-compatible-session.js`, reuses `../tts/stt.js`).
@@ -81,7 +97,7 @@ Server → client: `ready`, `ack {ackSeq}`, `partial {text}`,
 `error {error, retryable, reasonCode?}`, `pong`.
 
 `options` in `start` carries the client-selected provider config:
-`{ provider: 'local' | 'openai-compatible', language?, localModel?,
+`{ provider: 'muse' | 'local' | 'openai-compatible', language?, localModel?,
 openaiCompatible?: { baseUrl, model, apiKey } }`.
 
 ## Invariants
