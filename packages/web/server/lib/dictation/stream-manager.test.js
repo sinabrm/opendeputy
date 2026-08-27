@@ -191,4 +191,22 @@ describe('DictationStreamManager', () => {
     const partials = messages.filter((m) => m.type === 'partial');
     expect(partials.length).toBeGreaterThan(0);
   });
+
+  it('does not auto-commit final-only providers', async () => {
+    const session = new FakeSttSession();
+    session.supportsAutoCommit = false;
+    const { manager, messages } = createManager(session);
+    manager.autoCommitSeconds = 0.05;
+
+    await manager.handleStart('d1', FORMAT, {});
+    manager.handleChunk({ dictationId: 'd1', seq: 0, audioBase64: loudChunkBase64(1600) });
+    manager.handleChunk({ dictationId: 'd1', seq: 1, audioBase64: loudChunkBase64(1600) });
+    expect(session.commits).toBe(0);
+
+    manager.handleFinish('d1', 1);
+    const accepted = messages.find((message) => message.type === 'finish_accepted');
+    expect(accepted.payload.timeoutMs).toBeGreaterThan(25_000);
+    await waitFor(() => messages.some((m) => m.type === 'final'));
+    expect(session.commits).toBe(1);
+  });
 });

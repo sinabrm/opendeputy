@@ -3,7 +3,8 @@
  * state, and exposes a readiness snapshot for the status route.
  *
  * Providers:
- * - 'local' (default): sherpa-onnx Parakeet running in a worker process.
+ * - 'muse' (default): final-only cloud transcription through OpenCode Zen.
+ * - 'local': sherpa-onnx Whisper/Parakeet running in a worker process.
  *   Models auto-download in the background on first use.
  * - 'openai-compatible': any OpenAI-compatible /v1/audio/transcriptions
  *   endpoint (faster-whisper, whisper.cpp, OpenAI).
@@ -13,6 +14,7 @@ import { rm } from 'fs/promises';
 
 import { DictationWorkerClient, WorkerBackedTranscriptionSession } from './local/worker-client.js';
 import { OpenAICompatibleTranscriptionSession } from './openai-compatible-session.js';
+import { MuseTranscriptionSession } from './muse-transcription-session.js';
 import {
   DEFAULT_LOCAL_STT_MODEL,
   DEFAULT_LOCAL_TTS_MODEL,
@@ -84,7 +86,19 @@ export function createDictationService({ modelsDir }) {
    *           openaiCompatible?: { baseUrl?: string, model?: string, apiKey?: string } }} options
    */
   const createSttSession = async (options = {}) => {
-    const provider = options.provider === 'openai-compatible' ? 'openai-compatible' : 'local';
+    const provider = options.provider === 'openai-compatible'
+      ? 'openai-compatible'
+      : options.provider === 'local'
+        ? 'local'
+        : 'muse';
+
+    if (provider === 'muse') {
+      const session = new MuseTranscriptionSession({
+        language: options.language || undefined,
+      });
+      await session.connect();
+      return { session };
+    }
 
     if (provider === 'openai-compatible') {
       const config = options.openaiCompatible || {};
@@ -163,7 +177,11 @@ export function createDictationService({ modelsDir }) {
    * @param {{ provider?: string, localModel?: string }} [options]
    */
   const getStatus = async (options = {}) => {
-    const provider = options.provider === 'openai-compatible' ? 'openai-compatible' : 'local';
+    const provider = options.provider === 'openai-compatible'
+      ? 'openai-compatible'
+      : options.provider === 'local'
+        ? 'local'
+        : 'muse';
     const modelId = resolveLocalModelId(options.localModel);
 
     const describeModel = async (id, catalog) => ({
@@ -182,7 +200,7 @@ export function createDictationService({ modelsDir }) {
       LOCAL_TTS_MODEL_IDS.map((id) => describeModel(id, LOCAL_TTS_MODEL_CATALOG)),
     );
 
-    if (provider === 'openai-compatible') {
+    if (provider === 'muse' || provider === 'openai-compatible') {
       return { provider, available: true, models, ttsModels };
     }
 

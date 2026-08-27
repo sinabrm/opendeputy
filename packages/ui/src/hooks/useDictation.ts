@@ -48,6 +48,12 @@ const toError = (value: unknown): Error =>
 const getDictationStartOptions = (): DictationStartOptions => {
     const state = useConfigStore.getState();
     const language = state.sttLanguage?.trim();
+    if (state.sttProvider === 'muse') {
+        return {
+            provider: 'muse',
+            ...(language ? { language } : {}),
+        };
+    }
     if (state.sttProvider === 'openai-compatible') {
         return {
             provider: 'openai-compatible',

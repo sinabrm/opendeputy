@@ -12,7 +12,7 @@ import { openRuntimeWebSocket } from '@/lib/relay/runtime-socket';
 import { type RelayTunnelWebSocket } from '@/lib/relay/tunnel-client';
 
 export interface DictationStartOptions {
-    provider?: 'local' | 'openai-compatible';
+    provider?: 'muse' | 'local' | 'openai-compatible';
     language?: string;
     localModel?: string;
     openaiCompatible?: {

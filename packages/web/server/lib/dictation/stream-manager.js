@@ -87,9 +87,12 @@ export class DictationStreamManager {
       if (!state) {
         return;
       }
+      const committedAudioBytes = state.pendingCommitAudioBytes.shift() ?? 0;
       state.committedSegmentIds.push(segmentId);
-      state.bytesSinceCommit = 0;
-      state.peakSinceCommit = 0;
+      state.audioSecondsBySegmentId.set(
+        segmentId,
+        committedAudioBytes / Math.max(1, state.outputRate * 2),
+      );
 
       if (state.finishRequested && state.awaitingFinalCommit) {
         state.awaitingFinalCommit = false;
@@ -144,12 +147,14 @@ export class DictationStreamManager {
       nextSeqToForward: 0,
       ackSeq: -1,
       autoCommitBytes:
-        this.autoCommitSeconds > 0
+        this.autoCommitSeconds > 0 && stt.supportsAutoCommit !== false
           ? Math.max(1, Math.round(this.autoCommitSeconds * stt.requiredSampleRate * 2))
           : 0,
       bytesSinceCommit: 0,
       peakSinceCommit: 0,
       committedSegmentIds: [],
+      pendingCommitAudioBytes: [],
+      audioSecondsBySegmentId: new Map(),
       transcriptsBySegmentId: new Map(),
       finalTranscriptSegmentIds: new Set(),
       awaitingFinalCommit: false,
@@ -328,7 +333,14 @@ export class DictationStreamManager {
       pendingCommittedSegments +
       pendingUncommittedTranscriptSegments +
       (state.awaitingFinalCommit ? 1 : 0);
-    const pendingAudioSeconds = Math.ceil(Math.max(0, state.bytesSinceCommit) / bytesPerSecond);
+    const pendingCommittedAudioSeconds = state.committedSegmentIds.reduce((seconds, segmentId) => {
+      return state.finalTranscriptSegmentIds.has(segmentId)
+        ? seconds
+        : seconds + (state.audioSecondsBySegmentId.get(segmentId) ?? 0);
+    }, 0);
+    const pendingAudioSeconds = Math.ceil(
+      Math.max(0, state.bytesSinceCommit) / bytesPerSecond + pendingCommittedAudioSeconds,
+    );
     const missingSeqCount =
       state.finalSeq === null ? 0 : Math.max(0, state.finalSeq - state.ackSeq);
 
@@ -357,6 +369,7 @@ export class DictationStreamManager {
       return;
     }
 
+    state.pendingCommitAudioBytes.push(state.bytesSinceCommit);
     state.bytesSinceCommit = 0;
     state.peakSinceCommit = 0;
     state.stt.commit();
@@ -387,6 +400,9 @@ export class DictationStreamManager {
       } else {
         state.awaitingFinalCommit = true;
         try {
+          state.pendingCommitAudioBytes.push(state.bytesSinceCommit);
+          state.bytesSinceCommit = 0;
+          state.peakSinceCommit = 0;
           state.stt.commit();
         } catch (error) {
           this.failAndCleanupStream(dictationId, error?.message || String(error), true);
