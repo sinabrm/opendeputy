@@ -1714,7 +1714,7 @@ export const settingsDict = {
   'settings.voice.page.provider.local': 'Lokal',
   'settings.voice.page.tooltip.sttLocal': 'On-device Transkription auf dem OpenDeputy-Server. Modelle werden automatisch heruntergeladen; kein API-Schlüssel erforderlich.',
   'settings.voice.page.tooltip.sttMuse': 'Cloud-Transkription mit Muse nach dem Ende der Aufnahme. Kein lokaler Modelldownload und kein API-Schlüssel erforderlich.',
-  'settings.voice.page.tooltip.localTts': 'On-device Synthese auf dem OpenDeputy-Server (Kokoro, Englisch). Das Modell wird automatisch heruntergeladen; kein API-Schlüssel erforderlich.',
+  'settings.voice.page.tooltip.localTts': 'Kostenlose Synthese auf dem Gerät (Kokoro für Englisch, Piper für Persisch und Gerätestimmen für andere Sprachen). Modelle werden automatisch geladen; kein API-Schlüssel nötig.',
   'settings.voice.page.stt.model.parakeetV2': 'Parakeet v2 (Englisch)',
   'settings.voice.page.stt.model.parakeetV3': 'Parakeet v3 (25 europäische Sprachen)',
   'settings.voice.page.stt.model.whisperBase': 'Whisper base (mehrsprachig)',

@@ -1758,7 +1758,7 @@ export const settingsDict = {
   "settings.voice.page.provider.local": "Local",
   "settings.voice.page.tooltip.sttLocal": "Transcripción local en el servidor de OpenDeputy. Los modelos se descargan automáticamente; no se necesita clave de API.",
   "settings.voice.page.tooltip.sttMuse": "Transcripción en la nube con Muse al terminar la grabación. No requiere descargar un modelo local ni una clave de API.",
-  "settings.voice.page.tooltip.localTts": "Síntesis local en el servidor de OpenDeputy (Kokoro, inglés). El modelo se descarga automáticamente; no se necesita clave de API.",
+  "settings.voice.page.tooltip.localTts": "Síntesis gratuita en el dispositivo (Kokoro para inglés, Piper para persa y voces del dispositivo para otros idiomas). Los modelos se descargan automáticamente; no hace falta clave API.",
   "settings.voice.page.stt.model.parakeetV2": "Parakeet v2 (inglés)",
   "settings.voice.page.stt.model.parakeetV3": "Parakeet v3 (25 idiomas europeos)",
   "settings.voice.page.stt.model.whisperBase": "Whisper base (multilingüe)",

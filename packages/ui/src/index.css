@@ -1777,3 +1777,35 @@ html.desktop-runtime [class*="cursor-pointer"] {
 html.desktop-runtime .markdown-content [data-openchamber-file-link="true"] {
   cursor: default;
 }
+
+@keyframes voice-orb-breathe {
+  0%, 100% { transform: scale(0.94); opacity: 0.45; }
+  50% { transform: scale(1.04); opacity: 0.8; }
+}
+
+@keyframes voice-orb-drift {
+  0%, 100% { transform: translate3d(-5%, 2%, 0) scale(0.96); opacity: 0.55; }
+  50% { transform: translate3d(6%, -4%, 0) scale(1.06); opacity: 0.8; }
+}
+
+.voice-orb-halo {
+  animation: voice-orb-breathe 2.8s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+.voice-orb-halo--speaking {
+  animation-duration: 1.5s;
+}
+
+.voice-orb-drift {
+  animation: voice-orb-drift 4.2s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .voice-orb-halo,
+  .voice-orb-drift {
+    animation: none;
+    will-change: auto;
+  }
+}

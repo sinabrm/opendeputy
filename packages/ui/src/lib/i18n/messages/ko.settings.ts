@@ -1758,7 +1758,7 @@ export const settingsDict = {
   'settings.voice.page.provider.local': '로컬',
   'settings.voice.page.tooltip.sttLocal': 'OpenDeputy 서버에서 로컬로 변환합니다. 모델은 자동으로 다운로드되며 API 키가 필요 없습니다.',
   'settings.voice.page.tooltip.sttMuse': '녹음이 끝나면 Muse로 클라우드 전사를 수행합니다. 로컬 모델 다운로드나 API 키가 필요 없습니다.',
-  'settings.voice.page.tooltip.localTts': 'OpenDeputy 서버에서 로컬로 음성을 합성합니다(Kokoro, 영어). 모델은 자동으로 다운로드되며 API 키가 필요 없습니다.',
+  'settings.voice.page.tooltip.localTts': '무료 온디바이스 음성 합성입니다(영어는 Kokoro, 페르시아어는 Piper, 기타 언어는 기기 음성). 모델은 자동 다운로드되며 API 키가 필요 없습니다.',
   'settings.voice.page.stt.model.parakeetV2': 'Parakeet v2 (영어)',
   'settings.voice.page.stt.model.parakeetV3': 'Parakeet v3 (유럽 25개 언어)',
   'settings.voice.page.stt.model.whisperBase': 'Whisper base (다국어)',

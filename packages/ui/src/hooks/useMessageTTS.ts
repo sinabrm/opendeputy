@@ -12,6 +12,7 @@ import { useSayTTS } from './useSayTTS';
 import { useLocalTTS } from './useLocalTTS';
 import { browserVoiceService } from '@/lib/voice/browserVoiceService';
 import { sanitizeForTTS } from '@/lib/voice/summarize';
+import { detectSpeechLanguage, selectLocalSpeechModel } from '@/lib/voice/speech-language';
 import { runtimeFetch } from '@/lib/runtime-fetch';
 
 // Below this length the reply is comfortable to listen to as-is; summarizing
@@ -117,6 +118,22 @@ export function useMessageTTS(): UseMessageTTSReturn {
             const shouldUseRaw = ttsInputMode === 'raw' && isServerProvider;
             const sanitizedText = sanitizeForTTS(sourceText);
             const textToSpeak = shouldUseRaw ? sourceText : sanitizedText;
+            const speakWithBrowser = async () => {
+                const language = detectSpeechLanguage(sanitizedText, navigator.language || 'en-US');
+                await browserVoiceService.waitForVoices();
+                await browserVoiceService.resumeAudioContext();
+                await browserVoiceService.speakText(
+                    sanitizedText,
+                    language,
+                    () => setIsPlaying(false),
+                    {
+                        rate: speechRate,
+                        pitch: speechPitch,
+                        volume: speechVolume,
+                        voiceName: voiceProvider === 'browser' ? browserVoice || undefined : undefined,
+                    },
+                );
+            };
             
             if (isServerProvider && isServerTTSAvailable) {
                 const voice = voiceProvider === 'openai-compatible' ? openaiCompatibleVoice : openaiVoice;
@@ -134,12 +151,21 @@ export function useMessageTTS(): UseMessageTTSReturn {
                     onError: () => setIsPlaying(false),
                 });
             } else if (voiceProvider === 'local') {
-                await speakLocalTTS(sanitizedText, {
-                    speakerId: localTtsVoiceId,
-                    speed: speechRate,
-                    onEnd: () => setIsPlaying(false),
-                    onError: () => setIsPlaying(false),
-                });
+                const language = detectSpeechLanguage(sanitizedText, navigator.language || 'en-US');
+                const modelId = selectLocalSpeechModel(language);
+                let localFailed = false;
+                if (modelId) {
+                    await speakLocalTTS(sanitizedText, {
+                        modelId,
+                        speakerId: modelId === 'kokoro-en-v0_19' ? localTtsVoiceId : 0,
+                        speed: speechRate,
+                        onEnd: () => setIsPlaying(false),
+                        onError: () => { localFailed = true; },
+                    });
+                    if (!localFailed) return;
+                    setIsPlaying(true);
+                }
+                await speakWithBrowser();
             } else if (voiceProvider === 'say' && isSayTTSAvailable) {
                 const wordsPerMinute = Math.round(100 + (speechRate - 0.5) * 200);
                 await speakSayTTS(sanitizedText, {
@@ -149,20 +175,7 @@ export function useMessageTTS(): UseMessageTTSReturn {
                     onError: () => setIsPlaying(false),
                 });
             } else {
-                // Browser TTS
-                await browserVoiceService.waitForVoices();
-                await browserVoiceService.resumeAudioContext();
-                await browserVoiceService.speakText(
-                    sanitizedText,
-                    navigator.language || 'en-US',
-                    () => setIsPlaying(false),
-                    {
-                        rate: speechRate,
-                        pitch: speechPitch,
-                        volume: speechVolume,
-                        voiceName: browserVoice || undefined,
-                    }
-                );
+                await speakWithBrowser();
             }
         } catch (err) {
             console.error('[useMessageTTS] Playback error:', err);

@@ -1,5 +1,5 @@
 /**
- * Sherpa-onnx offline TTS (Kokoro). Runs inside the dictation worker process
+ * Sherpa-onnx offline TTS (Kokoro and Piper/VITS). Runs inside the dictation worker process
  * only — never load the native addon in the main server process.
  */
 
@@ -25,26 +25,34 @@ function float32ToPcm16le(samples) {
 
 export class SherpaTtsEngine {
   /**
-   * @param {{ modelDir: string, files: { model: string, voices: string, tokens: string, espeakData: string }, numThreads?: number }} config
+   * @param {{ type: 'kokoro'|'vits', modelDir: string, files: { model: string, voices?: string, tokens: string, espeakData: string }, numThreads?: number }} config
    */
   constructor(config) {
     const modelPath = path.join(config.modelDir, config.files.model);
-    const voicesPath = path.join(config.modelDir, config.files.voices);
     const tokensPath = path.join(config.modelDir, config.files.tokens);
     const dataDir = path.join(config.modelDir, config.files.espeakData);
 
     assertFileExists(modelPath, 'TTS model');
-    assertFileExists(voicesPath, 'TTS voices');
     assertFileExists(tokensPath, 'TTS tokens');
     assertFileExists(dataDir, 'TTS espeak-ng dataDir');
 
-    const sherpa = loadSherpaOnnxNode();
-    if (typeof sherpa.OfflineTts !== 'function') {
-      throw new Error('sherpa-onnx-node OfflineTts is unavailable');
-    }
-
-    this.tts = new sherpa.OfflineTts({
-      model: {
+    let modelConfig;
+    if (config.type === 'vits') {
+      modelConfig = {
+        vits: {
+          model: modelPath,
+          tokens: tokensPath,
+          dataDir,
+          lengthScale: 1.0,
+        },
+      };
+    } else {
+      if (!config.files.voices) {
+        throw new Error('Kokoro TTS requires a voices file');
+      }
+      const voicesPath = path.join(config.modelDir, config.files.voices);
+      assertFileExists(voicesPath, 'TTS voices');
+      modelConfig = {
         kokoro: {
           model: modelPath,
           voices: voicesPath,
@@ -52,7 +60,16 @@ export class SherpaTtsEngine {
           dataDir,
           lengthScale: 1.0,
         },
-      },
+      };
+    }
+
+    const sherpa = loadSherpaOnnxNode();
+    if (typeof sherpa.OfflineTts !== 'function') {
+      throw new Error('sherpa-onnx-node OfflineTts is unavailable');
+    }
+
+    this.tts = new sherpa.OfflineTts({
+      model: modelConfig,
       numThreads: config.numThreads ?? 2,
       provider: 'cpu',
       maxNumSentences: 1,
