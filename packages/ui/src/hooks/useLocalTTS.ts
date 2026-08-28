@@ -11,9 +11,15 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { prepareLocalDictationModel } from '@/lib/dictation/dictation-model-readiness';
 import { runtimeFetch } from '@/lib/runtime-fetch';
 
+export const KOKORO_EN_TTS_MODEL_ID = 'kokoro-en-v0_19';
+export const PIPER_FA_EN_TTS_MODEL_ID = 'vits-piper-fa-en-medium';
+
 export interface LocalTTSSpeakOptions {
+    /** Managed sherpa-onnx model id. */
+    modelId?: typeof KOKORO_EN_TTS_MODEL_ID | typeof PIPER_FA_EN_TTS_MODEL_ID;
     /** Kokoro speaker id (0-10) */
     speakerId?: number;
     /** Playback speed multiplier (1.0 = normal) */
@@ -119,6 +125,7 @@ export function useLocalTTS(): UseLocalTTSReturn {
     const [error, setError] = useState<string | null>(null);
 
     const audioSourceRef = useRef<AudioBufferSourceNode | null>(null);
+    const audioPlaybackResolveRef = useRef<(() => void) | null>(null);
     const sessionRef = useRef<PlaybackSession | null>(null);
 
     const unlockAudio = useCallback(async (): Promise<void> => {
@@ -145,6 +152,8 @@ export function useLocalTTS(): UseLocalTTSReturn {
             sessionRef.current = null;
         }
         if (audioSourceRef.current) {
+            const resolvePlayback = audioPlaybackResolveRef.current;
+            audioPlaybackResolveRef.current = null;
             try {
                 audioSourceRef.current.onended = null;
                 audioSourceRef.current.stop();
@@ -152,6 +161,7 @@ export function useLocalTTS(): UseLocalTTSReturn {
                 // Already stopped
             }
             audioSourceRef.current = null;
+            resolvePlayback?.();
         }
         setIsPlaying(false);
     }, []);
@@ -177,6 +187,7 @@ export function useLocalTTS(): UseLocalTTSReturn {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     text: chunk,
+                    model: options?.modelId ?? KOKORO_EN_TTS_MODEL_ID,
                     ...(typeof options?.speakerId === 'number' ? { speakerId: options.speakerId } : {}),
                     ...(typeof options?.speed === 'number' ? { speed: options.speed } : {}),
                 }),
@@ -203,9 +214,13 @@ export function useLocalTTS(): UseLocalTTSReturn {
                 source.buffer = audioBuffer;
                 source.connect(ctx.destination);
                 audioSourceRef.current = source;
+                audioPlaybackResolveRef.current = resolve;
                 source.onended = () => {
                     if (audioSourceRef.current === source) {
                         audioSourceRef.current = null;
+                    }
+                    if (audioPlaybackResolveRef.current === resolve) {
+                        audioPlaybackResolveRef.current = null;
                     }
                     resolve();
                 };
@@ -216,6 +231,16 @@ export function useLocalTTS(): UseLocalTTSReturn {
         try {
             setIsPlaying(true);
             options?.onStart?.();
+
+            const modelId = options?.modelId ?? KOKORO_EN_TTS_MODEL_ID;
+            await prepareLocalDictationModel({
+                provider: 'local',
+                modelId,
+                signal: session.abort.signal,
+            });
+            if (session.cancelled) {
+                return;
+            }
 
             // Pipelined: synthesize chunk N+1 while chunk N is playing.
             let nextFetch: Promise<ArrayBuffer> = fetchChunk(chunks[0]);

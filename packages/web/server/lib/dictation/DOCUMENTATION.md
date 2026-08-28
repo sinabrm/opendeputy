@@ -6,7 +6,7 @@ over a WebSocket; the server runs the transcription and streams live partial
 transcripts back when the selected provider supports them. Muse, the default,
 buffers the recording and returns one final transcript after the user stops.
 
-Local TTS (Kokoro via sherpa-onnx OfflineTts) runs in the same worker process
+Local TTS (Kokoro and Piper/VITS via sherpa-onnx OfflineTts) runs in the same worker process
 and is exposed as `POST /api/dictation/tts/speak` (JSON `{text, speakerId?,
 speed?, model?}` → WAV bytes; 503 with `reasonCode` while the model is
 downloading). TTS models live in the same catalog/downloader as STT models
@@ -26,6 +26,7 @@ original model sources and the licenses declared by their publishers are:
 | `whisper-base-int8` | [OpenAI Whisper](https://github.com/openai/whisper) | MIT |
 | `whisper-tiny-int8` | [OpenAI Whisper](https://github.com/openai/whisper) | MIT |
 | `kokoro-en-v0_19` | [Kokoro-82M v0.19](https://huggingface.co/hexgrad/Kokoro-82M/tree/e6a2633a608163a6383195168a1abf0c4b8aeaa7) | Apache-2.0 |
+| `vits-piper-fa-en-medium` | [Piper Reza Hedayatfar / Ibrahim Walk](https://github.com/k2-fsa/sherpa-onnx/releases/tag/tts-models) | CC0-1.0 |
 
 These entries describe the model weights, not every support file in a converted
 archive. `local/model-catalog.js` is the source of truth for each archive URL,

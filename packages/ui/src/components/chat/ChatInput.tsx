@@ -79,6 +79,7 @@ import { sessionEvents } from '@/lib/sessionEvents';
 import { fetchResponseStyleInstruction } from '@/lib/responseStyle';
 import { wrapSystemReminder } from '@/lib/systemReminder';
 import { getSyncMessages } from '@/sync/sync-refs';
+import { useVoiceStore } from '@/sync/voice-store';
 import { eventMatchesShortcut, getEffectiveShortcutCombo, normalizeCombo } from '@/lib/shortcuts';
 import {
     assignImageAttachmentFilenames,
@@ -166,6 +167,10 @@ const MOBILE_COMPOSER_BOUND_GAP_PX = 4;
 const EMPTY_QUEUE: QueuedMessage[] = [];
 const EMPTY_SENDING_IDS: string[] = [];
 const COMPACT_CHAT_PLACEHOLDER_MAX_WIDTH = 560;
+const VOICE_CONVERSATION_RESPONSE_INSTRUCTION = wrapSystemReminder(
+    'This is a live voice conversation. Reply in the same language as the user, naturally and directly. '
+    + 'Prefer one to three short sentences unless the user explicitly asks for detail. Avoid markdown unless it is essential.',
+);
 const renameFileForAttachmentCitation = (file: File, filename: string): File => {
     if (file.name === filename) {
         return file;
@@ -818,6 +823,14 @@ const ChatInputComponent: React.FC<ChatInputProps> = ({ onOpenSettings, scrollTo
 
     // Session activity for queue availability and controls
     const { phase: sessionPhase } = useCurrentSessionActivity();
+    const openVoiceConversation = useVoiceStore((state) => state.setOpen);
+    const registerVoiceSendHandler = useVoiceStore((state) => state.registerSendHandler);
+    const handleStartVoiceConversation = React.useCallback(() => {
+        if (!currentSessionId && !newSessionDraftOpen) {
+            openNewSessionDraft(currentDirectory ? { directoryOverride: currentDirectory } : undefined);
+        }
+        openVoiceConversation(true);
+    }, [currentDirectory, currentSessionId, newSessionDraftOpen, openNewSessionDraft, openVoiceConversation]);
     const autoReviewRunning = useAutoReviewStore(React.useCallback((state) => {
         if (!currentSessionId) return false;
         const run = state.runsByOriginalSessionID[currentSessionId];
@@ -883,6 +896,8 @@ const ChatInputComponent: React.FC<ChatInputProps> = ({ onOpenSettings, scrollTo
             starter chips: on mobile the collapsed pill has no mounted textarea,
             so the DOM-first input snapshot would read empty content. */
         presetText?: string;
+        /** Hidden context used only for this submitted turn. */
+        syntheticTexts?: string[];
     };
     const handleSubmitRef = React.useRef<(options?: SubmitOptions) => Promise<void>>(async () => {});
 
@@ -1054,6 +1069,7 @@ const ChatInputComponent: React.FC<ChatInputProps> = ({ onOpenSettings, scrollTo
         // Inline review comments and synthetic context are consumed before
         // assembly so a failed send can restore exactly what it took.
         const syntheticParts = consumePendingSyntheticParts();
+        const optionSyntheticTexts = options?.syntheticTexts ?? [];
         const consumedDraftTarget = queuedOnly ? null : inlineDraftTarget;
         const drafts: InlineCommentDraft[] = consumedDraftTarget
             ? consumeDrafts(consumedDraftTarget)
@@ -1068,7 +1084,10 @@ const ChatInputComponent: React.FC<ChatInputProps> = ({ onOpenSettings, scrollTo
             composerText: !queuedOnly && inputSnapshot.hasContent ? inputSnapshot.message : null,
             composerAttachments: attachedFiles,
             inlineComments: drafts,
-            syntheticTexts: syntheticParts?.map((part) => part.text) ?? [],
+            syntheticTexts: [
+                ...optionSyntheticTexts,
+                ...(syntheticParts?.map((part) => part.text) ?? []),
+            ],
             linkedIssueContext: linkedIssue?.contextText ?? null,
             linkedPr: linkedPr
                 ? { instructions: linkedPr.instructionsText, context: linkedPr.contextText }
@@ -1400,6 +1419,19 @@ const ChatInputComponent: React.FC<ChatInputProps> = ({ onOpenSettings, scrollTo
         const next = appendInlineText(composerRef.current?.getValue() ?? messageRef.current, text);
         void handleSubmitRef.current({ presetText: next });
     }, []);
+
+    const handleVoiceConversationSend = React.useCallback((text: string) => {
+        const next = appendInlineText(composerRef.current?.getValue() ?? messageRef.current, text);
+        void handleSubmitRef.current({
+            presetText: next,
+            syntheticTexts: [VOICE_CONVERSATION_RESPONSE_INSTRUCTION],
+        });
+    }, []);
+
+    React.useEffect(
+        () => registerVoiceSendHandler(handleVoiceConversationSend),
+        [handleVoiceConversationSend, registerVoiceSendHandler],
+    );
 
     // Preset chips rendered outside this component (e.g. under the welcome
     // message on narrow surfaces) request a submit via the input store; consume
@@ -2628,6 +2660,7 @@ const ChatInputComponent: React.FC<ChatInputProps> = ({ onOpenSettings, scrollTo
                         onOpenIssuePicker={openIssuePicker}
                         onOpenPrPicker={openPrPicker}
                         onOpenAttachSheet={openMobileAttachSheet}
+                        onStartVoiceConversation={handleStartVoiceConversation}
                         onStartDictation={toggleDictation}
                         onAbort={handleAbort}
                     />
@@ -2811,6 +2844,7 @@ const ChatInputComponent: React.FC<ChatInputProps> = ({ onOpenSettings, scrollTo
                         onPrimaryAction={handlePrimaryAction}
                         onQueueMessage={handleQueueMessage}
                         onAbort={handleAbort}
+                        onStartVoiceConversation={handleStartVoiceConversation}
                         onStartDictation={toggleDictation}
                         onDictationInsert={handleDictationInsert}
                         onDictationInsertAndSend={handleDictationInsertAndSend}

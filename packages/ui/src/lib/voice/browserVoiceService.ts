@@ -53,6 +53,7 @@ class BrowserVoiceService {
   private isSpeaking = false;
   private audioContext: AudioContext | null = null;
   private audioUnlockRequired = false;
+  private finishCurrentSpeech: (() => void) | null = null;
 
   /**
    * Check if browser supports Web Speech API
@@ -426,7 +427,7 @@ class BrowserVoiceService {
    * @param lang - BCP 47 language tag for voice selection
    * @param onEnd - Optional callback when speech ends
    * @param options - Optional TTS configuration (rate, pitch, volume, voiceName)
-   * @returns Promise that resolves when speech starts
+   * @returns Promise that resolves when speech finishes or is cancelled
    */
   async speakText(
     text: string,
@@ -447,12 +448,12 @@ class BrowserVoiceService {
     // Small delay to ensure audio context is ready
     await new Promise(resolve => setTimeout(resolve, 50));
 
+    // Finish any previous request before replacing the browser utterance.
+    this.cancelSpeech();
+
     // Set speaking state and pause listening to avoid hearing ourselves
     this.isSpeaking = true;
     this.pauseListening();
-
-    // Cancel any ongoing speech
-    window.speechSynthesis.cancel();
 
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = lang;
@@ -489,20 +490,37 @@ class BrowserVoiceService {
 
     return new Promise((resolve, reject) => {
       let hasStarted = false;
+      let settled = false;
+
+      const finish = () => {
+        if (settled) return;
+        settled = true;
+        if (this.finishCurrentSpeech === finish) {
+          this.finishCurrentSpeech = null;
+        }
+        resolve();
+      };
+      this.finishCurrentSpeech = finish;
 
       utterance.onstart = () => {
         hasStarted = true;
         console.log('[BrowserVoiceService] Speech started');
-        resolve();
       };
 
       utterance.onend = () => {
+        if (settled) return;
         this.isSpeaking = false;
         console.log('[BrowserVoiceService] Speech ended');
         onEnd?.();
+        finish();
       };
 
       utterance.onerror = (event) => {
+        if (settled) return;
+        settled = true;
+        if (this.finishCurrentSpeech === finish) {
+          this.finishCurrentSpeech = null;
+        }
         this.isSpeaking = false;
         console.error('[BrowserVoiceService] Speech synthesis error:', event.error);
 
@@ -538,9 +556,13 @@ class BrowserVoiceService {
    * Cancel ongoing speech
    */
   cancelSpeech(): void {
+    const finish = this.finishCurrentSpeech;
+    this.finishCurrentSpeech = null;
+    finish?.();
     if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel();
     }
+    this.isSpeaking = false;
   }
 
   /**

@@ -49,7 +49,7 @@ export function createDictationRuntime({
 }) {
   const service = createDictationService({ modelsDir });
 
-  // Local text-to-speech (Kokoro in the dictation worker). Returns WAV bytes;
+  // Local text-to-speech (Kokoro/Piper in the dictation worker). Returns WAV bytes;
   // 503 with a reason code while the model is still downloading.
   app.post('/api/dictation/tts/speak', express.json({ limit: '1mb' }), async (req, res) => {
     try {

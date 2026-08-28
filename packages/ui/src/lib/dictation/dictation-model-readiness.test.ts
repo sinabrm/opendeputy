@@ -113,6 +113,31 @@ describe('local dictation model preparation', () => {
         expect(calls).toEqual(['/api/dictation/status']);
     });
 
+    test('finds installed text-to-speech models in the TTS catalog snapshot', async () => {
+        const calls: string[] = [];
+        const fetchRuntime = async (input: string | URL | Request): Promise<Response> => {
+            calls.push(String(input));
+            return jsonResponse({
+                models: [],
+                ttsModels: [{
+                    id: 'vits-piper-fa-en-medium',
+                    installed: true,
+                    downloading: false,
+                    downloadError: null,
+                }],
+            });
+        };
+
+        await prepareLocalDictationModel({
+            provider: 'local',
+            modelId: 'vits-piper-fa-en-medium',
+            signal: new AbortController().signal,
+            fetchRuntime: fetchRuntime as typeof runtimeFetch,
+        });
+
+        expect(calls).toEqual(['/api/dictation/status']);
+    });
+
     test('starts the download and waits until installation completes', async () => {
         const calls: string[] = [];
         let statusReads = 0;

@@ -286,9 +286,16 @@ const KOKORO_VOICE_OPTIONS = [
     { id: 10, label: 'Lewis (bm)' },
 ];
 
-const LOCAL_TTS_MODEL_ID = 'kokoro-en-v0_19';
+const LOCAL_TTS_MODELS = [
+    { id: 'kokoro-en-v0_19', label: 'Kokoro · English', size: '305 MB' },
+    { id: 'vits-piper-fa-en-medium', label: 'Piper · فارسی', size: '64 MB' },
+] as const;
 
-const LocalTtsModelStatus = () => {
+const LocalTtsModelStatusEntry = ({ modelId, label, size }: {
+    modelId: string;
+    label: string;
+    size: string;
+}) => {
     const { t } = useI18n();
     const [model, setModel] = useState<DictationModelState | null>(null);
     const [requesting, setRequesting] = useState(false);
@@ -301,7 +308,7 @@ const LocalTtsModelStatus = () => {
             }
             const data = await response.json();
             const entry = Array.isArray(data?.ttsModels)
-                ? data.ttsModels.find((m: DictationModelState) => m.id === LOCAL_TTS_MODEL_ID)
+                ? data.ttsModels.find((m: DictationModelState) => m.id === modelId)
                 : null;
             if (entry) {
                 setModel(entry);
@@ -309,7 +316,7 @@ const LocalTtsModelStatus = () => {
         } catch {
             // Display-only status; keep the previous state on fetch failure.
         }
-    }, []);
+    }, [modelId]);
 
     useEffect(() => {
         void refresh();
@@ -329,8 +336,8 @@ const LocalTtsModelStatus = () => {
         setRequesting(true);
         try {
             const path = method === 'POST'
-                ? `/api/dictation/models/${LOCAL_TTS_MODEL_ID}/download`
-                : `/api/dictation/models/${LOCAL_TTS_MODEL_ID}`;
+                ? `/api/dictation/models/${modelId}/download`
+                : `/api/dictation/models/${modelId}`;
             await runtimeFetch(path, { method });
             await refresh();
         } catch {
@@ -346,8 +353,8 @@ const LocalTtsModelStatus = () => {
 
     return (
         <div className="flex items-center gap-2 py-1.5">
-            <span className="typography-ui-label text-foreground">Kokoro</span>
-            <span className="typography-ui-compact tabular-nums text-muted-foreground">305 MB</span>
+            <span className="typography-ui-label text-foreground">{label}</span>
+            <span className="typography-ui-compact tabular-nums text-muted-foreground">{size}</span>
             {model.installed ? (
                 <>
                     <Icon
@@ -393,6 +400,19 @@ const LocalTtsModelStatus = () => {
         </div>
     );
 };
+
+const LocalTtsModelStatus = () => (
+    <div className="flex flex-col">
+        {LOCAL_TTS_MODELS.map((model) => (
+            <LocalTtsModelStatusEntry
+                key={model.id}
+                modelId={model.id}
+                label={model.label}
+                size={model.size}
+            />
+        ))}
+    </div>
+);
 
 const OPENAI_VOICE_OPTIONS = [
     { value: 'alloy', label: 'Alloy' },

@@ -67,8 +67,12 @@ const parseLocalModelSnapshot = (payload: unknown, modelId: string): LocalModelS
     if (!payload || typeof payload !== 'object') {
         return null;
     }
-    const models = (payload as { models?: unknown }).models;
-    if (!Array.isArray(models)) {
+    const body = payload as { models?: unknown; ttsModels?: unknown };
+    const models = [
+        ...(Array.isArray(body.models) ? body.models : []),
+        ...(Array.isArray(body.ttsModels) ? body.ttsModels : []),
+    ];
+    if (models.length === 0) {
         return null;
     }
     const entry = models.find((candidate) =>

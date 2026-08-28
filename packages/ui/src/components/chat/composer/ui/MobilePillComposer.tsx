@@ -39,6 +39,7 @@ export interface MobilePillComposerProps {
     onOpenIssuePicker: () => void;
     onOpenPrPicker: () => void;
     onOpenAttachSheet: () => void;
+    onStartVoiceConversation: () => void;
     onStartDictation: () => void;
     onAbort: () => void;
 }
@@ -64,6 +65,7 @@ export function MobilePillComposer(props: MobilePillComposerProps) {
         onOpenIssuePicker,
         onOpenPrPicker,
         onOpenAttachSheet,
+        onStartVoiceConversation,
         onStartDictation,
         onAbort,
     } = props;
@@ -113,6 +115,15 @@ export function MobilePillComposer(props: MobilePillComposerProps) {
                                 ? t('chat.chatInput.placeholder.chatCompact')
                                 : t('chat.chatInput.placeholder.selectSession')}
                     </span>
+                </button>
+                <button
+                    type="button"
+                    className={footerIconButtonClass}
+                    onClick={onStartVoiceConversation}
+                    title={t('chat.voiceMode.start')}
+                    aria-label={t('chat.voiceMode.start')}
+                >
+                    <Icon name="pulse" className={cn(iconSizeClass, 'text-current')} />
                 </button>
                 <button
                     type="button"

@@ -17,7 +17,7 @@ describe('local speech model catalog transparency', () => {
       ...Object.entries(LOCAL_TTS_MODEL_CATALOG),
     ];
 
-    expect(entries).toHaveLength(5);
+    expect(entries).toHaveLength(6);
     expect(new Set(entries.map(([, spec]) => spec.archiveUrl)).size).toBe(entries.length);
 
     for (const [modelId, spec] of entries) {

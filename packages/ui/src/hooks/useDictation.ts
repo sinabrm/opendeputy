@@ -21,6 +21,7 @@ export interface UseDictationOptions {
     onTranscript?: (text: string) => void;
     onError?: (error: Error) => void;
     canStart?: () => boolean;
+    getStartOptions?: () => DictationStartOptions;
 }
 
 export interface UseDictationResult {
@@ -73,7 +74,7 @@ const getDictationStartOptions = (): DictationStartOptions => {
 };
 
 export function useDictation(options: UseDictationOptions = {}): UseDictationResult {
-    const { onTranscript, onError, canStart } = options;
+    const { onTranscript, onError, canStart, getStartOptions } = options;
 
     const [status, setStatus] = useState<DictationStatus>('idle');
     const [partialTranscript, setPartialTranscript] = useState('');
@@ -94,16 +95,18 @@ export function useDictation(options: UseDictationOptions = {}): UseDictationRes
 
     const onTranscriptRef = useRef(onTranscript);
     const onErrorRef = useRef(onError);
+    const getStartOptionsRef = useRef(getStartOptions);
     useEffect(() => {
         onTranscriptRef.current = onTranscript;
         onErrorRef.current = onError;
-    }, [onTranscript, onError]);
+        getStartOptionsRef.current = getStartOptions;
+    }, [onTranscript, onError, getStartOptions]);
 
     const senderRef = useRef<DictationStreamSender | null>(null);
     if (!senderRef.current) {
         senderRef.current = new DictationStreamSender({
             client: dictationClient,
-            getStartOptions: getDictationStartOptions,
+            getStartOptions: () => getStartOptionsRef.current?.() ?? getDictationStartOptions(),
         });
     }
 
@@ -232,7 +235,7 @@ export function useDictation(options: UseDictationOptions = {}): UseDictationRes
         prepareAbortControllerRef.current = prepareAbortController;
 
         try {
-            const startOptions = getDictationStartOptions();
+            const startOptions = getStartOptionsRef.current?.() ?? getDictationStartOptions();
             await prepareLocalDictationModel({
                 provider: startOptions.provider,
                 modelId: startOptions.localModel,

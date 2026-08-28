@@ -61,6 +61,7 @@ export interface ComposerFooterProps {
     onPrimaryAction: () => void;
     onQueueMessage: () => void;
     onAbort: () => void;
+    onStartVoiceConversation: () => void;
     onStartDictation: () => void;
     onDictationInsert: (text: string) => void;
     onDictationInsertAndSend: (text: string) => void;
@@ -100,6 +101,7 @@ export function ComposerFooter(props: ComposerFooterProps) {
         onPrimaryAction,
         onQueueMessage,
         onAbort,
+        onStartVoiceConversation,
         onStartDictation,
         onDictationInsert,
         onDictationInsertAndSend,
@@ -151,6 +153,16 @@ export function ComposerFooter(props: ComposerFooterProps) {
                         </div>
                         <div className="flex items-center min-w-0 gap-x-1 justify-end">
                             <div className="flex items-center gap-x-1 flex-shrink-0">
+                                <button
+                                    type="button"
+                                    className={footerIconButtonClass}
+                                    onClick={onStartVoiceConversation}
+                                    disabled={dictationActive}
+                                    title={t('chat.voiceMode.start')}
+                                    aria-label={t('chat.voiceMode.start')}
+                                >
+                                    <Icon name="pulse" className={cn(iconSizeClass, 'text-current')} />
+                                </button>
                                 <button
                                     type="button"
                                     className={footerIconButtonClass}
@@ -227,6 +239,16 @@ export function ComposerFooter(props: ComposerFooterProps) {
                     </div>
                     <div className={cn('flex items-center flex-1 justify-end', footerGapClass, 'md:gap-x-3')}>
                         <MemoModelControls className={cn('flex-1 min-w-0 justify-end')} />
+                        <button
+                            type="button"
+                            className={footerIconButtonClass}
+                            onClick={onStartVoiceConversation}
+                            disabled={dictationActive}
+                            title={t('chat.voiceMode.start')}
+                            aria-label={t('chat.voiceMode.start')}
+                        >
+                            <Icon name="pulse" className={cn(iconSizeClass, 'text-current')} />
+                        </button>
                         <MemoComposerDictation
                             radius={chatInputRadius}
                             isMobile={isMobile}

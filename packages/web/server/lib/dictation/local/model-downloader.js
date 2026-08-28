@@ -12,6 +12,8 @@ import path from 'path';
 import { Readable } from 'stream';
 import { pipeline } from 'stream/promises';
 import { spawn } from 'child_process';
+import tarStream from 'tar-stream';
+import unbzip2Stream from 'unbzip2-stream';
 
 import { getLocalSttModelSpec } from './model-catalog.js';
 
@@ -136,23 +138,68 @@ async function downloadToFile(url, outputPath, expected, onProgress) {
   }
 }
 
+async function extractTarArchivePortable(archivePath, destDir) {
+  const destinationRoot = path.resolve(destDir);
+  const extract = tarStream.extract();
+
+  extract.on('entry', (header, entry, next) => {
+    const normalizedName = String(header.name || '').replaceAll('\\', '/');
+    const outputPath = path.resolve(destinationRoot, normalizedName);
+    const relative = path.relative(destinationRoot, outputPath);
+    if (!normalizedName || relative.startsWith('..') || path.isAbsolute(relative)) {
+      entry.resume();
+      extract.destroy(new Error(`Unsafe path in speech model archive: ${header.name}`));
+      return;
+    }
+
+    if (header.type === 'directory') {
+      mkdir(outputPath, { recursive: true })
+        .then(() => {
+          entry.once('end', next);
+          entry.resume();
+        })
+        .catch((error) => extract.destroy(error));
+      return;
+    }
+
+    if (header.type !== 'file') {
+      entry.once('end', next);
+      entry.resume();
+      return;
+    }
+
+    mkdir(path.dirname(outputPath), { recursive: true })
+      .then(() => pipeline(entry, createWriteStream(outputPath)))
+      .then(() => next())
+      .catch((error) => extract.destroy(error));
+  });
+
+  await pipeline(createReadStream(archivePath), unbzip2Stream(), extract);
+}
+
 async function extractTarArchive(archivePath, destDir) {
   await mkdir(destDir, { recursive: true });
 
-  await new Promise((resolve, reject) => {
-    const child = spawn('tar', ['xf', archivePath, '-C', destDir], {
-      stdio: 'ignore',
-      windowsHide: true,
+  try {
+    await new Promise((resolve, reject) => {
+      const child = spawn('tar', ['xf', archivePath, '-C', destDir], {
+        stdio: 'ignore',
+        windowsHide: true,
+      });
+      child.on('error', reject);
+      child.on('exit', (code) => {
+        if (code === 0) {
+          resolve();
+        } else {
+          reject(new Error(`tar exited with code ${code}`));
+        }
+      });
     });
-    child.on('error', reject);
-    child.on('exit', (code) => {
-      if (code === 0) {
-        resolve();
-      } else {
-        reject(new Error(`tar exited with code ${code}`));
-      }
-    });
-  });
+  } catch {
+    // Windows 10's bundled tar can lack a bzip2 filter. Keep the fast native
+    // path where it works, with a dependency-backed fallback on every OS.
+    await extractTarArchivePortable(archivePath, destDir);
+  }
 }
 
 async function isNonEmptyFile(filePath) {

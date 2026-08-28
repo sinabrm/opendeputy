@@ -1,11 +1,16 @@
 import React from 'react';
+import { VoiceConversationDialog } from '@/components/voice/VoiceConversationDialog';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
+import { useCurrentSessionActivity } from '@/hooks/useSessionActivity';
+import { useEffectiveDirectory } from '@/hooks/useEffectiveDirectory';
 import { usePwaManifestSync } from '@/hooks/usePwaManifestSync';
 import { useQueuedMessageAutoSend } from '@/hooks/useQueuedMessageAutoSend';
 import { useSessionAutoCleanup } from '@/hooks/useSessionAutoCleanup';
 import { useWindowControlsOverlayLayout } from '@/hooks/useWindowControlsOverlayLayout';
 import { preloadLocalDictationModel } from '@/lib/dictation/dictation-model-readiness';
 import { useConfigStore } from '@/stores/useConfigStore';
+import { useSessionUIStore } from '@/sync/session-ui-store';
+import { useVoiceStore } from '@/sync/voice-store';
 import { setOptimisticRefs } from '@/sync/session-actions';
 import { markSessionViewed } from '@/sync/notification-store';
 import { setExternallyViewedSession } from '@/sync/sync-context';
@@ -105,13 +110,74 @@ const LocalDictationModelPreloadEffect: React.FC<{ enabled: boolean }> = ({ enab
   return null;
 };
 
+const LOCAL_TTS_PRELOAD_MODELS = ['kokoro-en-v0_19', 'vits-piper-fa-en-medium'] as const;
+
+const LocalVoiceModelPreloadEffect: React.FC<{ enabled: boolean }> = ({ enabled }) => {
+  const isInitialized = useConfigStore((state) => state.isInitialized);
+
+  React.useEffect(() => {
+    if (!enabled || !isInitialized) return;
+
+    const controller = new AbortController();
+    const preload = () => {
+      for (const modelId of LOCAL_TTS_PRELOAD_MODELS) {
+        void preloadLocalDictationModel({ modelId, signal: controller.signal }).catch(() => {
+          // Playback retries authoritatively when background preparation
+          // cannot complete because the device is offline or low on disk.
+        });
+      }
+    };
+
+    preload();
+    window.addEventListener('online', preload);
+    return () => {
+      controller.abort();
+      window.removeEventListener('online', preload);
+    };
+  }, [enabled, isInitialized]);
+
+  return null;
+};
+
+/**
+ * Keep the voice dialog above the replaceable chat composer. Creating a session
+ * from the first voice turn swaps ChatInput for the session view; mounting the
+ * dialog here keeps its dictation stream and TTS state alive through that swap.
+ */
+const VoiceConversationHost: React.FC = () => {
+  const isOpen = useVoiceStore((state) => state.isOpen);
+  const setOpen = useVoiceStore((state) => state.setOpen);
+  const sendText = useVoiceStore((state) => state.sendText);
+  const currentSessionId = useSessionUIStore((state) => state.currentSessionId);
+  const effectiveDirectory = useEffectiveDirectory();
+  const { phase: sessionPhase } = useCurrentSessionActivity();
+
+  if (!isOpen) return null;
+
+  return (
+    <VoiceConversationDialog
+      open={isOpen}
+      onOpenChange={setOpen}
+      sessionId={currentSessionId}
+      directory={effectiveDirectory}
+      sessionPhase={sessionPhase}
+      onSend={sendText}
+    />
+  );
+};
+
 export function SyncRuntimeEffects({ embeddedBackgroundWorkEnabled }: {
   embeddedBackgroundWorkEnabled: boolean;
 }) {
   useSessionAutoCleanup(embeddedBackgroundWorkEnabled);
   useQueuedMessageAutoSend(embeddedBackgroundWorkEnabled);
 
-  return <SyncOptimisticBridge />;
+  return (
+    <>
+      <SyncOptimisticBridge />
+      <VoiceConversationHost />
+    </>
+  );
 }
 
 export function SyncAppEffects({ embeddedBackgroundWorkEnabled, dictationModelPreloadEnabled }: {
@@ -126,6 +192,7 @@ export function SyncAppEffects({ embeddedBackgroundWorkEnabled, dictationModelPr
     <>
       <SyncRuntimeEffects embeddedBackgroundWorkEnabled={embeddedBackgroundWorkEnabled} />
       <LocalDictationModelPreloadEffect enabled={dictationModelPreloadEnabled === true} />
+      <LocalVoiceModelPreloadEffect enabled={dictationModelPreloadEnabled === true} />
       <MiniChatPresenceBridge />
     </>
   );

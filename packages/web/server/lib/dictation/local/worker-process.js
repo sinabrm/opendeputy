@@ -104,6 +104,7 @@ function getTtsEngine(modelsDir, modelId) {
   }
   const spec = getLocalSttModelSpec(modelId);
   const created = new SherpaTtsEngine({
+    type: spec.type,
     modelDir: getLocalSttModelDir(modelsDir, modelId),
     files: spec.files,
     numThreads: 2,

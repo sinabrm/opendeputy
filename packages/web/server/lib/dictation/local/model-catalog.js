@@ -163,6 +163,36 @@ export const LOCAL_TTS_MODEL_CATALOG = {
     },
     description: 'Kokoro TTS (English, natural voices)',
   },
+  'vits-piper-fa-en-medium': {
+    type: 'vits',
+    archiveUrl:
+      'https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/vits-piper-fa_en-rezahedayatfar-ibrahimwalk-medium.tar.bz2',
+    archiveIntegrity: {
+      algorithm: 'sha256',
+      sha256: 'ed0756ba340e832b2504a5910c0a2ea341a65fa3ec7f26729098df694eecde1d',
+      bytes: 67246929,
+      provenance: 'maintainer-verified',
+      verifiedAt: '2026-08-28',
+      source:
+        'https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/vits-piper-fa_en-rezahedayatfar-ibrahimwalk-medium.tar.bz2',
+      note: 'GitHub does not publish a digest for this older release asset; the exact upstream asset was downloaded and hashed by an OpenDeputy maintainer.',
+    },
+    modelSource: {
+      name: 'Piper Reza Hedayatfar / Ibrahim Walk medium',
+      url: 'https://github.com/k2-fsa/sherpa-onnx/releases/tag/tts-models',
+    },
+    modelLicense: {
+      spdx: 'CC0-1.0',
+      url: 'https://huggingface.co/datasets/mah92/Hedayatfar-Persian-Quran-Audio-Dataset',
+    },
+    extractedDir: 'vits-piper-fa_en-rezahedayatfar-ibrahimwalk-medium',
+    files: {
+      model: 'fa_en-rezahedayatfar-ibrahimwalk-medium.onnx',
+      tokens: 'tokens.txt',
+      espeakData: 'espeak-ng-data',
+    },
+    description: 'Piper VITS TTS (Persian and English, medium quality)',
+  },
 };
 
 export const DEFAULT_LOCAL_STT_MODEL = 'whisper-base-int8';
