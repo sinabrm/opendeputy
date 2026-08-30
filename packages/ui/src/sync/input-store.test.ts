@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, test } from "bun:test"
 import { strToU8, zipSync } from "fflate"
-import { useInputStore } from "./input-store"
+import { attachmentToMessageFile, useInputStore } from "./input-store"
 
 class MockFileReader {
   result: string | ArrayBuffer | null = null
@@ -61,6 +61,27 @@ describe("input-store attachments", () => {
       activeEditorFile: null,
     })
     useInputStore.getState().setAttachedFiles([])
+  })
+
+  test("keeps the original PDF name visible while sending bounded text context", () => {
+    const attachment = {
+      id: "pdf-1",
+      file: new File(["pdf-bytes"], "book.pdf", { type: "application/pdf" }),
+      dataUrl: "data:application/pdf;base64,cGRmLWJ5dGVz",
+      mimeType: "application/pdf",
+      filename: "book.pdf",
+      size: 9,
+      source: "local" as const,
+      contextText: "# PDF: book.pdf\nPages: 1\n\n--- Page 1 of 1 ---\nRelevant content",
+      contextMimeType: "text/plain",
+    }
+
+    const outgoing = attachmentToMessageFile(attachment, "What is the relevant content?")
+
+    expect(outgoing.filename).toBe("book.pdf")
+    expect(outgoing.mime).toBe("text/plain")
+    expect(outgoing.url.startsWith("data:text/plain;base64,")).toBe(true)
+    expect(Buffer.from(outgoing.url.split(",")[1] ?? "", "base64").toString()).toContain("Relevant content")
   })
 
   testWithMockFileReader("does not attach a local file that finishes reading after attachments are cleared", async () => {

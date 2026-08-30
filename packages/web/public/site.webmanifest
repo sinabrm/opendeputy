@@ -1,7 +1,7 @@
 {
   "name": "OpenDeputy - AI Coworker",
   "short_name": "OpenDeputy",
-  "description": "Open-source AI coworker for OpenCode with browser and computer control",
+  "description": "A Windows-first, open-source AI coworker for projects, files, terminals, websites, and desktop applications.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#151313",

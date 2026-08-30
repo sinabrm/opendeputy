@@ -1774,8 +1774,6 @@ export const settingsDict = {
   'settings.voice.page.field.messageReadAloudButton': 'Nachricht vorlesen-Taste',
   'settings.voice.page.field.summarizeBeforePlaybackAria': 'Zusammenfassen vor der Wiedergabe',
   'settings.voice.page.field.summarizeBeforePlayback': 'Vor der Wiedergabe zusammenfassen',
-  'settings.voice.page.field.summarizeVoiceModeResponsesAria': 'Antworten im Sprachmodus zusammenfassen',
-  'settings.voice.page.field.summarizeVoiceModeResponses': 'Antworten im Sprachmodus zusammenfassen',
   'settings.voice.page.field.summarizationThreshold': 'Zusammenfassungsschwellenwert',
   'settings.voice.page.field.summaryMaxLength': 'Maximale Länge der Zusammenfassung',
   'settings.voice.page.hint.shiftClickPrefix': 'Drücken Sie',

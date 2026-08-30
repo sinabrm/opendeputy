@@ -72,7 +72,12 @@ import {
   type DeleteSessionsOptions,
   type UnarchiveSessionsOptions,
 } from "./session-actions"
-import { useInputStore, type SyntheticContextPart } from "./input-store"
+import {
+  attachmentToMessageFile,
+  useInputStore,
+  type MessageAttachmentFile,
+  type SyntheticContextPart,
+} from "./input-store"
 import { useSessionGoalArmStore } from "@/stores/useSessionGoalArmStore"
 import { setSessionGoal } from "@/lib/sessionGoalActions"
 import { wrapSystemReminder } from "@/lib/systemReminder"
@@ -249,6 +254,25 @@ type AssistantMessageSessionExecution = {
 function notifyMessageSent(sessionId: string): void {
   runtimeFetch(`/api/sessions/${sessionId}/message-sent`, { method: "POST" })
     .catch(() => { /* ignore */ })
+}
+
+const messageFilesForAttachments = async (
+  attachments: AttachedFile[] | undefined,
+  query: string,
+): Promise<MessageAttachmentFile[] | undefined> => {
+  if (!attachments || attachments.length === 0) return undefined
+  return Promise.all(attachments.map((attachment) => attachmentToMessageFile(attachment, query)))
+}
+
+const messagePartsForAttachments = async (
+  parts: Array<{ text: string; attachments?: AttachedFile[]; synthetic?: boolean }> | undefined,
+): Promise<Array<{ text: string; synthetic?: boolean; files?: MessageAttachmentFile[] }> | undefined> => {
+  if (!parts || parts.length === 0) return undefined
+  return Promise.all(parts.map(async (part) => ({
+    text: part.text,
+    synthetic: part.synthetic,
+    files: await messageFilesForAttachments(part.attachments, part.text),
+  })))
 }
 
 // ---------------------------------------------------------------------------
@@ -1292,12 +1316,8 @@ export const useSessionUIStore = create<SessionUIState>()((set, get) => ({
 
       markPendingUserSendAnimation(createdDraftSession.sessionId)
 
-      const files = attachments?.map((a) => ({
-        type: "file" as const,
-        mime: a.mimeType,
-        url: a.dataUrl,
-        filename: a.filename,
-      }))
+      const files = await messageFilesForAttachments(attachments, content)
+      const messageAdditionalParts = await messagePartsForAttachments(mergedAdditionalParts)
 
       await applyArmedGoal(createdDraftSession.sessionId, createdDraftSession.directory)
       await routeMessage({
@@ -1312,16 +1332,7 @@ export const useSessionUIStore = create<SessionUIState>()((set, get) => ({
         inputMode,
         files,
         delivery: options?.delivery,
-        additionalParts: mergedAdditionalParts?.map((p) => ({
-          text: p.text,
-          synthetic: p.synthetic,
-          files: p.attachments?.map((a: AttachedFile) => ({
-            type: "file" as const,
-            mime: a.mimeType,
-            url: a.dataUrl,
-            filename: a.filename,
-          })),
-        })),
+        additionalParts: messageAdditionalParts,
       })
       return
     }
@@ -1372,12 +1383,8 @@ export const useSessionUIStore = create<SessionUIState>()((set, get) => ({
       markPendingUserSendAnimation(targetSessionId)
     }
 
-    const files = attachments?.map((a) => ({
-      type: "file" as const,
-      mime: a.mimeType,
-      url: a.dataUrl,
-      filename: a.filename,
-    }))
+    const files = await messageFilesForAttachments(attachments, content)
+    const messageAdditionalParts = await messagePartsForAttachments(additionalParts)
 
     if (targetSessionId) {
       await applyArmedGoal(targetSessionId, currentSessionDirectory)
@@ -1395,16 +1402,7 @@ export const useSessionUIStore = create<SessionUIState>()((set, get) => ({
       inputMode,
       files,
       delivery: options?.delivery,
-      additionalParts: additionalParts?.map((p) => ({
-        text: p.text,
-        synthetic: p.synthetic,
-        files: p.attachments?.map((a) => ({
-          type: "file" as const,
-          mime: a.mimeType,
-          url: a.dataUrl,
-          filename: a.filename,
-        })),
-      })),
+      additionalParts: messageAdditionalParts,
     })
   },
 

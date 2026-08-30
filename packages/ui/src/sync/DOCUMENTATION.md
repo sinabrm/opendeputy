@@ -49,13 +49,14 @@ So:
 | `session-ui-store.ts` | Session selection, draft lifecycle, abort prompts, worktree metadata, SDK-facing action entrypoints | App UI state |
 | `useGlobalSessionsStore.ts` | Global active sessions, global archived sessions, `sessionsByDirectory` | All opened project/worktree session lists |
 | `viewport-store.ts` | Scroll anchors, session memory, loading indicators | App UI state |
-| `attachment-files.ts` | Attachment picker allowlists, MIME/content validation, structured-text sanitization, and HEIC conversion | Local chat attachments across shared UI runtimes |
+| `attachment-files.ts` | Attachment picker allowlists, MIME/content validation, PDF normalization, structured-text sanitization, and HEIC conversion | Local chat attachments across shared UI runtimes |
+| `pdf-ocr.ts` | Lazy, bounded browser OCR for PDF pages without a text layer | Scanned PDF attachment preparation |
 | `document-attachments.ts` | Bounded Office/OpenDocument extraction, document text serialization, embedded-image extraction, and positional citations | DOCX, PPTX, XLSX, ODT, ODP, and ODS chat attachments |
 | `input-store.ts` | Draft input state, attached files, synthetic parts | App UI state |
 | `selection-store.ts` | Model/agent/variant selections | App UI state |
 | `voice-store.ts` | Voice state | App UI state |
 
-Local chat attachments are normalized by `attachment-files.ts` before entering `input-store.ts`. PNG, JPEG, GIF, WebP, and PDF retain their media type; HEIC/HEIF is converted to JPEG; recognized text/code formats and unknown files whose first 4 KB are text are sent as `text/plain`; binary files outside the supported media types are rejected. Jupyter notebooks become readable markdown with non-text outputs omitted. HAR credentials, cookies, and sensitive URL parameters are redacted, while request/response body text is omitted. SVG and Draw.io files are attached as source text, not executable/rendered content. Browser and VS Code pickers expose the same allowlist, while drag-and-drop may still accept an unknown extension after content inspection.
+Local chat attachments are normalized by `attachment-files.ts` before entering `input-store.ts`. PNG, JPEG, GIF, and WebP retain their media type. Every PDF is parsed locally with PDF.js and serialized as a bounded `text/plain` sidecar with page markers; the original PDF name, bytes, and preview metadata remain the visible attachment. At send time, long PDF sidecars are page-selected for the current question and capped before they reach the provider, so follow-up turns do not replay an entire book. Pages without selectable text are rendered sequentially and OCRed by the lazy Tesseract worker (`eng+fas` by default); OCR and parsing limits are bounded for low-end devices. If parsing or OCR is unavailable, an explicit text diagnostic is sent instead of the original binary, so later turns cannot trigger the provider's fragile PDF parser. Prepared PDF results are reused from a bounded content-hash cache during the current runtime. HEIC/HEIF is converted to JPEG; recognized text/code formats and unknown files whose first 4 KB are text are sent as `text/plain`; binary files outside the supported media types are rejected. Jupyter notebooks become readable markdown with non-text outputs omitted. HAR credentials, cookies, and sensitive URL parameters are redacted, while request/response body text is omitted. SVG and Draw.io files are attached as source text, not executable/rendered content. Browser and VS Code pickers expose the same allowlist, while drag-and-drop may still accept an unknown extension after content inspection.
 
 Office and OpenDocument packages are metadata-validated before asynchronous extraction, with limits of 20 MB compressed input, 5,000 archive entries, 25 MB per entry, 8 MB per XML part, and 100 MB total uncompressed content. Unsafe or non-canonical archive paths reject the whole attachment, and only XML, relationship, and supported image entries are decompressed and retained. Extracted text, including its explicit truncation notice, is bounded to 2,000,000 characters. At most 50 signature-validated PNG, JPEG, GIF, or WebP images and 40 MB of image bytes are retained, with a 20 MB per-image limit; unsupported, invalid, omitted, and truncated content remains explicit in the extracted text. Images whose citations fall beyond text truncation are not attached. Extracted document content remains a `text/plain` file attachment with the original document filename, rather than becoming visible user-message text. Supported embedded images become separate image file parts; the extracted text contains `[filename]` citations at the source paragraph, slide object, spreadsheet cell anchor, or OpenDocument text position. Generated image filenames are re-evaluated if the composer changes during asynchronous preparation, avoiding collisions. The store publishes all generated parts atomically only after every data URL is ready.
 
@@ -406,7 +407,6 @@ The optimization multiplies with targeted event cloning: fewer new references pe
 | Store | Owns | When it changes |
 |-------|------|-----------------|
 | `session-ui-store.ts` | Session selection, draft lifecycle, abort, worktree, SDK actions | Session switch, draft open/close |
-| `voice-store.ts` | Voice connection/activity state | Voice toggle |
 | `input-store.ts` | Pending input text, synthetic parts, attached files | User typing, file attach, revert/fork |
 | `selection-store.ts` | Per-session model/agent/variant choices | Model/agent picker |
 | `viewport-store.ts` | Scroll anchors, session memory state, sync status | Streaming, scroll, session switch |
@@ -425,7 +425,6 @@ The optimization multiplies with targeted event cloning: fewer new references pe
 ```typescript
 // WRONG — stuffing unrelated state into one store
 const useEverythingStore = create(() => ({
-  voiceMode: "idle",
   scrollAnchor: 0,
   selectedModel: null,
   pendingInput: "",
@@ -433,7 +432,6 @@ const useEverythingStore = create(() => ({
 }))
 
 // RIGHT — separate stores by concern + change frequency
-const useVoiceStore = create(() => ({ voiceMode: "idle" }))
 const useViewportStore = create(() => ({ scrollAnchor: 0 }))
 const useSelectionStore = create(() => ({ selectedModel: null }))
 const useInputStore = create(() => ({ pendingInput: "" }))

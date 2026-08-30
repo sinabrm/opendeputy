@@ -663,6 +663,7 @@ export const MessageFilesDisplay = memo(({ files, onShowPopup, compact = false }
             {otherFiles.map((file, index) => {
               const fileName = resolveDisplayName(file);
               const ext = fileName.split('.').pop() || '';
+              const isPdf = file.mime?.toLowerCase().split(';', 1)[0] === 'application/pdf' || ext.toLowerCase() === 'pdf';
               const sizeText = formatFileSize(file.size);
               const githubLinkKind = getGitHubLinkKind(file);
               return (
@@ -687,7 +688,7 @@ export const MessageFilesDisplay = memo(({ files, onShowPopup, compact = false }
                       </button>
                     ) : (
                       <div className="inline-flex items-center bg-muted/30 border border-border/30 typography-meta gap-1 px-2 py-0.5 rounded-lg">
-                        {file.mime?.includes('pdf') ? (
+                        {isPdf ? (
                           <Icon name="file-pdf" className="text-muted-foreground h-3.5 w-3.5" />
                         ) : (
                           <FileTypeIcon filePath={fileName} extension={ext} className="text-muted-foreground h-3.5 w-3.5" />
@@ -762,6 +763,7 @@ export const MessageFilesDisplay = memo(({ files, onShowPopup, compact = false }
       {fileItems.map((file, index) => {
         const fileName = resolveDisplayName(file);
         const isImage = file.mime?.startsWith('image/');
+        const isPdf = file.mime?.toLowerCase().split(';', 1)[0] === 'application/pdf' || /\.pdf$/i.test(fileName);
         const sizeText = formatFileSize(file.size);
         const githubLinkKind = getGitHubLinkKind(file);
 
@@ -882,7 +884,7 @@ export const MessageFilesDisplay = memo(({ files, onShowPopup, compact = false }
                 <div className="flex-shrink-0">
                   {file.mime?.startsWith('image/') ? (
                     <Icon name="file-image" className={cn("text-muted-foreground", compact ? "h-3.5 w-3.5" : "h-4 w-4")} />
-                  ) : file.mime?.includes('pdf') ? (
+                  ) : isPdf ? (
                     <Icon name="file-pdf" className={cn("text-muted-foreground", compact ? "h-3.5 w-3.5" : "h-4 w-4")} />
                   ) : (
                     <Icon name="file" className={cn("text-muted-foreground", compact ? "h-3.5 w-3.5" : "h-4 w-4")} />

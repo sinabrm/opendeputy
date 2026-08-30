@@ -353,6 +353,8 @@ export const createOpenCodeEnvRuntime = (deps) => {
 
   const resolveOpencodeCliPath = () => {
     const explicit = [
+      process.env.OPENDEPUTY_CODE_BINARY,
+      process.env.OPENDEPUTY_BINARY,
       process.env.OPENCODE_BINARY,
       process.env.OPENCODE_PATH,
       process.env.OPENCHAMBER_OPENCODE_PATH,
@@ -372,7 +374,7 @@ export const createOpenCodeEnvRuntime = (deps) => {
     const bundled = bundledOpenCodeCliFallback();
     if (bundled) return bundled;
 
-    const resolvedFromPath = searchPathFor('opencode');
+    const resolvedFromPath = searchPathFor('opendeputy-code') || searchPathFor('opencode');
     if (resolvedFromPath) {
       clearWslOpencodeResolution();
       state.resolvedOpencodeBinarySource = 'path';
@@ -1075,7 +1077,13 @@ export const createOpenCodeEnvRuntime = (deps) => {
       return state.resolvedOpencodeBinary;
     }
 
-    const existing = typeof process.env.OPENCODE_BINARY === 'string' ? process.env.OPENCODE_BINARY.trim() : '';
+    const existing = typeof process.env.OPENDEPUTY_CODE_BINARY === 'string'
+      ? process.env.OPENDEPUTY_CODE_BINARY.trim()
+      : typeof process.env.OPENDEPUTY_BINARY === 'string'
+        ? process.env.OPENDEPUTY_BINARY.trim()
+        : typeof process.env.OPENCODE_BINARY === 'string'
+          ? process.env.OPENCODE_BINARY.trim()
+          : '';
     if (existing && isExecutable(existing)) {
       clearWslOpencodeResolution();
       state.resolvedOpencodeBinary = existing;
@@ -1095,6 +1103,7 @@ export const createOpenCodeEnvRuntime = (deps) => {
       }
 
       process.env.OPENCODE_BINARY = resolved;
+      process.env.OPENDEPUTY_CODE_BINARY = resolved;
       prependToPath(path.dirname(resolved));
       ensureOpencodeShimRuntime(resolved);
       state.resolvedOpencodeBinary = resolved;

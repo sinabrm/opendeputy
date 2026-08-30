@@ -1818,8 +1818,6 @@ export const settingsDict = {
   "settings.voice.page.field.messageReadAloudButton": "Кнопка «Прочитати вголос» для повідомлень",
   "settings.voice.page.field.summarizeBeforePlaybackAria": "Підсумовувати перед відтворенням",
   "settings.voice.page.field.summarizeBeforePlayback": "Підсумовувати перед відтворенням",
-  "settings.voice.page.field.summarizeVoiceModeResponsesAria": "Підсумовувати відповіді голосового режиму",
-  "settings.voice.page.field.summarizeVoiceModeResponses": "Підсумовувати відповіді голосового режиму",
   "settings.voice.page.field.summarizationThreshold": "Поріг підсумовування",
   "settings.voice.page.field.summaryMaxLength": "Максимальна довжина підсумку",
   "settings.voice.page.hint.shiftClickPrefix": "Натисніть",

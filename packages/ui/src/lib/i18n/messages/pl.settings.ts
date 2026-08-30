@@ -2066,8 +2066,6 @@ export const settingsDict = {
   'settings.voice.page.field.summarizationThreshold': 'Próg podsumowania',
   'settings.voice.page.field.summarizeBeforePlayback': 'Podsumuj przed odtworzeniem',
   'settings.voice.page.field.summarizeBeforePlaybackAria': 'Podsumuj przed odtworzeniem',
-  'settings.voice.page.field.summarizeVoiceModeResponses': 'Podsumowuj odpowiedzi w trybie głosowym',
-  'settings.voice.page.field.summarizeVoiceModeResponsesAria': 'Podsumowuj odpowiedzi w trybie głosowym',
   'settings.voice.page.field.summaryMaxLength': 'Maksymalna długość podsumowania',
   'settings.voice.page.field.voice': 'Głos',
   'settings.voice.page.field.voiceIdentifierHint': 'Identyfikator głosu obsługiwany przez serwer',

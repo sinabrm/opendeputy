@@ -22,7 +22,11 @@ import { filterVisibleParts, normalizeParts } from './message/partUtils';
 import { normalizeUserDisplayParts } from './message/normalizeUserDisplayParts';
 import { isHiddenUserMessage } from './message/hiddenUserMessage';
 import { flattenAssistantTextParts } from '@/lib/messages/messageText';
-import { isLikelyProviderAuthFailure, PROVIDER_AUTH_FAILURE_MESSAGE } from '@/lib/messages/providerAuthError';
+import {
+    isLikelyProviderAuthFailure,
+    isLikelyTransientProviderFailure,
+    PROVIDER_AUTH_FAILURE_MESSAGE,
+} from '@/lib/messages/providerAuthError';
 import { getProviderModelDisplayName } from '@/lib/modelDisplay';
 import { lazyWithChunkRecovery } from '@/lib/chunkLoadRecovery';
 import type { TurnGroupingContext } from './lib/turns/types';
@@ -701,6 +705,17 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
         if (!detail) {
             return undefined;
         }
+        const hasToolOrFilePart = message.parts.some((part) => part.type === 'tool' || part.type === 'file');
+        if (
+            isFollowedByAssistant
+            && !hasToolOrFilePart
+            && isLikelyTransientProviderFailure(`${errorName ?? ''} ${detail}`)
+        ) {
+            // A later assistant message means the server recovered this empty
+            // provider turn. Do not keep the stale raw transport error in the
+            // completed chat transcript; failed tool/file parts remain visible.
+            return undefined;
+        }
         if (errorName === 'SessionRetry') {
             return {
                 text: `Opencode failed to send a message. Retry attempt info: \n\`${detail}\``,
@@ -723,7 +738,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
             text: `Opencode failed to send message with error:\n\`${detail}\``,
             variant: 'error' as const,
         };
-    }, [isUser, message.info]);
+    }, [isFollowedByAssistant, isUser, message.info, message.parts]);
 
     const assistantErrorText = assistantError?.text;
     const assistantErrorVariant = assistantError?.variant;

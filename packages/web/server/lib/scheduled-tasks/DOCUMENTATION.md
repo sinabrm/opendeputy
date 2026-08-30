@@ -1,6 +1,6 @@
 # Scheduled Tasks module
 
-Server-owned scheduled task runtime and routes for OpenChamber-only automation.
+Server-owned scheduled task runtime and routes for OpenDeputy-only automation.
 
 ## Scope
 
@@ -11,7 +11,7 @@ Server-owned scheduled task runtime and routes for OpenChamber-only automation.
 
 ## Cross-instance occurrence claiming
 
-Multiple OpenChamber server processes can share the same on-disk project config
+Multiple OpenDeputy server processes can share the same on-disk project config
 (for example CLI `serve` on port 3000 and the Electron desktop server on port
 57123). Each process keeps its own timers, so without coordination a daily (or
 weekly / cron / once) slot would dispatch twice.

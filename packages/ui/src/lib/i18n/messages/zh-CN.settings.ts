@@ -1818,8 +1818,6 @@ export const settingsDict = {
   'settings.voice.page.field.messageReadAloudButton': '消息朗读按钮',
   'settings.voice.page.field.summarizeBeforePlaybackAria': '播放前摘要',
   'settings.voice.page.field.summarizeBeforePlayback': '播放前摘要',
-  'settings.voice.page.field.summarizeVoiceModeResponsesAria': '摘要语音模式回复',
-  'settings.voice.page.field.summarizeVoiceModeResponses': '摘要语音模式回复',
   'settings.voice.page.field.summarizationThreshold': '摘要阈值',
   'settings.voice.page.field.summaryMaxLength': '摘要最大长度',
   'settings.voice.page.hint.shiftClickPrefix': '按住',

@@ -32,3 +32,35 @@ export const isLikelyProviderAuthFailure = (value: unknown): boolean => {
 
   return has401 && hasAuthContext;
 };
+
+// Errors in this group are normally recoverable transport/provider failures.
+// The server-side session-recovery runtime retries an empty turn for them; the
+// UI uses the same classification to avoid leaving a stale raw error bubble
+// after a later assistant continuation has succeeded.
+export const isLikelyTransientProviderFailure = (value: unknown): boolean => {
+  if (typeof value !== "string") return false;
+
+  const detail = value.toLowerCase().trim();
+  if (!detail || isLikelyProviderAuthFailure(value)) return false;
+
+  if (
+    detail.includes("messageabortederror")
+    || detail.includes("user abort")
+    || detail.includes("permission denied")
+    || detail.includes("access denied")
+    || detail.includes("not allowed")
+    || detail.includes("invalid api key")
+    || detail.includes("insufficient balance")
+    || detail.includes("content policy")
+    || detail.includes("unsupported")
+    || detail.includes("not found")
+  ) {
+    return false;
+  }
+
+  if (detail.includes("invalid_request_error") && !/(parser faas|timeout|temporar)/i.test(detail)) {
+    return false;
+  }
+
+  return /(?:ai_apicallerror|upstream request failed|parser faas|rate limit|\b(?:408|429|5\d\d)\b|timeout|timed?[- ]?out|network|socket|connection|fetch|temporar|overloaded|unavailable|reset)/i.test(detail);
+};

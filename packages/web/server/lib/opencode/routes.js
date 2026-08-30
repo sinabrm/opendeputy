@@ -205,8 +205,8 @@ ${desktopReturn ? `<a class="return" href="openchamber://focus/mcp-auth">Return 
             ? 'OPENCODE_UPGRADE_MANAGED_BY_OPENCHAMBER'
             : 'OPENCODE_UPGRADE_UNSUPPORTED',
           error: capability.reason === 'bundled'
-            ? 'OpenCode is bundled with OpenChamber Desktop and updates with the app.'
-            : 'This OpenCode runtime cannot be upgraded by OpenChamber.',
+            ? 'OpenCode is bundled with OpenDeputy Desktop and updates with the app.'
+            : 'This OpenCode runtime cannot be upgraded by OpenDeputy.',
         });
       }
       if (openCodeUpgradePromise) {

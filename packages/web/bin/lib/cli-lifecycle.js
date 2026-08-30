@@ -112,7 +112,7 @@ async function resolveDoctorPortStatuses(options = {}) {
         available: false,
         status: 'warning',
         line: `port ${requestedPort} not available (desktop runtime)`,
-        detail: 'Use a CLI instance port from `openchamber serve` for tunneling.',
+        detail: 'Use a CLI instance port from `opencode serve` for tunneling.',
       });
       return { statuses, availableEntries: [] };
     }
@@ -122,7 +122,7 @@ async function resolveDoctorPortStatuses(options = {}) {
       available: false,
       status: 'error',
       line: `port ${requestedPort} not available (no running instance)`,
-      detail: `Start one with \`openchamber serve --port ${requestedPort}\`.`,
+      detail: `Start one with \`opencode serve --port ${requestedPort}\`.`,
     });
     return { statuses, availableEntries: [] };
   }
@@ -143,7 +143,7 @@ async function resolveDoctorPortStatuses(options = {}) {
       available: false,
       status: 'warning',
       line: `port ${desktopEntry.port} not available (desktop runtime)`,
-      detail: 'Use a CLI instance port from `openchamber serve` for tunneling.',
+      detail: 'Use a CLI instance port from `opencode serve` for tunneling.',
     });
   }
 
@@ -153,7 +153,7 @@ async function resolveDoctorPortStatuses(options = {}) {
       available: false,
       status: 'warning',
       line: 'no CLI ports available for tunneling',
-      detail: 'Start one with `openchamber serve`.',
+      detail: 'Start one with `opencode serve`.',
     });
   }
 
@@ -191,8 +191,8 @@ async function discoverRunningInstances(options = {}) {
       }
 
       // A live PID-file is only the right instance if the recorded port also
-      // confirms OpenChamber. Cmdline identity alone can match a recycled PID
-      // from another OpenChamber process on a different port. Try all plausible
+      // confirms the OpenCode runtime. Cmdline identity alone can match a recycled PID
+      // from another OpenCode process on a different port. Try all plausible
       // hosts first; if matched/unknown identity still can't be confirmed, keep
       // the registry files but don't claim the instance is running.
       const { info: liveInfo, host: confirmedHost } = await fetchSystemInfoFromPortCandidates(

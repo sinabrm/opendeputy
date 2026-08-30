@@ -8,7 +8,7 @@ import { invokeDesktop, isDesktopShell, isVSCodeRuntime } from '@/lib/desktop';
 import { syncDesktopSettings, initializeAppearancePreferences } from '@/lib/persistence';
 import { applyPersistedDirectoryPreferences } from '@/lib/directoryPersistence';
 import { DesktopHostSwitcherInline } from '@/components/desktop/DesktopHostSwitcher';
-import { OpenChamberLogo } from '@/components/ui/OpenChamberLogo';
+import { OpenDeputyWordmark } from '@/components/ui/OpenDeputyWordmark';
 import { Icon } from "@/components/icon/Icon";
 import { useI18n } from '@/lib/i18n';
 import { runtimeFetch } from '@/lib/runtime-fetch';
@@ -287,7 +287,12 @@ const AuthShell: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
 const LoadingScreen: React.FC = () => (
   <div className="flex min-h-screen items-center justify-center bg-background text-foreground">
-    <OpenChamberLogo width={120} height={120} />
+    <div
+      className="rounded-sm bg-[#151313] px-4 py-3"
+      style={{ width: 'min(348px, calc(100vw - 48px))' }}
+    >
+      <OpenDeputyWordmark width={348} className="h-auto w-full" />
+    </div>
   </div>
 );
 

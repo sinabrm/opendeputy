@@ -1818,6 +1818,24 @@ const buildStartupSplashHtml = () => {
   const splashFgLight = typeof settings.splashFgLight === 'string' ? settings.splashFgLight.trim() : '#1c1917';
   const splashBgDark = typeof settings.splashBgDark === 'string' ? settings.splashBgDark.trim() : '#0c0a09';
   const splashFgDark = typeof settings.splashFgDark === 'string' ? settings.splashFgDark.trim() : '#fafaf9';
+  const wordmarkCandidates = [
+    path.join(resolveWebDistDir(), 'opendeputy-wordmark-ornate-dark-with-logo.svg'),
+    path.join(__dirname, '..', 'web', 'public', 'opendeputy-wordmark-ornate-dark-with-logo.svg'),
+  ];
+  const wordmarkDataUrl = wordmarkCandidates.reduce((resolved, candidate) => {
+    if (resolved) return resolved;
+    try {
+      const svg = fs.readFileSync(candidate, 'utf8').trim();
+      return svg.startsWith('<svg')
+        ? `data:image/svg+xml;base64,${Buffer.from(svg, 'utf8').toString('base64')}`
+        : '';
+    } catch {
+      return '';
+    }
+  }, '');
+  const splashBrand = wordmarkDataUrl
+    ? `<img class="wordmark" src="${wordmarkDataUrl}" width="348" height="42" alt="OpenDeputy" />`
+    : '<div class="wordmark-fallback" role="img" aria-label="OpenDeputy">OpenDeputy</div>';
 
   return `<!doctype html>
   <html>
@@ -1862,26 +1880,26 @@ const buildStartupSplashHtml = () => {
         display: grid;
         justify-items: center;
       }
+      .wordmark {
+        display: block;
+        width: min(348px, calc(100vw - 48px));
+        height: auto;
+        padding: 12px 16px;
+        border-radius: 4px;
+        background: #151313;
+        box-sizing: content-box;
+      }
+      .wordmark-fallback {
+        color: var(--splash-stroke);
+        font-size: 18px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+      }
     </style>
   </head>
   <body>
     <div class="stack">
-      <svg width="120" height="120" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="OpenDeputy loading icon">
-        <path fill="var(--splash-stroke)" stroke="var(--splash-stroke)" stroke-width="1" opacity="0.996078431372549" d="M 119.5 83 L 392.5 83 L 394 84.5 L 393.5 337 L 326 271.5 L 326 153.5 L 324.5 152 L 187.5 152 L 186 153.5 L 186 271.5 L 187 272.5 L 187 360 L 242 360 L 242 428 L 118 428 L 118 84.5 L 119.5 83 Z" />
-        <path fill="#bcbbbc" stroke="#bcbbbc" stroke-width="1" opacity="0.9098039215686274" d="M 187.5 153 L 188 274.5 L 187 274.5 L 187.5 153 Z" />
-        <path fill="#bcbbbc" stroke="#bcbbbc" stroke-width="1" opacity="0.9098039215686274" d="M 324.5 153 L 325 271.5 L 330 276.5 L 324 271.5 L 324.5 153 Z" />
-        <path fill="#bcbbbc" stroke="#bcbbbc" stroke-width="1" opacity="0.9098039215686274" d="M 269.5 252 L 274 255.5 Q 273.3 257.8 275.5 257 L 310 290.5 L 308 291.5 L 310.5 293 L 311.5 292 L 335.5 316 L 344 323.5 L 345.5 326 L 381 359.5 L 380 361.5 L 383.5 362 L 395 373.5 L 395 375.5 L 394.5 379 L 320.5 379 L 320.5 380 L 395 380.5 L 320.5 381 L 270.5 431 L 268 428.5 L 268 254 L 271 253.5 L 269.5 252 Z" />
-        <path fill="#bcbbbc" stroke="#bcbbbc" stroke-width="1" opacity="0.9098039215686274" d="M 350.5 296 L 361.5 308 L 350.5 296 Z" />
-        <path fill="#bcbbbc" stroke="#bcbbbc" stroke-width="1" opacity="0.9098039215686274" d="M 365.5 313 L 367.5 316 L 365.5 313 Z" />
-        <path fill="#bcbbbc" stroke="#bcbbbc" stroke-width="1" opacity="0.9098039215686274" d="M 378.5 323 L 379.5 325 L 378.5 323 Z" />
-        <path fill="#bcbbbc" stroke="#bcbbbc" stroke-width="1" opacity="0.9098039215686274" d="M 381.5 326 L 385.5 331 L 381.5 326 Z" />
-        <path fill="#bcbbbc" stroke="#bcbbbc" stroke-width="1" opacity="0.9098039215686274" d="M 396.5 376 L 397 378.5 L 396 378.5 L 396.5 376 Z" />
-        <path fill="#bcbbbc" stroke="#bcbbbc" stroke-width="1" opacity="0.9098039215686274" d="M 117.5 429 L 243 429.5 L 117.5 430 L 117.5 429 Z" />
-        <path fill="var(--splash-logo-edge)" stroke="var(--splash-logo-edge)" stroke-width="1" opacity="0.8" d="M 117 83 L 119 83.5 L 118 84.5 L 118 428 L 242 428 L 242 360 L 187 360 L 187 275.5 L 188 275.5 L 188 359 L 243 359 L 243 429 L 117 429 L 117 83 Z" />
-        <path fill="var(--splash-logo-edge)" stroke="var(--splash-logo-edge)" stroke-width="1" opacity="0.8" d="M 393.5 83 L 395 83.5 L 395 338 L 380 326 L 378.5 323 L 376.5 324 L 377 322.5 L 350.5 296 L 325 271.5 L 325 153 L 187 153 L 186.5 272 L 186 153.5 L 187.5 152 L 324.5 152 L 326 153.5 L 326 271.5 L 345.5 291 L 393.5 337 L 394 84.5 L 393.5 83 Z" />
-        <path fill="var(--splash-logo-edge)" stroke="var(--splash-logo-edge)" stroke-width="1" opacity="0.8" d="M 115.5 84 L 116 427.5 L 115 427.5 L 115.5 84 Z" />
-        <path fill="var(--splash-logo-edge)" stroke="var(--splash-logo-edge)" stroke-width="1" opacity="0.8" d="M 396.5 84 L 397 337.5 L 396 337.5 L 396.5 84 Z" />
-      </svg>
+      ${splashBrand}
     </div>
   </body>
   </html>`;

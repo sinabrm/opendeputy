@@ -49,6 +49,24 @@
   ],
   "reviewedMissingTexts": [
     {
+      "key": "@napi-rs/canvas-linux-x64-gnu@1.0.8",
+      "license": "MIT",
+      "targets": ["docker-linux-x64"],
+      "reason": "The Linux x64 platform package contains only native binaries and omits a root license text; its package metadata declares MIT and the parent @napi-rs/canvas package retains the upstream MIT notice."
+    },
+    {
+      "key": "@napi-rs/canvas-linux-x64-musl@1.0.8",
+      "license": "MIT",
+      "targets": ["docker-linux-x64"],
+      "reason": "The Linux musl x64 platform package contains only native binaries and omits a root license text; its package metadata declares MIT and the parent @napi-rs/canvas package retains the upstream MIT notice."
+    },
+    {
+      "key": "@napi-rs/canvas-win32-x64-msvc@1.0.8",
+      "license": "MIT",
+      "targets": ["windows-x64"],
+      "reason": "The Windows x64 platform package contains only native binaries and omits a root license text; its package metadata declares MIT and the parent @napi-rs/canvas package retains the upstream MIT notice."
+    },
+    {
       "key": "@opencode-ai/sdk@1.18.18",
       "license": "MIT",
       "manualLicenseFile": "legal/third-party/OpenCode-1.18.18-LICENSE.txt",

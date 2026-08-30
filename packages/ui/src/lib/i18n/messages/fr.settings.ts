@@ -1736,8 +1736,6 @@ export const settingsDict = {
   'settings.voice.page.field.messageReadAloudButton': 'Bouton Message lu à haute voix',
   'settings.voice.page.field.summarizeBeforePlaybackAria': 'Résumer avant la lecture',
   'settings.voice.page.field.summarizeBeforePlayback': 'Résumer avant la lecture',
-  'settings.voice.page.field.summarizeVoiceModeResponsesAria': 'Résumer les réponses en mode vocal',
-  'settings.voice.page.field.summarizeVoiceModeResponses': 'Résumer les réponses en mode vocal',
   'settings.voice.page.field.summarizationThreshold': 'Seuil de synthèse',
   'settings.voice.page.field.summaryMaxLength': 'Longueur maximale du résumé',
   'settings.voice.page.hint.shiftClickPrefix': 'Presse',

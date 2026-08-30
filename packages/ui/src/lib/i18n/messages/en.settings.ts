@@ -1841,8 +1841,6 @@ export const settingsDict = {
   'settings.voice.page.field.messageReadAloudButton': 'Read message aloud button',
   'settings.voice.page.field.summarizeBeforePlaybackAria': 'Summarize before playback',
   'settings.voice.page.field.summarizeBeforePlayback': 'Summarize Before Playback',
-  'settings.voice.page.field.summarizeVoiceModeResponsesAria': 'Summarize voice mode responses',
-  'settings.voice.page.field.summarizeVoiceModeResponses': 'Summarize Voice Mode Responses',
   'settings.voice.page.field.summarizationThreshold': 'Summarization Threshold',
   'settings.voice.page.field.summaryMaxLength': 'Summary Max Length',
   'settings.voice.page.hint.shiftClickPrefix': 'Press',

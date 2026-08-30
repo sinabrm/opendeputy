@@ -16,7 +16,7 @@
   "main": "./server/index.js",
   "types": "./server/index.d.ts",
   "bin": {
-    "opendeputy": "./bin/cli.js",
+    "opencode": "./bin/cli.js",
     "openchamber": "./bin/cli.js"
   },
   "publishConfig": {

@@ -225,6 +225,10 @@ mock.module('@/components/ui/OpenChamberLogo', () => ({
   OpenChamberLogo: () => 'logo',
 }));
 
+mock.module('@/components/ui/OpenDeputyWordmark', () => ({
+  OpenDeputyWordmark: () => 'wordmark',
+}));
+
 mock.module('@/components/icon/Icon', () => ({
   Icon: () => null,
 }));
