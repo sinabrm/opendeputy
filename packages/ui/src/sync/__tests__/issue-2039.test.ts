@@ -224,6 +224,12 @@ mock.module("../viewport-store", () => ({
 }))
 
 mock.module("../input-store", () => ({
+  attachmentToMessageFile: () => ({
+    type: "file",
+    mime: "text/plain",
+    url: "data:text/plain;base64,",
+    filename: "attachment",
+  }),
   useInputStore: {
     getState: () => ({
       clearAttachedFiles: () => undefined,
