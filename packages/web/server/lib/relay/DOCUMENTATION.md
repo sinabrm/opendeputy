@@ -2,11 +2,11 @@
 
 ## Purpose
 
-The private relay lets an OpenChamber client (mobile app, browser, or another desktop) reach a user's OpenChamber instance through OpenChamber-hosted infrastructure when the instance is not directly reachable (behind NAT, no public URL, no tunnel). The instance dials **outbound** to the relay; nothing needs to be exposed inbound.
+The private relay lets an OpenDeputy client (mobile app, browser, or another desktop) reach a user's OpenDeputy instance through OpenDeputy-hosted infrastructure when the instance is not directly reachable (behind NAT, no public URL, no tunnel). The instance dials **outbound** to the relay; nothing needs to be exposed inbound.
 
 Traffic is **end-to-end encrypted between the two endpoints** (client and host instance). The relay infrastructure forwards opaque ciphertext and cannot read application traffic — it is an untrusted transport, not a trusted middlebox.
 
-This module (`packages/web/server/lib/relay/`) is the **host side**: it runs inside the OpenChamber web server (so it works for Electron desktop, headless server, and CLI installs alike). The **client side** lives in `packages/ui/src/lib/relay/`. The **relay service itself** is a separate Cloudflare Worker in the `openchamber-website` repo and only brokers connections.
+This module (`packages/web/server/lib/relay/`) is the **host side**: it runs inside the OpenDeputy web server (so it works for Electron desktop, headless server, and CLI installs alike). The **client side** lives in `packages/ui/src/lib/relay/`. The **relay service itself** is a separate Cloudflare Worker in the `openchamber-website` repo and only brokers connections.
 
 ## The three layers
 
@@ -14,7 +14,7 @@ Traffic is modeled as three stacked layers. The relay understands only Layer 1; 
 
 1. **Relay routing (Layer 1)** — outbound WebSocket connections to the relay, connection brokering, and host authentication to the relay. The relay routes each client to the correct host and forwards frames verbatim.
 2. **End-to-end encryption (Layer 2)** — an authenticated encrypted channel established directly between client and host, keyed so the relay cannot participate. Built on standard WebCrypto primitives (ECDH key agreement + AEAD framing). The host's encryption public key is distributed to the client out-of-band via the pairing payload and is the client's trust anchor.
-3. **Tunnel multiplexing (Layer 3)** — because an OpenChamber client speaks many concurrent HTTP requests, an event stream (SSE), and WebSockets to one origin, the encrypted channel carries a small multiplexing protocol. It frames HTTP request/response (including streamed bodies) and WebSocket sub-streams so the whole app works over one encrypted connection.
+3. **Tunnel multiplexing (Layer 3)** — because an OpenDeputy client speaks many concurrent HTTP requests, an event stream (SSE), and WebSockets to one origin, the encrypted channel carries a small multiplexing protocol. It frames HTTP request/response (including streamed bodies) and WebSocket sub-streams so the whole app works over one encrypted connection.
 
 ## Entrypoints and structure
 
@@ -49,7 +49,7 @@ Request bodies crossing the tunnel are buffered on the host and forwarded to loo
 
 ## Authentication model
 
-- The tunnel is **transport only**. The OpenChamber server still authenticates every tunneled request exactly as it authenticates a direct remote client. The relay path grants reachability, not authorization.
+- The tunnel is **transport only**. The OpenDeputy server still authenticates every tunneled request exactly as it authenticates a direct remote client. The relay path grants reachability, not authorization.
 - Clients carry their normal credential. HTTP and SSE requests authenticate with the client's bearer token (a header). **WebSocket upgrades cannot send headers**, so they authenticate with a short-lived URL-scoped token minted beforehand and passed as a query parameter. This asymmetry is important when adding new WebSocket features (see the skill).
 - The host authenticates itself to the relay with a signed handshake using its long-lived signing key.
 - Enabling the relay is explicit opt-in and disabled by default; disabling it severs all relay reachability immediately.

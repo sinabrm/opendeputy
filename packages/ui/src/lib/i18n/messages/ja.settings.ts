@@ -1851,8 +1851,6 @@ export const settingsDict = {
   'settings.voice.page.field.messageReadAloudButton': 'メッセージ読み上げボタン',
   'settings.voice.page.field.summarizeBeforePlaybackAria': '再生前に要約',
   'settings.voice.page.field.summarizeBeforePlayback': '再生前に要約',
-  'settings.voice.page.field.summarizeVoiceModeResponsesAria': '音声モードの応答を要約',
-  'settings.voice.page.field.summarizeVoiceModeResponses': '音声モードの応答を要約',
   'settings.voice.page.field.summarizationThreshold': '要約しきい値',
   'settings.voice.page.field.summaryMaxLength': '要約最大長',
   'settings.voice.page.hint.shiftClickPrefix': '押す',

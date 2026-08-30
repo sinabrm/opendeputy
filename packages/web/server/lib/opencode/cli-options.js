@@ -7,6 +7,7 @@ export const parseServeCliOptions = ({
 }) => {
   const args = Array.isArray(argv) ? [...argv] : [];
   const envPassword =
+    env.OPENDEPUTY_UI_PASSWORD ||
     env.OPENCHAMBER_UI_PASSWORD ||
     env.OPENCODE_UI_PASSWORD ||
     null;
@@ -19,7 +20,8 @@ export const parseServeCliOptions = ({
     : undefined;
   const envTunnelToken = env.OPENCHAMBER_TUNNEL_TOKEN || undefined;
   const envTunnelHostname = env.OPENCHAMBER_TUNNEL_HOSTNAME || undefined;
-  const envApiOnly = env.OPENCHAMBER_API_ONLY === '1' || env.OPENCHAMBER_API_ONLY === 'true';
+  const envApiOnly = env.OPENDEPUTY_API_ONLY === '1' || env.OPENDEPUTY_API_ONLY === 'true'
+    || env.OPENCHAMBER_API_ONLY === '1' || env.OPENCHAMBER_API_ONLY === 'true';
 
   const options = {
     port: defaultPort,

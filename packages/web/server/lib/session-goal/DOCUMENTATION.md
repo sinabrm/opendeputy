@@ -184,7 +184,7 @@ The loop here picks it up from session events like any other goal.
 
 ## CLI-created goals
 
-`openchamber session create --prompt <text> --goal` uses the explicit
+`opencode session create --prompt <text> --goal` uses the explicit
 `POST /api/openchamber/sessions` orchestration route. The server creates the
 session, fits and stores the expanded prompt as its objective, patches active
 goal metadata, appends the synthetic goal reminder, and only then dispatches
@@ -195,7 +195,7 @@ expansion becomes the audit objective; goal metadata
 is still installed before the command runs. A missing command template falls
 back to the raw invocation.
 
-`openchamber session send --goal` and `openchamber session fork --goal` use
+`opencode session send --goal` and `opencode session fork --goal` use
 the same server-owned prompt orchestration. Send installs a fresh goal on the
 target session; fork first uses the official OpenCode fork operation (at the
 optional message boundary), then installs the goal on the new session. Both

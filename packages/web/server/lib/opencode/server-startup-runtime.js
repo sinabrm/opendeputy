@@ -22,9 +22,11 @@ export const createServerStartupRuntime = (dependencies) => {
 
   const resolveBindHost = (host) =>
     host
-    || (typeof process.env.OPENCHAMBER_HOST === 'string' && process.env.OPENCHAMBER_HOST.trim().length > 0
-      ? process.env.OPENCHAMBER_HOST.trim()
-      : '127.0.0.1');
+    || (typeof process.env.OPENDEPUTY_HOST === 'string' && process.env.OPENDEPUTY_HOST.trim().length > 0
+      ? process.env.OPENDEPUTY_HOST.trim()
+      : typeof process.env.OPENCHAMBER_HOST === 'string' && process.env.OPENCHAMBER_HOST.trim().length > 0
+        ? process.env.OPENCHAMBER_HOST.trim()
+        : '127.0.0.1');
 
   const startListeningAndMaybeTunnel = async ({
     port,
@@ -48,7 +50,7 @@ export const createServerStartupRuntime = (dependencies) => {
 
           if (typeof process.send === 'function') {
             if (!process.connected) {
-              throw new Error('OpenChamber startup IPC channel disconnected before ready notification');
+              throw new Error('OpenDeputy startup IPC channel disconnected before ready notification');
             }
 
             await new Promise((resolveReadyNotification, rejectReadyNotification) => {

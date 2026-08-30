@@ -36,6 +36,38 @@ const unknownAssistant = (id = 'msg_unknown', overrides = {}) => ({
   ],
 });
 
+const unfinishedAssistant = (id = 'msg_unfinished', overrides = {}) => ({
+  info: {
+    id,
+    sessionID: SESSION_ID,
+    parentID: 'msg_user',
+    role: 'assistant',
+    providerID: 'opencode',
+    modelID: 'muse-spark-1.2-contributor-free',
+    agent: 'build',
+    variant: 'xhigh',
+    time: { created: 11 },
+    ...overrides,
+  },
+  parts: [],
+});
+
+const recoverableErrorAssistant = (id = 'msg_error') => ({
+  info: {
+    id,
+    sessionID: SESSION_ID,
+    parentID: 'msg_user',
+    role: 'assistant',
+    providerID: 'opencode',
+    modelID: 'muse-spark-1.2-contributor-free',
+    agent: 'build',
+    variant: 'xhigh',
+    time: { created: 11, completed: 12 },
+    error: { name: 'AI_APICallError', message: 'Upstream request failed: connection reset' },
+  },
+  parts: [],
+});
+
 const recoveryMessage = (id, attempt) => ({
   info: { id, sessionID: SESSION_ID, role: 'user', time: { created: attempt + 1 } },
   parts: [{
@@ -99,6 +131,208 @@ describe('empty unknown finish recovery', () => {
       parts: [{ type: 'text', synthetic: true }],
     });
     expect(JSON.parse(prompt.init.body).parts[0].text).toContain('Attempt 1 of 2');
+    runtime.stop();
+  });
+
+  it('continues an unfinished assistant turn after a failed tool result', async () => {
+    const failedToolTurn = {
+      info: {
+        id: 'msg_tool',
+        sessionID: SESSION_ID,
+        parentID: 'msg_user',
+        role: 'assistant',
+        providerID: 'opencode',
+        modelID: 'muse-spark-1.2-contributor-free',
+        agent: 'build',
+        variant: 'xhigh',
+        time: { created: 9, completed: 10 },
+        finish: 'tool-calls',
+      },
+      parts: [{
+        type: 'tool',
+        tool: 'bash',
+        state: { status: 'completed', metadata: { exit: 1 }, output: 'ImportError' },
+      }],
+    };
+    const messages = [userMessage(), failedToolTurn, unfinishedAssistant()];
+    const requests = [];
+    const fetchImpl = vi.fn(async (input, init = {}) => {
+      const url = new URL(typeof input === 'string' ? input : input.url);
+      requests.push({ url, init });
+      if (url.pathname === `/session/${SESSION_ID}`) return jsonResponse({ id: SESSION_ID });
+      if (url.pathname === `/session/${SESSION_ID}/message`) return jsonResponse(messages);
+      if (url.pathname === `/session/${SESSION_ID}/prompt_async`) return new Response(null, { status: 204 });
+      throw new Error(`Unexpected request: ${url.pathname}`);
+    });
+    const runtime = createRuntime(fetchImpl);
+
+    runtime.processPayload(idlePayload(), DIRECTORY);
+    await vi.advanceTimersByTimeAsync(10);
+
+    const prompts = requests.filter(({ url }) => url.pathname.endsWith('/prompt_async'));
+    expect(prompts).toHaveLength(1);
+    expect(JSON.parse(prompts[0].init.body).parts[0].text).toContain('repair the command or file');
+    runtime.stop();
+  });
+
+  it('uses the watchdog when an unfinished assistant never publishes idle', async () => {
+    const messages = [userMessage(), unfinishedAssistant()];
+    const requests = [];
+    const fetchImpl = vi.fn(async (input, init = {}) => {
+      const url = new URL(typeof input === 'string' ? input : input.url);
+      requests.push({ url, init });
+      if (url.pathname === `/session/${SESSION_ID}`) return jsonResponse({ id: SESSION_ID });
+      if (url.pathname === '/session/status') return jsonResponse({});
+      if (url.pathname === `/session/${SESSION_ID}/message`) return jsonResponse(messages);
+      if (url.pathname === `/session/${SESSION_ID}/prompt_async`) return new Response(null, { status: 204 });
+      throw new Error(`Unexpected request: ${url.pathname}`);
+    });
+    const runtime = createRuntime(fetchImpl, { interruptedTurnWatchdogMs: 10 });
+
+    runtime.processPayload({
+      type: 'message.updated',
+      properties: { info: unfinishedAssistant().info },
+    }, DIRECTORY);
+    await vi.advanceTimersByTimeAsync(10);
+
+    expect(requests.some(({ url }) => url.pathname.endsWith('/prompt_async'))).toBe(true);
+    runtime.stop();
+  });
+
+  it('keeps checking a busy session and resumes once it becomes idle', async () => {
+    const messages = [userMessage(), unfinishedAssistant()];
+    const requests = [];
+    let statusReads = 0;
+    const fetchImpl = vi.fn(async (input, init = {}) => {
+      const url = new URL(typeof input === 'string' ? input : input.url);
+      requests.push({ url, init });
+      const pathname = url.pathname;
+      if (pathname === `/session/${SESSION_ID}`) return jsonResponse({ id: SESSION_ID });
+      if (pathname === '/session/status') {
+        statusReads += 1;
+        return jsonResponse(statusReads === 1 ? { [SESSION_ID]: { type: 'busy' } } : {});
+      }
+      if (pathname === `/session/${SESSION_ID}/message`) return jsonResponse(messages);
+      if (pathname === `/session/${SESSION_ID}/prompt_async`) return new Response(null, { status: 204 });
+      throw new Error(`Unexpected request: ${pathname}`);
+    });
+    const runtime = createRuntime(fetchImpl, {
+      interruptedTurnWatchdogMs: 10,
+      busyRecheckDelayMs: 20,
+    });
+
+    runtime.processPayload({
+      type: 'session.status',
+      properties: { sessionID: SESSION_ID, status: { type: 'busy' }, directory: DIRECTORY },
+    }, DIRECTORY);
+    await vi.advanceTimersByTimeAsync(10);
+    expect(requests.some(({ url }) => url.pathname.endsWith('/prompt_async'))).toBe(false);
+    await vi.advanceTimersByTimeAsync(20);
+
+    expect(requests.some(({ url }) => url.pathname.endsWith('/prompt_async'))).toBe(true);
+    runtime.stop();
+  });
+
+  it('retries a watchdog check after a temporary endpoint failure', async () => {
+    const messages = [userMessage(), unfinishedAssistant()];
+    let sessionReads = 0;
+    const requests = [];
+    const fetchImpl = vi.fn(async (input, init = {}) => {
+      const url = new URL(typeof input === 'string' ? input : input.url);
+      requests.push({ url, init });
+      if (url.pathname === `/session/${SESSION_ID}`) {
+        sessionReads += 1;
+        if (sessionReads === 1) throw new Error('temporary network failure');
+        return jsonResponse({ id: SESSION_ID });
+      }
+      if (url.pathname === '/session/status') return jsonResponse({});
+      if (url.pathname === `/session/${SESSION_ID}/message`) return jsonResponse(messages);
+      if (url.pathname === `/session/${SESSION_ID}/prompt_async`) return new Response(null, { status: 204 });
+      throw new Error(`Unexpected request: ${url.pathname}`);
+    });
+    const runtime = createRuntime(fetchImpl, {
+      interruptedTurnWatchdogMs: 10,
+      busyRecheckDelayMs: 20,
+    });
+
+    runtime.processPayload({
+      type: 'message.updated',
+      properties: { info: unfinishedAssistant().info },
+    }, DIRECTORY);
+    await vi.advanceTimersByTimeAsync(10);
+    expect(requests.some(({ url }) => url.pathname.endsWith('/prompt_async'))).toBe(false);
+    await vi.advanceTimersByTimeAsync(20);
+
+    expect(requests.some(({ url }) => url.pathname.endsWith('/prompt_async'))).toBe(true);
+    runtime.stop();
+  });
+
+  it('continues after a transient provider error event', async () => {
+    const messages = [userMessage(), recoverableErrorAssistant()];
+    const requests = [];
+    const fetchImpl = vi.fn(async (input, init = {}) => {
+      const url = new URL(typeof input === 'string' ? input : input.url);
+      requests.push({ url, init });
+      if (url.pathname === `/session/${SESSION_ID}`) return jsonResponse({ id: SESSION_ID });
+      if (url.pathname === `/session/${SESSION_ID}/message`) return jsonResponse(messages);
+      if (url.pathname === `/session/${SESSION_ID}/prompt_async`) return new Response(null, { status: 204 });
+      throw new Error(`Unexpected request: ${url.pathname}`);
+    });
+    const runtime = createRuntime(fetchImpl);
+
+    runtime.processPayload({
+      type: 'session.error',
+      properties: { sessionID: SESSION_ID, directory: DIRECTORY },
+    }, DIRECTORY);
+    await vi.advanceTimersByTimeAsync(10);
+
+    expect(requests.some(({ url }) => url.pathname.endsWith('/prompt_async'))).toBe(true);
+    runtime.stop();
+  });
+
+  it('does not retry permanent provider errors', async () => {
+    const failed = recoverableErrorAssistant('msg_permanent');
+    failed.info.error = { name: 'InvalidRequestError', message: 'unsupported model' };
+    const fetchImpl = vi.fn(async (input) => {
+      const pathname = requestPath(input);
+      if (pathname === `/session/${SESSION_ID}`) return jsonResponse({ id: SESSION_ID });
+      if (pathname === `/session/${SESSION_ID}/message`) return jsonResponse([userMessage(), failed]);
+      throw new Error(`Unexpected request: ${pathname}`);
+    });
+    const runtime = createRuntime(fetchImpl);
+
+    runtime.processPayload({
+      type: 'session.error',
+      properties: { sessionID: SESSION_ID, directory: DIRECTORY },
+    }, DIRECTORY);
+    await vi.advanceTimersByTimeAsync(10);
+
+    expect(fetchImpl.mock.calls.some(([input]) => requestPath(input).endsWith('/prompt_async'))).toBe(false);
+    runtime.stop();
+  });
+
+  it('does not retry an error that already contains a tool part', async () => {
+    const failed = recoverableErrorAssistant('msg_error_with_tool');
+    failed.parts = [{
+      type: 'tool',
+      tool: 'bash',
+      state: { status: 'completed', metadata: { exit: 1 }, output: 'failed' },
+    }];
+    const fetchImpl = vi.fn(async (input) => {
+      const pathname = requestPath(input);
+      if (pathname === `/session/${SESSION_ID}`) return jsonResponse({ id: SESSION_ID });
+      if (pathname === `/session/${SESSION_ID}/message`) return jsonResponse([userMessage(), failed]);
+      throw new Error(`Unexpected request: ${pathname}`);
+    });
+    const runtime = createRuntime(fetchImpl);
+
+    runtime.processPayload({
+      type: 'session.error',
+      properties: { sessionID: SESSION_ID, directory: DIRECTORY },
+    }, DIRECTORY);
+    await vi.advanceTimersByTimeAsync(10);
+
+    expect(fetchImpl.mock.calls.some(([input]) => requestPath(input).endsWith('/prompt_async'))).toBe(false);
     runtime.stop();
   });
 

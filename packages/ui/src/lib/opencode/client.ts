@@ -16,6 +16,7 @@ import { isAmbiguousTransportFailure, markAmbiguousTransportFailure } from "@/li
 import { FilesystemError, parseFilesystemErrorReason } from "@/lib/api/files-errors";
 import type { PermissionRequest } from "@/types/permission";
 import type { QuestionRequest } from "@/types/question";
+import { prepareAttachmentFiles } from "@/sync/attachment-files";
 
 /**
  * Tagged result of `OpencodeService.fetchPermission()`. The caller can
@@ -648,6 +649,67 @@ class OpencodeService {
   }
 
   /**
+   * Convert a raw PDF restored from an older message into the same Markdown
+   * attachment produced by the picker. This protects retries/forks of old
+   * sessions whose history still contains an `application/pdf` file part.
+   */
+  private isPdfFilePart(file: { mime: string; filename?: string }): boolean {
+    const mime = file.mime.toLowerCase().split(';', 1)[0]?.trim();
+    // A new PDF attachment keeps its original .pdf filename for display, but
+    // carries a text/plain sidecar payload. Do not mistake that provider-safe
+    // sidecar for a raw PDF and normalize it into a visible .md file again.
+    if (mime === 'text/plain') return false;
+    return mime === 'application/pdf' || /\.pdf$/i.test(file.filename ?? '');
+  }
+
+  private async textDataUrl(text: string): Promise<string> {
+    return this.blobToDataUrl(new Blob([text], { type: 'text/plain' }), 'text/plain');
+  }
+
+  private async normalizePdfPart(file: { mime: string; filename?: string; url: string }): Promise<{ mime: string; filename?: string; url: string }> {
+    const sourceName = file.filename || 'document.pdf';
+    const markdownName = sourceName.replace(/\.pdf$/i, '') + '.md';
+    try {
+      if (!file.url.startsWith('data:')) {
+        throw new Error('PDF bytes are not available in the restored file part');
+      }
+      const response = await fetch(file.url);
+      if (!response.ok) throw new Error(`PDF data URL could not be read (${response.status})`);
+      const blob = await response.blob();
+      const source = new File([blob], sourceName, { type: 'application/pdf' });
+      const prepared = await prepareAttachmentFiles(source);
+      const first = Array.isArray(prepared) ? prepared[0] : undefined;
+      if (!first) throw new Error('PDF normalization returned no text attachment');
+      const url = await this.fileToDataUrl(first.file, first.mimeType);
+      return { mime: 'text/plain', filename: first.file.name, url };
+    } catch (error) {
+      console.warn('Failed to normalize a restored PDF attachment', error);
+      return {
+        mime: 'text/plain',
+        filename: markdownName,
+        url: await this.textDataUrl(
+          `# PDF: ${sourceName}\n\n[OpenDeputy could not restore readable text from this PDF.]\nThe original PDF was not sent as binary to avoid provider parser failures.\n`,
+        ),
+      };
+    }
+  }
+
+  private async fileToDataUrl(file: File, mime: string): Promise<string> {
+    return this.blobToDataUrl(file, mime);
+  }
+
+  private async blobToDataUrl(blob: Blob, mime: string): Promise<string> {
+    const bytes = new Uint8Array(await blob.arrayBuffer());
+    let binary = '';
+    // Avoid a huge spread argument and keep data-url creation safe for large
+    // extracted PDFs on Chromium/Electron.
+    for (let offset = 0; offset < bytes.length; offset += 0x8000) {
+      binary += String.fromCharCode(...bytes.subarray(offset, offset + 0x8000));
+    }
+    return `data:${mime};base64,${btoa(binary)}`;
+  }
+
+  /**
    * Convert HEIC image to JPEG.
    * Returns the original file if conversion fails.
    */
@@ -704,8 +766,15 @@ class OpencodeService {
    * Normalize file part for sending to AI providers.
    * - Converts unsupported text MIME types to text/plain
    * - Converts HEIC/HEIF images to JPEG
+   * - Converts raw PDF parts restored from older messages to Markdown/text
    */
   private async normalizeFilePart(file: { mime: string; filename?: string; url: string }): Promise<{ mime: string; filename?: string; url: string }> {
+    // PDFs restored from an older session may still be raw binary. Normalize
+    // them before the request reaches a provider's PDF parser.
+    if (this.isPdfFilePart(file)) {
+      return this.normalizePdfPart(file);
+    }
+
     // Handle HEIC conversion
     if (this.isHeicMime(file.mime)) {
       return this.convertHeicToJpeg(file);

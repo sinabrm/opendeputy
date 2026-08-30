@@ -1,6 +1,6 @@
 # OpenDeputy Web Runtime
 
-This package provides the in-process server and built web interface used by OpenDeputy Desktop. It retains the upstream `openchamber` CLI and package name as compatibility aliases for existing automation and remote-server deployments.
+This package provides the in-process server and built web interface used by OpenDeputy Desktop. It exposes the OpenCode CLI while retaining the upstream `openchamber` command as a compatibility alias for existing automation and remote-server deployments.
 
 The Windows desktop release starts this server inside Electron and bundles the matching OpenCode CLI. A standalone remote server may connect to an external OpenCode instance or start an installed OpenCode CLI.
 
@@ -23,7 +23,7 @@ Node.js 22 or newer, then can opt in with
 
 ## Compatibility
 
-The package remains `@openchamber/web`, the CLI alias remains `openchamber`, and existing `OPENCHAMBER_*` environment variables remain supported. These identifiers are runtime contracts; visible desktop branding and release artifacts use OpenDeputy.
+The package remains `@openchamber/web`, the compatibility CLI alias remains `openchamber`, and existing `OPENCHAMBER_*` environment variables remain supported. These identifiers are runtime contracts; visible desktop branding and release artifacts use OpenDeputy.
 
 ## Security
 

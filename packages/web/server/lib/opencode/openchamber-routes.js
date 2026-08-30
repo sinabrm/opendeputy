@@ -133,7 +133,7 @@ export const registerOpenChamberRoutes = (app, dependencies) => {
       if (isForegroundService) {
         if (!systemdServiceUnit) {
           return res.status(409).json({
-            error: 'Foreground servers must be updated by their service manager. Set OPENCHAMBER_SYSTEMD_UNIT when running under systemd, or run openchamber update and restart the service.',
+            error: 'Foreground servers must be updated by their service manager. Set OPENCHAMBER_SYSTEMD_UNIT when running under systemd, or run opencode update and restart the service.',
           });
         }
 
@@ -168,7 +168,7 @@ export const registerOpenChamberRoutes = (app, dependencies) => {
 
         return res.json({
           success: true,
-          message: 'Update queued; OpenChamber will restart after installation completes',
+          message: 'Update queued; OpenDeputy will restart after installation completes',
           version: updateInfo.version,
           packageManager: pm,
           autoRestart: true,
@@ -194,7 +194,7 @@ export const registerOpenChamberRoutes = (app, dependencies) => {
         String(storedOptions.port),
       ];
       let restartCmdPrimary = restartParts.join(' ');
-      let restartCmdFallback = `openchamber serve --port ${storedOptions.port}`;
+      let restartCmdFallback = `opencode serve --port ${storedOptions.port}`;
       if (storedOptions.host) {
         if (isWindows) {
           const escapedHost = storedOptions.host.replace(/"/g, '""');
@@ -225,7 +225,7 @@ export const registerOpenChamberRoutes = (app, dependencies) => {
       const updateLogPath = path.join(openchamberDataDir, 'update-install.log');
       const logPreamble = [
         '',
-        `=== OpenChamber update ${new Date().toISOString()} ===`,
+        `=== OpenDeputy update ${new Date().toISOString()} ===`,
         `currentVersion=${updateInfo.currentVersion || 'unknown'}`,
         `targetVersion=${updateInfo.version || 'unknown'}`,
         `packageManager=${pm}`,
@@ -262,8 +262,8 @@ export const registerOpenChamberRoutes = (app, dependencies) => {
             timeout /t 2 /nobreak >nul
             ${updateCmd}
             if %ERRORLEVEL% EQU 0 (
-              echo Update successful, restarting OpenChamber...
-              ${restartCmd || 'echo Service manager will restart OpenChamber.'}
+              echo Update successful, restarting OpenDeputy...
+              ${restartCmd || 'echo Service manager will restart OpenDeputy.'}
             ) else (
               echo Update failed
               exit /b 1
@@ -274,8 +274,8 @@ export const registerOpenChamberRoutes = (app, dependencies) => {
             sleep 2
             ${updateCmd}
             if [ $? -eq 0 ]; then
-              echo "Update successful, restarting OpenChamber..."
-              ${restartCmd || 'echo "Service manager will restart OpenChamber."'}
+              echo "Update successful, restarting OpenDeputy..."
+              ${restartCmd || 'echo "Service manager will restart OpenDeputy."'}
             else
               echo "Update failed"
               exit 1

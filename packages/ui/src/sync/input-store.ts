@@ -5,7 +5,7 @@
 
 import { create } from "zustand"
 import type { AttachedFile } from "@/stores/types/sessionTypes"
-import { prepareAttachmentFiles } from "./attachment-files"
+import { prepareAttachmentFiles, selectPdfContext, textToDataUrl } from "./attachment-files"
 
 const FILE_URI_PREFIX = "file://"
 const MAX_ATTACHMENT_PREPARATION_ATTEMPTS = 3
@@ -53,6 +53,45 @@ const readFileAsDataUrl = (file: File, mime: string): Promise<string> => new Pro
   reader.onabort = () => reject(new Error("File read aborted"))
   reader.readAsDataURL(file)
 })
+
+const isPdfAttachment = (file: File): boolean => (
+  file.type.toLowerCase().split(";", 1)[0]?.trim() === "application/pdf"
+  || /\.pdf$/i.test(file.name)
+)
+
+export type MessageAttachmentFile = {
+  type: "file"
+  mime: string
+  url: string
+  filename: string
+}
+
+/**
+ * Build the provider payload while keeping the original attachment metadata
+ * for the chat UI. PDF context is bounded and page-selected per user query;
+ * the provider receives text/plain content with the original .pdf filename,
+ * so neither the UI nor the provider sees a generated .md attachment.
+ */
+export const attachmentToMessageFile = (
+  attachment: AttachedFile,
+  query: string,
+): MessageAttachmentFile => {
+  if (attachment.contextText && attachment.contextMimeType) {
+    return {
+      type: "file",
+      mime: attachment.contextMimeType,
+      url: textToDataUrl(selectPdfContext(attachment.contextText, query)),
+      filename: attachment.filename,
+    }
+  }
+
+  return {
+    type: "file",
+    mime: attachment.mimeType,
+    url: attachment.dataUrl,
+    filename: attachment.filename,
+  }
+}
 
 const getDataUrlByteSize = (url: string): number => {
   if (!url.startsWith("data:")) return 0
@@ -177,24 +216,62 @@ export const useInputStore = create<InputState>()((set, get) => ({
       const attachedFiles: AttachedFile[] = []
       const isDocumentExtraction = preparedFiles.length > 1
       const sourceDocumentId = isDocumentExtraction ? `${Date.now()}-${Math.random().toString(36).slice(2)}` : undefined
-      for (const prepared of preparedFiles) {
-        let dataUrl: string
+
+      // A PDF is a display attachment and a provider-context attachment at
+      // the same time. Keep the original bytes/name in the UI, but retain the
+      // locally extracted text separately so sending never forwards the raw
+      // PDF to a provider parser.
+      if (isPdfAttachment(file) && preparedFiles.length === 1) {
+        let originalDataUrl: string
         try {
-          dataUrl = await readFileAsDataUrl(prepared.file, prepared.mimeType)
+          originalDataUrl = await readFileAsDataUrl(file, "application/pdf")
         } catch {
           return false
         }
-        if (!dataUrl || generation !== attachmentReadGeneration) return false
+        if (!originalDataUrl || generation !== attachmentReadGeneration) return false
+
+        const prepared = preparedFiles[0]
+        let contextText: string
+        try {
+          contextText = await prepared.file.text()
+        } catch {
+          return false
+        }
+        if (generation !== attachmentReadGeneration) return false
+
         attachedFiles.push({
           id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
-          file: prepared.file,
-          dataUrl,
-          mimeType: prepared.mimeType,
-          filename: prepared.file.name,
-          size: prepared.file.size,
+          file,
+          dataUrl: originalDataUrl,
+          mimeType: "application/pdf",
+          filename: file.name,
+          size: file.size,
           source: "local",
-          sourceDocumentId,
+          contextText,
+          contextMimeType: prepared.mimeType,
         })
+      }
+
+      if (attachedFiles.length === 0) {
+        for (const prepared of preparedFiles) {
+          let dataUrl: string
+          try {
+            dataUrl = await readFileAsDataUrl(prepared.file, prepared.mimeType)
+          } catch {
+            return false
+          }
+          if (!dataUrl || generation !== attachmentReadGeneration) return false
+          attachedFiles.push({
+            id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+            file: prepared.file,
+            dataUrl,
+            mimeType: prepared.mimeType,
+            filename: prepared.file.name,
+            size: prepared.file.size,
+            source: "local",
+            sourceDocumentId,
+          })
+        }
       }
 
       if (hasGeneratedFilenameCollision(generatedFilenames, get().attachedFiles)) continue

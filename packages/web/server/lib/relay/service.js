@@ -40,7 +40,7 @@ const normalizeRelayUrl = (value) => {
 // stored setting entirely, so the host connection, the pairing offer, and the
 // status all point at it — clients then inherit it from the offer automatically.
 const envRelayUrlOverride = () => {
-  const raw = process.env.OPENCHAMBER_RELAY_URL;
+  const raw = process.env.OPENDEPUTY_RELAY_URL || process.env.OPENCHAMBER_RELAY_URL;
   if (typeof raw !== 'string' || !raw.trim() || !isValidRelayUrl(raw)) return null;
   return raw.trim();
 };

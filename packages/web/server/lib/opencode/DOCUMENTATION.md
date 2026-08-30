@@ -35,7 +35,7 @@ This module provides OpenCode server integration utilities for the web server ru
 - `packages/web/server/lib/agent-tool/runtime.js`: managed OpenCode custom-tool materialization, environment injection, loopback authentication, and fixed CLI action dispatch.
 - `packages/web/server/lib/system-prompt/runtime.js`: opt-in managed OpenCode system-prompt optimizer materialization and plugin injection.
 - `packages/web/server/lib/opencode/server-utils-runtime.js`: shared server runtime utilities for OpenCode proxy wiring, OpenCode port/readiness helpers, and snapshot fetchers.
-- `packages/web/server/lib/opencode/openchamber-routes.js`: OpenChamber update and models metadata route registration.
+- `packages/web/server/lib/opencode/openchamber-routes.js`: OpenDeputy update and models metadata route registration.
 - `packages/web/server/lib/opencode/pwa-manifest-routes.js`: PWA manifest route registration with recent-session shortcut resolution and short-lived caching.
 - `packages/web/server/lib/opencode/project-icon-routes.js`: project icon upload/read/discovery route registration and icon storage orchestration.
 - `packages/web/server/lib/opencode/skill-routes.js`: route registration for skill config CRUD, supporting files, and skills catalog scan/install flows.
@@ -46,7 +46,7 @@ This module provides OpenCode server integration utilities for the web server ru
 - `packages/web/server/lib/opencode/proxy.js`: OpenCode API/SSE forwarding and readiness-gate route registration.
 - `packages/web/server/lib/opencode/session-runtime.js`: session status/attention/activity runtime for OpenCode SSE events.
 - `packages/web/server/lib/opencode/watcher.js`: global SSE watcher runtime for push/session event fanout.
-- `packages/web/server/lib/session-recovery/runtime.js`: bounded hidden continuation for completed, empty `finish: unknown` assistant turns.
+- `packages/web/server/lib/session-recovery/runtime.js`: bounded hidden continuation for empty, unfinished, and transiently failed assistant turns.
 - `packages/web/server/lib/opencode/shared.js`: shared utilities for config, markdown, skills, and git helpers.
 - `packages/web/server/lib/ui-auth/ui-auth.js`: UI session authentication runtime (outside OpenCode module).
 - `packages/web/server/lib/ui-auth/ui-passkeys.js`: UI passkey storage and WebAuthn registration/authentication helpers (outside OpenCode module).
@@ -409,7 +409,7 @@ an authoritative loopback callback URL even when OpenChamber binds port `0`.
   - Can still create its own `/global/event` reader when no shared hub is provided, which keeps module tests and isolated reuse simple.
   - Reuses event-stream parsing, `Last-Event-ID`, stall timeout, and reconnect behavior.
   - Forwards unwrapped global event payloads into notification/session side effects.
-  - The same global event hub drives empty unknown-finish recovery. Recovery revalidates the session tail and sends at most two fully synthetic continuations per visible user turn, so no automatic request appears in chat.
+  - The same global event hub drives automatic session recovery. Recovery revalidates the session tail, watches unfinished turns while the session is busy, and sends at most two fully synthetic continuations per visible user turn, so no automatic request appears in chat.
 
 ## Storage and configuration
 - Provider auth: `~/.local/share/opencode/auth.json`.

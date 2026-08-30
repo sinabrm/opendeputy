@@ -27,6 +27,7 @@ export const resolveOpenCodeEnvConfig = (options = {}) => {
 
   const configuredOpenCodePort = (() => {
     const raw =
+      env.OPENDEPUTY_CODE_PORT ||
       env.OPENCODE_PORT ||
       env.OPENCHAMBER_OPENCODE_PORT ||
       env.OPENCHAMBER_INTERNAL_PORT;
@@ -38,11 +39,16 @@ export const resolveOpenCodeEnvConfig = (options = {}) => {
   })();
 
   const configuredOpenCodeHost = (() => {
-    const raw = typeof env.OPENCODE_HOST === 'string' ? env.OPENCODE_HOST.trim() : '';
+    const hostEnvName = typeof env.OPENDEPUTY_CODE_HOST === 'string' && env.OPENDEPUTY_CODE_HOST.trim()
+      ? 'OPENDEPUTY_CODE_HOST'
+      : typeof env.OPENCODE_HOST === 'string' && env.OPENCODE_HOST.trim()
+        ? 'OPENCODE_HOST'
+        : '';
+    const raw = hostEnvName ? env[hostEnvName].trim() : '';
     if (!raw) return null;
 
     const warnInvalidHost = (reason) => {
-      logger.warn(`[config] Ignoring OPENCODE_HOST=${JSON.stringify(raw)}: ${reason}`);
+      logger.warn(`[config] Ignoring ${hostEnvName}=${JSON.stringify(raw)}: ${reason}`);
     };
 
     let url;
@@ -68,24 +74,28 @@ export const resolveOpenCodeEnvConfig = (options = {}) => {
     return { origin: url.origin, port };
   })();
 
-  // OPENCODE_HOST takes precedence over OPENCODE_PORT when both are set
+  // An explicit OpenDeputy code host takes precedence over the port when both
+  // are set. Legacy OpenCode variables remain supported below.
   const effectivePort = configuredOpenCodeHost?.port ?? configuredOpenCodePort;
 
   const configuredOpenCodeHostname = (() => {
-    const raw = env.OPENCHAMBER_OPENCODE_HOSTNAME;
+    const hostnameEnvName = typeof env.OPENDEPUTY_CODE_HOSTNAME === 'string' && env.OPENDEPUTY_CODE_HOSTNAME.trim()
+      ? 'OPENDEPUTY_CODE_HOSTNAME'
+      : 'OPENCHAMBER_OPENCODE_HOSTNAME';
+    const raw = env[hostnameEnvName];
     if (typeof raw !== 'string') {
       return '127.0.0.1';
     }
     const trimmed = raw.trim();
     if (!trimmed) {
       logger.warn(
-        `[config] Ignoring OPENCHAMBER_OPENCODE_HOSTNAME=${JSON.stringify(raw)}: empty after trimming`,
+        `[config] Ignoring ${hostnameEnvName}=${JSON.stringify(raw)}: empty after trimming`,
       );
       return '127.0.0.1';
     }
     if (!isValidOpenCodeHostname(trimmed)) {
       logger.error(
-        `[config] Rejecting OPENCHAMBER_OPENCODE_HOSTNAME=${JSON.stringify(raw)}: `
+        `[config] Rejecting ${hostnameEnvName}=${JSON.stringify(raw)}: `
         + 'must be a valid hostname or IP address (for example 127.0.0.1, 0.0.0.0, localhost, [::1]); '
         + 'falling back to 127.0.0.1 (loopback only)',
       );

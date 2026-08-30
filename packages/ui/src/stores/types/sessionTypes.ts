@@ -24,6 +24,14 @@ export interface AttachedFile {
     /** Shared ID linking entries extracted from the same document (PPTX, DOCX, etc.).
      *  Removing any entry with this ID cascades to all entries in the group. */
     sourceDocumentId?: string;
+    /**
+     * Provider-safe context retained separately from the original user file.
+     * PDFs keep their original filename/data URL for the UI while this text is
+     * selected and bounded at send time, so the binary PDF never reaches the
+     * provider parser and a whole book is not resent on every turn.
+     */
+    contextText?: string;
+    contextMimeType?: string;
 }
 
 export type EditPermissionMode = 'allow' | 'ask' | 'deny' | 'full';

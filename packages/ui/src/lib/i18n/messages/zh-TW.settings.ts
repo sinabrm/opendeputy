@@ -1725,8 +1725,6 @@ export const settingsDict = {
   'settings.voice.page.field.messageReadAloudButton': '訊息朗讀按鈕',
   'settings.voice.page.field.summarizeBeforePlaybackAria': '播放前摘要',
   'settings.voice.page.field.summarizeBeforePlayback': '播放前摘要',
-  'settings.voice.page.field.summarizeVoiceModeResponsesAria': '摘要語音模式回覆',
-  'settings.voice.page.field.summarizeVoiceModeResponses': '摘要語音模式回覆',
   'settings.voice.page.field.summarizationThreshold': '摘要閾值',
   'settings.voice.page.field.summaryMaxLength': '摘要最大長度',
   'settings.voice.page.hint.shiftClickPrefix': '按住',

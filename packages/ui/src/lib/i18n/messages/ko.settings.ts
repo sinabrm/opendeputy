@@ -1818,8 +1818,6 @@ export const settingsDict = {
   'settings.voice.page.field.messageReadAloudButton': '메시지 읽어주기 버튼',
   'settings.voice.page.field.summarizeBeforePlaybackAria': '재생 전 요약',
   'settings.voice.page.field.summarizeBeforePlayback': '재생 전 요약',
-  'settings.voice.page.field.summarizeVoiceModeResponsesAria': '음성 모드 응답 요약',
-  'settings.voice.page.field.summarizeVoiceModeResponses': '음성 모드 응답 요약',
   'settings.voice.page.field.summarizationThreshold': '요약 기준',
   'settings.voice.page.field.summaryMaxLength': '요약 최대 길이',
   'settings.voice.page.hint.shiftClickPrefix': '마이크 버튼에서',
