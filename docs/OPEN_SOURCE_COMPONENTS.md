@@ -11,7 +11,7 @@ This page explains what OpenDeputy is built from, what each release actually shi
 - **Development only**: it helps build, test, or maintain OpenDeputy and is not an end-user feature.
 - **User-added**: it is controlled by the user's OpenCode/OpenDeputy configuration and is not part of the OpenDeputy distribution.
 
-[`THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md) contains the major legal acknowledgements. The generated [`THIRD_PARTY_LICENSES.txt`](../THIRD_PARTY_LICENSES.txt) is the JavaScript and native-package dependency/license inventory for the packaged Windows-x64 application, resolved from the release lockfile. Exact upstream texts for separately bundled binaries and adapted assets are retained in [`legal/third-party`](../legal/third-party/README.md). It is not a general inventory of Docker operating-system packages, optional user-installed tools, downloaded models, or user-added extensions. These files complement, and do not replace, license files distributed by individual projects.
+[`THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md) contains the major legal acknowledgements. The generated [`THIRD_PARTY_LICENSES.txt`](../THIRD_PARTY_LICENSES.txt) and [`THIRD_PARTY_LICENSES.linux-x64.txt`](../THIRD_PARTY_LICENSES.linux-x64.txt) are the JavaScript and native-package dependency/license inventories for the packaged Windows-x64 and Linux-x64 desktop applications, resolved from the release lockfile. Exact upstream texts for separately bundled binaries and adapted assets are retained in [`legal/third-party`](../legal/third-party/README.md). These reports are not general inventories of Docker operating-system packages, optional user-installed tools, downloaded models, or user-added extensions. They complement, and do not replace, license files distributed by individual projects.
 
 ## Derived source
 
@@ -44,9 +44,32 @@ OpenDeputy's in-app browser is implemented with Electron's Chromium view and fir
 
 Managed desktop OpenCode receives eight enabled MCP entries. TouchPoint uses its self-contained packaged Python runtime and does not rely on a system Python or another application installation. The `opendeputy`, `opendeputy_web`, and `opendeputy_workspace` tools are also materialized from OpenDeputy code; they are not separate third-party MCP projects.
 
+## Bundled Linux desktop components
+
+The Linux AppImage and Debian package use the same Electron shell and web UI,
+but ship Linux-native helpers and omit the Windows-only TouchPoint runtime.
+Their package-level dependency inventory is
+[`THIRD_PARTY_LICENSES.linux-x64.txt`](../THIRD_PARTY_LICENSES.linux-x64.txt).
+
+| Project | Role | Version or pin | Status | License |
+| --- | --- | --- | --- | --- |
+| OpenDeputy web server and UI | In-process backend and compiled interface | Current source and release | Bundled | MIT, subject to third-party notices |
+| [Electron](https://github.com/electron/electron) | Linux desktop shell and embedded Chromium/Node.js runtime | Release manifest and lockfile | Bundled | MIT; Chromium and other notices ship with Electron |
+| [OpenCode](https://github.com/anomalyco/opencode) | Agent runtime and provider/plugin API | CLI and SDK `1.18.18` | Bundled | MIT |
+| [Open Computer Use](https://github.com/iFurySt/open-codex-computer-use) | Approval-gated Linux desktop inspection and control through MCP | `0.3.1` | Bundled | MIT |
+| [Playwright MCP](https://github.com/microsoft/playwright-mcp) | Isolated browser automation MCP | `0.0.79` | Bundled in the managed agent kit | Apache-2.0 |
+| [Open Browser Use](https://github.com/iFurySt/open-browser-use) | Linux browser automation MCP and CLI | `0.1.41` | Bundled in the managed agent kit; Chrome extension connection is external | MIT |
+| [`@zavora-ai/computer-use-mcp`](https://www.npmjs.com/package/@zavora-ai/computer-use-mcp) | Linux accessibility and coordinate-control compatibility MCP | `7.0.0` | Bundled in the managed agent kit | MIT |
+| [Sharp](https://sharp.pixelplumbing.com/) | Image decoding for visual grounding | `0.35.3`; Linux libvips native package | Bundled in the managed agent kit | Apache-2.0 and LGPL-3.0-or-later as declared by native packages |
+| [`sherpa-onnx-node`](https://github.com/k2-fsa/sherpa-onnx) | Native local speech inference runtime | API package `1.12.28`; Linux native package resolved through its optional range | Bundled; model files are not | Apache-2.0 for the runtime |
+
+Linux desktop updates are supported when OpenDeputy is launched from a
+writable AppImage. Debian installs receive newer versions by installing the
+newer `.deb` manually.
+
 ## Major bundled interface foundations
 
-This is a readable acknowledgement of prominent UI projects, not a substitute for the complete Windows-x64 packaged dependency inventory. Exact pinned texts for the adapted Flexoki and Vitesse data and the bundled Remix Icon package are in the [`legal/third-party`](../legal/third-party/README.md) manual bundle.
+This is a readable acknowledgement of prominent UI projects, not a substitute for the complete Windows-x64 or Linux-x64 packaged dependency inventories. Exact pinned texts for the adapted Flexoki and Vitesse data and the bundled Remix Icon package are in the [`legal/third-party`](../legal/third-party/README.md) manual bundle.
 
 | Project | What users see | Version or source of truth | License |
 | --- | --- | --- | --- |
@@ -62,11 +85,11 @@ This is a readable acknowledgement of prominent UI projects, not a substitute fo
 
 ## Bundled web and Docker components
 
-The standalone web/server build shares the OpenDeputy UI and backend dependencies. Its environment differs from the Windows installer.
+The standalone web/server build shares the OpenDeputy UI and backend dependencies. Its environment differs from the desktop installers.
 
 | Project or layer | Role | Version or pin | Distribution | License |
 | --- | --- | --- | --- | --- |
-| [Bun](https://github.com/oven-sh/bun) | Package manager/build tool and Docker base runtime | `1.3.14` | Docker image and development environment; not bundled in the Windows installer | MIT for Bun; the base image contains separately licensed components |
+| [Bun](https://github.com/oven-sh/bun) | Package manager/build tool and Docker base runtime | `1.3.14` | Docker image and development environment; not bundled in desktop installers | MIT for Bun; the base image contains separately licensed components |
 | [Node.js](https://github.com/nodejs/node) | Runs the self-hosted web server and Playwright transport | `22` | Docker image and supported source runtime | MIT; Node.js includes separately licensed components |
 | [OpenCode](https://github.com/anomalyco/opencode) | Managed agent runtime | `opencode-ai@1.18.18` | Installed in the Docker image; a non-Docker server may use a separately installed or externally managed OpenCode | MIT |
 | [Playwright Core](https://github.com/microsoft/playwright) | Controls the persistent server-owned browser; its reviewed Docker seccomp profile enables Chromium's non-root sandbox | `1.62.1` | Bundled in the web/server dependency graph and Compose configuration | Apache-2.0 |
@@ -130,7 +153,7 @@ OpenDeputy also supports arbitrary OpenCode plugin package specs and local plugi
 
 ## Skills
 
-The Windows agent kit includes `computer-control`, `desktop-workspace`, `open-browser-use`, and `open-computer-use`. OpenCode supplies the built-in `customize-opencode` skill, producing five default discovered skills. The skills catalog can also scan and install skills from [Anthropic's public skills repository](https://github.com/anthropics/skills), the [ClawdHub](https://clawdhub.com/) community registry, or a user-provided Git repository.
+The managed desktop agent kit includes `computer-control`, `desktop-workspace`, `open-browser-use`, and `open-computer-use` on both Windows and Linux. TouchPoint-specific control remains Windows-only. OpenCode supplies the built-in `customize-opencode` skill, producing five default discovered skills. The skills catalog can also scan and install skills from [Anthropic's public skills repository](https://github.com/anthropics/skills), the [ClawdHub](https://clawdhub.com/) community registry, or a user-provided Git repository.
 
 Installed skills may contain instructions, scripts, references, and assets. Their licenses and security behavior vary by repository and sometimes by individual skill. Review each selected skill's `SKILL.md`, supporting files, source, and license before installing it. A catalog listing is not an endorsement or a claim that the skill is covered by OpenDeputy's MIT License.
 
@@ -144,7 +167,7 @@ Compatibility is also not inclusion: support for an `opencode-snippets`-compatib
 
 ## Development-only components
 
-The source checkout uses tools such as Bun, TypeScript, Vite, Vitest, ESLint, electron-builder, NSIS support downloaded by electron-builder, patch-package, and repository automation. These tools build or validate release artifacts; they are not separate end-user capabilities in the Windows app. Their exact resolved versions are recorded by the lockfile; packages included in the packaged Windows-x64 dependency graph also appear in the generated license inventory.
+The source checkout uses tools such as Bun, Node.js, TypeScript, Vite, Vitest, ESLint, electron-builder, NSIS/AppImage support downloaded by electron-builder, patch-package, and repository automation. These tools build or validate release artifacts; they are not separate end-user capabilities in the desktop apps. Their exact resolved versions are recorded by the lockfile; packages included in the packaged Windows-x64 or Linux-x64 dependency graph appear in the corresponding generated license inventory.
 
 Repository `.agents/skills` outside `packages/electron/agent-kit/skills`, tests, fixtures, build scripts, and contributor documentation guide development. They are not automatically installed into a user's OpenCode skills directories or included as advertised runtime extensions.
 
@@ -153,9 +176,9 @@ Repository `.agents/skills` outside `packages/electron/agent-kit/skills`, tests,
 When updating a component, update the corresponding record as part of the same change:
 
 - `package.json`, workspace package manifests, and `bun.lock` for JavaScript/native packages.
-- `packages/electron/package.json` and its packaging resources for Windows-bundled runtimes.
+- `packages/electron/package.json`, `packages/electron/electron-builder.linux.cjs`, and the packaging resources for desktop-bundled runtimes.
 - `Dockerfile` for Docker base software, OpenCode, and cloudflared pins.
 - `packages/web/server/lib/dictation/local/model-catalog.js` for speech model URLs, byte sizes, SHA-256 values, and checksum provenance.
 - `scripts/install-optional-windows-tools.ps1` for optional Windows package pins and install identifiers.
-- [`THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md) for major acknowledgements and generated [`THIRD_PARTY_LICENSES.txt`](../THIRD_PARTY_LICENSES.txt) for the packaged Windows-x64 JavaScript/native dependency inventory.
+- [`THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md) for major acknowledgements and generated [`THIRD_PARTY_LICENSES.txt`](../THIRD_PARTY_LICENSES.txt) / [`THIRD_PARTY_LICENSES.linux-x64.txt`](../THIRD_PARTY_LICENSES.linux-x64.txt) for the packaged Windows-x64 and Linux-x64 JavaScript/native dependency inventories.
 - [`legal/third-party`](../legal/third-party/README.md) for pinned manual license texts that the npm inventory cannot retain automatically.

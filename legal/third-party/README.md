@@ -2,7 +2,7 @@
 
 This directory contains license texts for bundled binaries and adapted assets
 that are not fully represented by the installed npm package roots scanned into
-`THIRD_PARTY_LICENSES.txt`.
+`THIRD_PARTY_LICENSES.txt` and `THIRD_PARTY_LICENSES.linux-x64.txt`.
 
 The source revision is part of each record. License files are copied verbatim
 from the linked revision, with line endings normalized to LF for deterministic

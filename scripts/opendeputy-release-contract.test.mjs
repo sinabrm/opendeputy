@@ -50,6 +50,37 @@ test('Windows package is branded and self-contained', () => {
   }
 });
 
+test('Linux package has native targets and excludes Windows-only resources', () => {
+  const rootPackage = json('package.json');
+  const electronPackage = json('packages/electron/package.json');
+  const requireFromRoot = createRequire(path.join(root, 'package.json'));
+  const linuxBuild = requireFromRoot('./packages/electron/electron-builder.linux.cjs');
+  const targets = linuxBuild.linux.target.map((entry) => typeof entry === 'string' ? entry : entry.target);
+  assert.deepEqual(targets, ['AppImage', 'deb']);
+  assert.equal(linuxBuild.linux.executableName, 'opendeputy');
+  assert.equal(electronPackage.desktopName, 'opendeputy');
+  assert.equal(linuxBuild.linux.syncDesktopName, true);
+  assert.match(electronPackage.scripts['package:linux'], /--target=linux-x64 --check/);
+  assert.match(rootPackage.scripts['electron:install:linux'], /install-linux-appimage\.mjs/);
+
+  const resources = linuxBuild.extraResources.map((entry) => entry.to);
+  assert.ok(resources.includes('web-dist'));
+  assert.ok(resources.includes('opencode-cli'));
+  assert.ok(resources.includes('agent-kit'));
+  assert.ok(resources.includes('legal/THIRD_PARTY_LICENSES.linux-x64.txt'));
+  assert.equal(resources.includes('touchpoint-runtime'), false);
+  assert.equal(resources.includes('legal/THIRD_PARTY_LICENSES.txt'), false);
+
+  const agentKitNodeModules = linuxBuild.extraResources.find((entry) => entry.from === 'agent-kit/node_modules');
+  assert.deepEqual(agentKitNodeModules.filter, [
+    '**/*',
+    '!open-browser-use/native/darwin-*/**/*',
+    '!open-browser-use/native/windows-*/**/*',
+    '!@zavora-ai/computer-use-mcp/*.darwin-*.node',
+    '!@zavora-ai/computer-use-mcp/*.win32-*.node',
+  ]);
+});
+
 test('repository ownership and release automation are OpenDeputy-only', () => {
   assert.match(read('.github/CODEOWNERS'), /@sinabrm/);
   assert.doesNotMatch(read('SECURITY.md'), /security@openchamber\.dev|@btriapitsyn/);
@@ -91,6 +122,17 @@ test('green main pushes create short-lived Windows CI artifacts', () => {
   assert.match(packagingScript, /argument === '--publish'/);
   assert.match(packageVerifier, /System\.Security\.Cryptography\.SHA256/);
   assert.doesNotMatch(packageVerifier, /Get-FileHash/);
+});
+
+test('green main pushes create a Linux desktop artifact', () => {
+  const ciWorkflow = read('.github/workflows/ci.yml');
+  assert.match(ciWorkflow, /package-linux:/);
+  assert.match(ciWorkflow, /bun run electron:build:linux/);
+  assert.match(ciWorkflow, /bun run test:linux-package/);
+  assert.match(ciWorkflow, /OpenDeputy-Linux-\$\{\{ github\.sha \}\}/);
+  assert.match(ciWorkflow, /THIRD_PARTY_LICENSES\.linux-x64\.txt/);
+  assert.match(ciWorkflow, /OpenDeputy-\*-linux-\*\.AppImage/);
+  assert.match(ciWorkflow, /OpenDeputy-\*-linux-\*\.deb/);
 });
 
 test('tracked environment secrets are excluded', () => {
@@ -173,9 +215,10 @@ test('CI builds the Linux x64 image and checks its artifact-specific legal bundl
   assert.equal(fs.existsSync(path.join(root, 'scripts/chromium-seccomp-profile.json')), true);
 });
 
-test('required Windows release documentation exists', () => {
+test('required desktop release documentation exists', () => {
   for (const relativePath of [
     'docs/WINDOWS_INSTALL.md',
+    'docs/LINUX_INSTALL.md',
     'docs/OPTIONAL_TOOLS.md',
     'docs/SAFETY_AND_PRIVACY.md',
     'docs/PUBLICATION_CHECKLIST.md',
@@ -187,6 +230,7 @@ test('required Windows release documentation exists', () => {
     'LICENSE',
     'THIRD_PARTY_NOTICES.md',
     'THIRD_PARTY_LICENSES.txt',
+    'THIRD_PARTY_LICENSES.linux-x64.txt',
     'docs/OPEN_SOURCE_COMPONENTS.md',
     'docs/SELF_HOSTING.md',
     'legal/third-party/README.md',
@@ -201,7 +245,10 @@ test('required Windows release documentation exists', () => {
   }
 });
 
-test('generated third-party license inventory is current and release-scoped', () => {
+const testOnWindows = process.platform === 'win32' ? test : test.skip;
+const testOnLinux = process.platform === 'linux' ? test : test.skip;
+
+testOnWindows('generated third-party license inventory is current and release-scoped', () => {
   const rootPackage = json('package.json');
   for (const scriptName of ['test', 'test:release-contract', 'licenses:generate', 'licenses:check']) {
     assert.match(
@@ -241,6 +288,36 @@ test('generated third-party license inventory is current and release-scoped', ()
     'workbox-window@',
   ]) {
     assert.ok(report.includes(`\n${dependency}`), `missing shipped dependency: ${dependency}`);
+  }
+  assert.doesNotMatch(report, /^electron-builder@/m);
+  assert.doesNotMatch(report, /License: \(not declared\)/);
+  assert.match(report, /Reviewed exception:/);
+});
+
+testOnLinux('generated Linux third-party license inventory is current and release-scoped', () => {
+  const result = spawnSync(process.execPath, [
+    'scripts/generate-third-party-licenses.mjs',
+    '--target=linux-x64',
+    '--check',
+  ], {
+    cwd: root,
+    encoding: 'utf8',
+  });
+  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+
+  const report = read('THIRD_PARTY_LICENSES.linux-x64.txt');
+  assert.match(report, /^OpenDeputy Third-Party Dependency License Inventory \(linux-x64\)$/m);
+  for (const dependency of [
+    'electron@',
+    'open-computer-use@',
+    '@playwright/mcp@',
+    'open-browser-use@',
+    '@zavora-ai/computer-use-mcp@',
+    'sherpa-onnx-node@',
+    '@opencode-ai/sdk@',
+    '@napi-rs/canvas-linux-x64-gnu@',
+  ]) {
+    assert.ok(report.includes(`\n${dependency}`), `missing shipped Linux dependency: ${dependency}`);
   }
   assert.doesNotMatch(report, /^electron-builder@/m);
   assert.doesNotMatch(report, /License: \(not declared\)/);

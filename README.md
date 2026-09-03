@@ -3,13 +3,13 @@
 </p>
 
 <p align="center">
-  A Windows-first, open-source AI coworker for projects, files, terminals, websites, and desktop applications.
+  An open-source AI coworker for projects, files, terminals, websites, and desktop applications on Windows and Linux.
 </p>
 
 <p align="center">
-  <a href="https://github.com/sinabrm/opendeputy/actions/workflows/ci.yml"><img alt="Windows CI" src="https://github.com/sinabrm/opendeputy/actions/workflows/ci.yml/badge.svg"></a>
+  <a href="https://github.com/sinabrm/opendeputy/actions/workflows/ci.yml"><img alt="Desktop CI" src="https://github.com/sinabrm/opendeputy/actions/workflows/ci.yml/badge.svg"></a>
   <a href="LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
-  <img alt="Windows x64" src="https://img.shields.io/badge/platform-Windows%20x64-0078D4.svg">
+  <img alt="Windows and Linux x64" src="https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20x64-0078D4.svg">
 </p>
 
 OpenDeputy combines [OpenCode](https://github.com/anomalyco/opencode) agents with a visual workspace and a managed set of browser, terminal, file, and approval-gated desktop tools. It is a modified distribution of the MIT-licensed [OpenChamber](https://github.com/openchamber/openchamber) project, not an official OpenChamber or OpenCode release.
@@ -35,9 +35,9 @@ OpenDeputy does not bundle model weights. The default configuration uses OpenCod
 | --- | --- | --- |
 | [OpenCode](https://github.com/anomalyco/opencode) | The open-source coding-agent runtime, CLI, provider layer, and SDK. | Agent execution and developer workflows. OpenDeputy uses and bundles a matching OpenCode CLI. |
 | [OpenChamber](https://github.com/openchamber/openchamber) | A broad visual workspace around OpenCode. | Desktop, web/PWA, VS Code, mobile, CLI/server, remote access, and multi-device workflows. |
-| **OpenDeputy** | A modified OpenChamber distribution focused on an integrated AI coworker. | Windows x64 first, with a bundled managed agent kit, browser automation, approval-gated Windows control, and optional local document, speech, and activity tools. |
+| **OpenDeputy** | A modified OpenChamber distribution focused on an integrated AI coworker. | Windows and Linux x64 desktop apps, with a bundled managed agent kit, browser automation, approval-gated desktop control, and optional local document, speech, and activity tools. |
 
-Choose OpenCode if you primarily want the agent runtime and terminal workflow. Choose OpenChamber if you want its wider cross-platform and multi-device workspace. Choose OpenDeputy if you want the Windows-first packaged experience and its additional managed tools.
+Choose OpenCode if you primarily want the agent runtime and terminal workflow. Choose OpenChamber if you want its wider cross-platform and multi-device workspace. Choose OpenDeputy if you want a packaged Windows or Linux desktop experience and its additional managed tools.
 
 Compatibility identifiers such as `@openchamber/*`, `OPENCHAMBER_*`, and existing configuration directories remain intentionally unchanged where renaming them would break upgrades.
 
@@ -65,6 +65,20 @@ To create a local unsigned installer:
 ```powershell
 bun run electron:build
 ```
+
+## Run from source or install on Linux
+
+Linux development and packaging use the same Electron desktop shell:
+
+```bash
+bun install
+bun run electron:dev
+```
+
+Build an AppImage and Debian package with `bun run electron:build:linux`.
+See [Linux installation](docs/LINUX_INSTALL.md) for requirements, install
+commands, application-menu registration, the inotify polling fallback, and the
+bundled Linux runtime details.
 
 To run OpenDeputy continuously on a private Linux server or VPS, use the
 included Docker deployment. It persists projects, sessions, scheduled tasks,
@@ -98,7 +112,7 @@ bun run test:release-contract
 
 ## What is included
 
-The Windows installer contains the OpenDeputy application and web interface, Electron, a matching OpenCode CLI, and a managed agent kit. The agent kit supplies eight enabled default MCP servers, including TouchPoint through a bundled portable Python runtime, plus four packaged skills; OpenCode supplies the built-in `customize-opencode` skill.
+The Windows installer contains the OpenDeputy application and web interface, Electron, a matching OpenCode CLI, and a managed agent kit. The Linux AppImage and Debian package contain the equivalent Linux desktop runtime and Linux-native helpers. The Windows agent kit supplies eight enabled default MCP servers, including TouchPoint through a bundled portable Python runtime; TouchPoint is Windows-only. Both desktop targets include the managed skills, and OpenCode supplies the built-in `customize-opencode` skill.
 
 LibreOffice, Piper, ActivityWatch, tunnel clients, local speech models, provider plugins, and additional user-configured skills or MCP servers remain optional. Nothing in the optional Windows tools flow is installed silently.
 
@@ -109,7 +123,7 @@ OpenDeputy uses many open-source projects. Its main foundations are:
 | [OpenChamber](https://github.com/openchamber/openchamber) | Original application foundation; OpenDeputy contains modifications and is not an official OpenChamber release. |
 | [OpenCode](https://github.com/anomalyco/opencode) | Agent runtime, provider integration, SDK, and bundled CLI. |
 | [Open Computer Use](https://github.com/iFurySt/open-codex-computer-use) | Bundled MCP runtime for approval-gated desktop inspection and control. |
-| [Electron](https://github.com/electron/electron) | Windows desktop shell. |
+| [Electron](https://github.com/electron/electron) | Windows and Linux desktop shell. |
 | [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx) | Local speech-to-text and text-to-speech runtime; model archives download separately on demand. |
 
 See [Open-source components](docs/OPEN_SOURCE_COMPONENTS.md) for the complete distribution map, including versions, licenses, optional integrations, plugins, skills, model downloads, Docker-only software, development tools, and items that are not shipped.
@@ -124,4 +138,4 @@ Report vulnerabilities privately through [GitHub's security advisory form](https
 
 OpenDeputy is released under the [MIT License](LICENSE). The original OpenChamber copyright notice remains in the license, and upstream history is preserved in [UPSTREAM_CHANGELOG.md](UPSTREAM_CHANGELOG.md).
 
-Third-party distribution details are recorded in [Open-source components](docs/OPEN_SOURCE_COMPONENTS.md), [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md), the retained [`legal/third-party`](legal/third-party/README.md) license texts, and the generated Windows-x64 dependency inventory in [`THIRD_PARTY_LICENSES.txt`](THIRD_PARTY_LICENSES.txt).
+Third-party distribution details are recorded in [Open-source components](docs/OPEN_SOURCE_COMPONENTS.md), [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md), the retained [`legal/third-party`](legal/third-party/README.md) license texts, and the generated Windows-x64 and Linux-x64 dependency inventories in [`THIRD_PARTY_LICENSES.txt`](THIRD_PARTY_LICENSES.txt) and [`THIRD_PARTY_LICENSES.linux-x64.txt`](THIRD_PARTY_LICENSES.linux-x64.txt).

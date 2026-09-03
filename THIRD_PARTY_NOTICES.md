@@ -2,7 +2,7 @@
 
 OpenDeputy includes, derives from, or interoperates with third-party projects. Their names and trademarks belong to their respective owners. This document identifies the major projects and distribution boundaries; it does not replace the license text shipped by any project.
 
-The generated [`THIRD_PARTY_LICENSES.txt`](THIRD_PARTY_LICENSES.txt) is the Windows x64 package-level inventory for JavaScript and npm-delivered native dependencies resolved by the release lockfile. Exact upstream texts for separately bundled binaries and adapted assets are retained in [`legal/third-party`](legal/third-party/README.md). [Open-source components](docs/OPEN_SOURCE_COMPONENTS.md) explains which components are bundled, downloaded on demand, optional, development-only, or supplied by the user.
+The generated [`THIRD_PARTY_LICENSES.txt`](THIRD_PARTY_LICENSES.txt) and [`THIRD_PARTY_LICENSES.linux-x64.txt`](THIRD_PARTY_LICENSES.linux-x64.txt) are the Windows x64 and Linux x64 package-level inventories for JavaScript and npm-delivered native dependencies resolved by the release lockfile. Exact upstream texts for separately bundled binaries and adapted assets are retained in [`legal/third-party`](legal/third-party/README.md). [Open-source components](docs/OPEN_SOURCE_COMPONENTS.md) explains which components are bundled, downloaded on demand, optional, development-only, or supplied by the user.
 
 ## Derived application code
 
@@ -31,6 +31,11 @@ Windows desktop packages include [Open Computer Use](https://github.com/iFurySt/
 Windows desktop packages include [Playwright MCP](https://github.com/microsoft/playwright-mcp) 0.0.79 under Apache-2.0, [Open Browser Use](https://github.com/iFurySt/open-browser-use) 0.1.41 under MIT, and [`@zavora-ai/computer-use-mcp`](https://www.npmjs.com/package/@zavora-ai/computer-use-mcp) 7.0.0 under MIT. Their package and transitive license texts are recorded in [`THIRD_PARTY_LICENSES.txt`](THIRD_PARTY_LICENSES.txt). The Chrome extension used by Open Browser Use is not silently installed by the Windows package.
 
 Windows desktop packages also include [TouchPoint](https://github.com/Touchpoint-Labs/touchpoint) `touchpoint-py` 0.3.0 under MIT and the official Python 3.12.10 embeddable runtime under the Python Software Foundation License. Python package metadata and retained license files ship beside the portable runtime under `resources/touchpoint-runtime`; the JavaScript/npm inventory remains in [`THIRD_PARTY_LICENSES.txt`](THIRD_PARTY_LICENSES.txt).
+
+Linux desktop packages include the same Playwright MCP, Open Browser Use, and
+`@zavora-ai/computer-use-mcp` agent-kit packages with their Linux native
+helpers. They do not include TouchPoint or the portable Windows Python runtime.
+The Linux package inventory is [`THIRD_PARTY_LICENSES.linux-x64.txt`](THIRD_PARTY_LICENSES.linux-x64.txt).
 
 The managed visual-grounding server uses Sharp 0.35.3. Its Windows native package declares `Apache-2.0 AND LGPL-3.0-or-later` because it carries the Sharp addon and dynamically linked libvips runtime; the generated license inventory preserves the package declaration and shipped license text.
 
