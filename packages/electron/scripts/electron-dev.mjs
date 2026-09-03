@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { spawn, spawnSync } from 'node:child_process';
+import fs from 'node:fs';
 import net from 'node:net';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -8,6 +9,12 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const repoRoot = path.resolve(__dirname, '../../..');
 const electronDir = path.join(repoRoot, 'packages/electron');
+const localElectronBinary = path.join(
+  electronDir,
+  'node_modules',
+  '.bin',
+  process.platform === 'win32' ? 'electron.cmd' : 'electron',
+);
 const preferredHmrUiPort = Number(process.env.OPENCHAMBER_HMR_UI_PORT || '5173');
 const preferredHmrApiPort = Number(process.env.OPENCHAMBER_HMR_API_PORT || '3901');
 
@@ -220,7 +227,14 @@ async function main() {
     });
   }
 
-  const electron = spawnProcess('npx', ['electron', './main.mjs'], {
+  // npm-based `npx electron` can reject the workspace's Bun override metadata
+  // before it ever starts Electron. Prefer the installed binary on every
+  // platform and retain npx as a repair-friendly fallback for fresh checkouts.
+  const electronCommand = fs.existsSync(localElectronBinary) ? localElectronBinary : 'npx';
+  const electronArgs = electronCommand === 'npx'
+    ? ['electron', './main.mjs']
+    : ['./main.mjs'];
+  const electron = spawnProcess(electronCommand, electronArgs, {
     cwd: electronDir,
     env: {
       ...process.env,

@@ -84,6 +84,9 @@ async function stopChildTree(child) {
 const uiPort = process.env.OPENCHAMBER_HMR_UI_PORT || '5180';
 const backendPort = process.env.OPENCHAMBER_HMR_API_PORT || '3902';
 const hmrHost = process.env.OPENCHAMBER_HMR_HOST || '127.0.0.1';
+const hmrWatchEnv = process.env.OPENCHAMBER_HMR_POLLING === '1'
+  ? { CHOKIDAR_USEPOLLING: '1' }
+  : {};
 
 function getLanAddresses() {
   const addresses = [];
@@ -112,7 +115,14 @@ function clearViteCache() {
 
 clearViteCache();
 
-const api = run('api', 'bun', ['run', '--cwd', 'packages/web', 'dev:server:watch'], {
+// Bun does not expose Node's `node:sqlite` module used by the workspace-tools
+// service. Run the Linux HMR API with the active Node runtime so the desktop
+// app exercises the same server path as the packaged application.
+const apiCommand = process.platform === 'linux' ? process.execPath : 'bun';
+const apiArgs = process.platform === 'linux'
+  ? ['--watch', path.join(webRoot, 'server', 'index.js'), '--port', backendPort]
+  : ['run', '--cwd', 'packages/web', 'dev:server:watch'];
+const api = run('api', apiCommand, apiArgs, {
   OPENCHAMBER_PORT: backendPort,
 });
 const vite = run(
@@ -121,6 +131,7 @@ const vite = run(
   ['x', 'vite', '--force', '--host', hmrHost, '--port', uiPort, '--strictPort'],
   {
     OPENCHAMBER_PORT: backendPort,
+    ...hmrWatchEnv,
     OPENCHAMBER_DISABLE_PWA_DEV: '1',
   },
   { cwd: webRoot },

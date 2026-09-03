@@ -9,7 +9,6 @@ import path from 'node:path';
 import { execFile, spawn, spawnSync } from 'node:child_process';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { promisify } from 'node:util';
-import updaterPkg from 'electron-updater';
 import { ElectronSshManager } from './ssh-manager.mjs';
 import { createTrayController } from './tray.mjs';
 import { resolveManagedOpenCodeCwd } from './opencode-cwd.mjs';
@@ -238,7 +237,26 @@ const INSTALLED_APPS_CACHE_TTL_SECS = 60 * 60 * 24;
 const INSTALLED_APPS_CACHE_FILE = 'discovered-apps.json';
 const LINUX_DESKTOP_ENTRIES_CACHE_TTL_MS = 30_000;
 const OPENCODE_SHUTDOWN_GRACE_MS = 100;
-const { autoUpdater } = updaterPkg;
+// Loading electron-updater during an unpackaged Linux development run makes
+// its AppImage updater inspect Electron's placeholder version ("0.0") and
+// abort before the desktop window can open. Keep the updater lazy: packaged
+// Windows and Linux builds still load the same updater after app.ready, while
+// development builds never initialize update machinery.
+let autoUpdater = null;
+
+const loadAutoUpdater = async () => {
+  if (autoUpdater) return autoUpdater;
+  const updaterPackage = await import('electron-updater');
+  autoUpdater = updaterPackage.autoUpdater;
+  return autoUpdater;
+};
+
+const requireAutoUpdater = () => {
+  if (!autoUpdater) {
+    throw new Error('Desktop updates are available only in a packaged OpenDeputy build.');
+  }
+  return autoUpdater;
+};
 
 const state = {
   serverHandle: null,
@@ -3088,16 +3106,19 @@ const compareSemver = (left, right) => {
   return 0;
 };
 
-const setupAutoUpdater = () => {
-  if (!app.isPackaged) {
+const setupAutoUpdater = async () => {
+  // electron-updater can replace a writable AppImage. A Debian install is
+  // managed by apt and must not attempt AppImage update discovery.
+  if (!app.isPackaged || (process.platform === 'linux' && !process.env.APPIMAGE)) {
     return;
   }
-  autoUpdater.autoDownload = false;
-  autoUpdater.autoInstallOnAppQuit = false;
-  autoUpdater.allowPrerelease = false;
-  autoUpdater.fullChangelog = true;
-  autoUpdater.disableWebInstaller = false;
-  autoUpdater.logger = log;
+  const updater = await loadAutoUpdater();
+  updater.autoDownload = false;
+  updater.autoInstallOnAppQuit = false;
+  updater.allowPrerelease = false;
+  updater.fullChangelog = true;
+  updater.disableWebInstaller = false;
+  updater.logger = log;
 
   const testBuild = typeof __OPENCHAMBER_UPDATER_E2E_BUILD__ !== 'undefined'
     && __OPENCHAMBER_UPDATER_E2E_BUILD__ === true;
@@ -3106,16 +3127,16 @@ const setupAutoUpdater = () => {
     ? resolveUpdaterChannel({ platform: process.platform, architecture: process.arch })
     : null;
   if (updaterChannel) {
-    autoUpdater.channel = updaterChannel;
+    updater.channel = updaterChannel;
   }
-  autoUpdater.setFeedURL(feed);
+  updater.setFeedURL(feed);
   log.info('[electron] updater feed configured', {
     provider: feed.provider,
     target: feed.provider === 'github' ? `${feed.owner}/${feed.repo}` : feed.url,
     channel: updaterChannel || 'latest',
   });
 
-  autoUpdater.on('download-progress', (progress) => {
+  updater.on('download-progress', (progress) => {
     const total = Number(progress.total || 0);
     const transferred = Number(progress.transferred || 0);
     setTaskbarProgress(total > 0 ? Math.max(0, Math.min(1, transferred / total)) : 0.01);
@@ -3129,7 +3150,7 @@ const setupAutoUpdater = () => {
     }));
   });
 
-  autoUpdater.on('update-downloaded', (info) => {
+  updater.on('update-downloaded', (info) => {
     log.info(`[electron] update-downloaded version=${info?.version || 'unknown'}`);
     setTaskbarProgress(-1);
     if (state.pendingUpdate) {
@@ -3137,7 +3158,7 @@ const setupAutoUpdater = () => {
     }
   });
 
-  autoUpdater.on('error', (err) => {
+  updater.on('error', (err) => {
     setTaskbarProgress(-1);
     log.error('[electron] autoUpdater error', err);
   });
@@ -4424,10 +4445,20 @@ const handleInvoke = async (browserWindow, command, args = {}) => {
     }
 
     case 'desktop_check_for_updates': {
+      if (!app.isPackaged || (process.platform === 'linux' && !process.env.APPIMAGE)) {
+        return {
+          available: false,
+          currentVersion: APP_VERSION,
+          version: null,
+          body: null,
+          date: null,
+        };
+      }
+      const updater = requireAutoUpdater();
       assertUpdaterCapability({ packaged: app.isPackaged });
       const currentVersion = APP_VERSION;
       const { available, updateInfo, updateResult, nextVersion, pendingUpdate } = await checkForDesktopUpdate({
-        autoUpdater,
+        autoUpdater: updater,
         currentVersion,
         pendingUpdate: state.pendingUpdate,
         compareVersions: compareSemver,
@@ -4447,7 +4478,8 @@ const handleInvoke = async (browserWindow, command, args = {}) => {
       };
     }
 
-    case 'desktop_download_and_install_update':
+    case 'desktop_download_and_install_update': {
+      const updater = requireAutoUpdater();
       assertUpdaterCapability({ packaged: app.isPackaged });
       if (!state.pendingUpdate) {
         throw new Error('No pending update');
@@ -4467,8 +4499,8 @@ const handleInvoke = async (browserWindow, command, args = {}) => {
           await new Promise((resolve, reject) => {
             let settled = false;
             const cleanup = () => {
-              autoUpdater.off('update-downloaded', onDownloaded);
-              autoUpdater.off('error', onError);
+              updater.off('update-downloaded', onDownloaded);
+              updater.off('error', onError);
             };
             const finish = (callback, value) => {
               if (settled) return;
@@ -4478,9 +4510,9 @@ const handleInvoke = async (browserWindow, command, args = {}) => {
             };
             const onDownloaded = () => finish(resolve, null);
             const onError = (error) => finish(reject, error);
-            autoUpdater.on('update-downloaded', onDownloaded);
-            autoUpdater.on('error', onError);
-            Promise.resolve(autoUpdater.downloadUpdate()).catch((error) => finish(reject, error));
+            updater.on('update-downloaded', onDownloaded);
+            updater.on('error', onError);
+            Promise.resolve(updater.downloadUpdate()).catch((error) => finish(reject, error));
           });
         }
         emitToAllWindows('openchamber:update-progress', mapUpdaterProgressEvent({
@@ -4491,9 +4523,11 @@ const handleInvoke = async (browserWindow, command, args = {}) => {
       } finally {
         setTaskbarProgress(-1);
       }
+    }
 
     case 'desktop_restart': {
       const applyUpdate = Boolean(state.pendingUpdate?.downloaded && app.isPackaged);
+      const updater = applyUpdate ? requireAutoUpdater() : null;
       if (applyUpdate) assertUpdaterCapability({ packaged: app.isPackaged });
       log.info(`[electron] desktop_restart applyUpdate=${applyUpdate} packaged=${app.isPackaged}`);
       if (applyUpdate && process.platform === 'darwin' && typeof app.isInApplicationsFolder === 'function') {
@@ -4527,7 +4561,7 @@ const handleInvoke = async (browserWindow, command, args = {}) => {
         try {
           if (applyUpdate) {
             killSidecar();
-            autoUpdater.quitAndInstall();
+            updater.quitAndInstall();
           } else {
             prepareForQuit();
             app.relaunch();
@@ -5429,7 +5463,7 @@ app.whenReady().then(async () => {
   nativeTheme.themeSource = readThemeSource();
   registerPackagedUiProtocol();
   hardenBrowserPanelSession();
-  setupAutoUpdater();
+  await setupAutoUpdater();
 
   if (process.platform === 'darwin') {
     Menu.setApplicationMenu(buildMacMenu());
