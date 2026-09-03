@@ -50,7 +50,9 @@ and generated and manually retained third-party legal notices under
 Linux native helpers, and the same managed agent kit; TouchPoint is omitted.
 End users do not install the bundled runtime components separately.
 
-Unsigned local builds are supported and must be labeled clearly. Releases are produced only by the Windows release workflow and are created as GitHub drafts.
+Unsigned local builds are supported and must be labeled clearly. The release
+workflow publishes Windows installers as GitHub drafts; Linux AppImage and
+Debian artifacts are built and validated by the Linux desktop CI job.
 
 ## Runtime and security rules
 

@@ -15,14 +15,14 @@
 OpenDeputy combines [OpenCode](https://github.com/anomalyco/opencode) agents with a visual workspace and a managed set of browser, terminal, file, and approval-gated desktop tools. It is a modified distribution of the MIT-licensed [OpenChamber](https://github.com/openchamber/openchamber) project, not an official OpenChamber or OpenCode release.
 
 > [!IMPORTANT]
-> OpenDeputy is currently pre-release software. The first unsigned Windows preview is available on the [Releases page](https://github.com/sinabrm/opendeputy/releases/tag/v1.19.0), or you can build and run it from source.
+> OpenDeputy is currently pre-release software. The current unsigned Windows preview is available on the [Releases page](https://github.com/sinabrm/opendeputy/releases/tag/v1.19.0); Linux AppImage and Debian builds are documented below. You can also build either desktop target from source.
 
 ## What it can do
 
 - Run agents with any provider and model supported by OpenCode.
 - Read and change project files, run terminal commands, use Git, and keep project notes.
 - Browse real websites using DOM and accessibility information, then click, type, scroll, and take screenshots.
-- Control Windows applications through the bundled, approval-gated Open Computer Use runtime.
+- Control supported Windows and Linux desktop applications through the bundled, approval-gated Open Computer Use runtime.
 - Route task-relevant text, code, images, screenshots, audio, video, PDFs, and documents to the configured model for analysis.
 - Continue in the tray when **Minimize to tray** is enabled.
 - Add optional document conversion, local speech, and ActivityWatch history integrations.
@@ -85,7 +85,7 @@ included Docker deployment. It persists projects, sessions, scheduled tasks,
 and a server-owned Chromium profile so browser work does not require a desktop
 window to remain open. See [Self-host OpenDeputy](docs/SELF_HOSTING.md).
 
-When public binaries are available, they will appear on the [Releases page](https://github.com/sinabrm/opendeputy/releases) with a `SHA256SUMS.txt` file. See [Windows installation](docs/WINDOWS_INSTALL.md), [optional tools](docs/OPTIONAL_TOOLS.md), and [safety and privacy](docs/SAFETY_AND_PRIVACY.md).
+When public binaries are available, they will appear on the [Releases page](https://github.com/sinabrm/opendeputy/releases) with a `SHA256SUMS.txt` file. See [Windows installation](docs/WINDOWS_INSTALL.md), [Linux installation](docs/LINUX_INSTALL.md), [optional tools](docs/OPTIONAL_TOOLS.md), and [safety and privacy](docs/SAFETY_AND_PRIVACY.md).
 
 ## Contribute
 
@@ -102,7 +102,7 @@ Good first contributions should stay small enough to review but solve a real use
 
 Common checks:
 
-```powershell
+```bash
 bun run type-check
 bun run lint
 bun run test
@@ -112,7 +112,7 @@ bun run test:release-contract
 
 ## What is included
 
-The Windows installer contains the OpenDeputy application and web interface, Electron, a matching OpenCode CLI, and a managed agent kit. The Linux AppImage and Debian package contain the equivalent Linux desktop runtime and Linux-native helpers. The Windows agent kit supplies eight enabled default MCP servers, including TouchPoint through a bundled portable Python runtime; TouchPoint is Windows-only. Both desktop targets include the managed skills, and OpenCode supplies the built-in `customize-opencode` skill.
+Windows and Linux desktop packages contain the OpenDeputy application and web interface, Electron, a matching OpenCode CLI, and a managed agent kit. Windows additionally includes TouchPoint through a bundled portable Python runtime; TouchPoint is Windows-only. Linux packages include Linux-native helpers instead. Both desktop targets include the managed skills, and OpenCode supplies the built-in `customize-opencode` skill.
 
 LibreOffice, Piper, ActivityWatch, tunnel clients, local speech models, provider plugins, and additional user-configured skills or MCP servers remain optional. Nothing in the optional Windows tools flow is installed silently.
 
