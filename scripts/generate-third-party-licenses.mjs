@@ -20,6 +20,19 @@ const targetConfigs = {
     ],
     includeElectronRuntime: true,
   },
+  'linux-x64': {
+    platform: 'linux',
+    architecture: 'x64',
+    defaultOutput: 'THIRD_PARTY_LICENSES.linux-x64.txt',
+    scopes: [
+      { label: 'root application runtime', manifest: 'package.json' },
+      { label: 'web server and browser application', manifest: 'packages/web/package.json' },
+      { label: 'shared browser UI', manifest: 'packages/ui/package.json' },
+      { label: 'Electron desktop shell', manifest: 'packages/electron/package.json' },
+      { label: 'managed desktop agent kit', manifest: 'packages/electron/agent-kit/package.json' },
+    ],
+    includeElectronRuntime: true,
+  },
   'docker-linux-x64': {
     platform: 'linux',
     architecture: 'x64',

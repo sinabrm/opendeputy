@@ -7,7 +7,12 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const agentKitDirectory = path.resolve(__dirname, '..', 'agent-kit');
 const npmCli = [
   process.env.OPENDEPUTY_NPM_CLI,
+  // Node installed through nvm keeps npm beside the runtime under
+  // ../lib/node_modules rather than in bin/node_modules. Keep the original
+  // layout too because system and Windows Node installations use it.
   path.join(path.dirname(process.execPath), 'node_modules', 'npm', 'bin', 'npm-cli.js'),
+  path.join(path.dirname(process.execPath), '..', 'lib', 'node_modules', 'npm', 'bin', 'npm-cli.js'),
+  '/usr/share/nodejs/npm/bin/npm-cli.js',
 ].find((candidate) => candidate && fs.existsSync(candidate));
 
 if (!npmCli) {

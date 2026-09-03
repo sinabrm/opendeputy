@@ -139,6 +139,8 @@ const windowsNodePtyPrebuildDir = path.join(nodePtyDir, 'prebuilds', `win32-${wi
 const hasWindowsNodePtyPrebuilds = process.platform === 'win32'
   && existsSync(path.join(windowsNodePtyPrebuildDir, 'conpty.node'))
   && existsSync(path.join(windowsNodePtyPrebuildDir, 'conpty_console_list.node'));
+const nodePtyPrebuildDir = path.join(nodePtyDir, 'prebuilds', `${process.platform}-${targetArchitecture.node}`);
+const hasNodePtyPrebuild = existsSync(path.join(nodePtyPrebuildDir, 'pty.node'));
 
 // Rebuild against the hoisted root node_modules (bun workspace layout).
 // force=true re-links regardless of cached state; prebuild-install lookup is
@@ -149,6 +151,11 @@ const hasWindowsNodePtyPrebuilds = process.platform === 'win32'
 // bun-pty at runtime.
 if (hasWindowsNodePtyPrebuilds) {
   console.log(`[electron] using bundled node-pty Windows ${windowsPrebuildArch} prebuilds`);
+} else if (hasNodePtyPrebuild) {
+  // node-pty's Unix binaries use Node-API and are ABI-stable across Electron
+  // releases. Reusing the published prebuild keeps Linux packaging usable on
+  // minimal build hosts that do not have a C/C++ toolchain installed.
+  console.log(`[electron] using bundled node-pty ${process.platform} ${targetArchitecture.node} prebuild`);
 } else {
   const rebuildPath = createWindowsRebuildPath(repoRoot);
   let cleanupNodeAddonApi = async () => {};
