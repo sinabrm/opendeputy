@@ -29,6 +29,7 @@ import {
   readLinuxAutostartEnabled,
   setLinuxAutostartEnabled,
 } from './linux-autostart.mjs';
+import { registerLinuxDesktopIntegration } from './linux-desktop-integration.mjs';
 import { unsupportedAppSpecificOpenError, validateLocalPath } from './path-open-utils.mjs';
 import { mintOutsideFileGrant } from '@openchamber/web/server/lib/fs/routes.js';
 
@@ -5482,6 +5483,21 @@ app.whenReady().then(async () => {
   }
 
   if (process.platform === 'linux' && app.isPackaged) {
+    try {
+      const desktopIntegration = await registerLinuxDesktopIntegration({
+        appName: app.getName(),
+        appVersion: APP_VERSION,
+        iconSourcePath: path.join(process.resourcesPath, 'icons', 'icon.png'),
+      });
+      if (desktopIntegration.registered) {
+        log.info('[electron] Linux AppImage desktop entry registered', {
+          desktopFilePath: desktopIntegration.desktopFilePath,
+        });
+      }
+    } catch (error) {
+      log.warn('[electron] failed to register Linux AppImage desktop entry', error);
+    }
+
     try {
       const enabled = await readLinuxAutostartEnabled();
       if (enabled) {
